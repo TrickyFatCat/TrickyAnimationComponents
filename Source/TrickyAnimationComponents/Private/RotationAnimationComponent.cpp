@@ -22,6 +22,10 @@ void URotationAnimationComponent::TickComponent(float DeltaTime, ELevelTick Tick
 
 	if (bRotateX || bRotateY || bRotateZ)
 	{
+		DeltaRotator.Roll = bRotateX ? RotationSpeed.Roll : 0.f;
+		DeltaRotator.Pitch = bRotateY ? RotationSpeed.Pitch : 0.f;
+		DeltaRotator.Yaw = bRotateZ ? RotationSpeed.Yaw : 0.f;
+		
 		AddLocalRotation(DeltaRotator);
 	}
 }
