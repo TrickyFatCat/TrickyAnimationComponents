@@ -8,18 +8,38 @@ URotationAnimationComponent::URotationAnimationComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void URotationAnimationComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	DeltaRotator = RotationSpeed;
+}
 
 void URotationAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                                 FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	bRotateX ? DeltaRotator.Roll = DeltaRotationX : DeltaRotator.Roll = 0.f;
-	bRotateY ? DeltaRotator.Pitch = DeltaRotationY : DeltaRotator.Pitch = 0.f;
-	bRotateZ ? DeltaRotator.Yaw = DeltaRotationZ : DeltaRotator.Yaw = 0.f;
-
-	if (DeltaRotator.Equals(FRotator::ZeroRotator))
+	if (bRotateX || bRotateY || bRotateZ)
 	{
 		AddLocalRotation(DeltaRotator);
 	}
+}
+
+FRotator URotationAnimationComponent::GetRotationSpeed() const
+{
+	return RotationSpeed;
+}
+
+void URotationAnimationComponent::SetRotationSpeed(const FRotator Value)
+{
+	RotationSpeed = Value;
+	DeltaRotator = Value;
+}
+
+void URotationAnimationComponent::SetIsRotating(const bool bX, const bool bY, const bool bZ)
+{
+	bRotateX = bX;
+	bRotateY = bY;
+	bRotateZ = bZ;
 }

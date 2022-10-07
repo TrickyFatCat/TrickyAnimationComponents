@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "Components/SceneComponent.h"
 #include "RotationAnimationComponent.generated.h"
 
 
@@ -15,26 +15,34 @@ class TRICKYANIMATIONCOMPONENTS_API URotationAnimationComponent : public USceneC
 public:
 	URotationAnimationComponent();
 
+protected:
+	virtual void BeginPlay() override;
+
+public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
+ 
+	UFUNCTION(BlueprintGetter)
+	FRotator GetRotationSpeed() const;
 
+	UFUNCTION(BlueprintSetter)
+	void SetRotationSpeed(const FRotator Value);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimators|RotationAnimator")
+	void SetIsRotating(const bool bX, const bool bY, const bool bZ);
+
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Rotation)
 	bool bRotateX = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Rotation, meta=(EditCondition="bRotateX"))
-	float DeltaRotationX = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Rotation)
 	bool bRotateY = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Rotation, meta=(EditCondition="bRotateY"))
-	float DeltaRotationY = 1.f;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Rotation)
 	bool bRotateZ = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Rotation, meta=(EditCondition="bRotateZ"))
-	float DeltaRotationZ = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetRotationSpeed, BlueprintSetter=SetRotationSpeed, Category=Rotation)
+	FRotator RotationSpeed{0.f, 1.f, 0.f};
 
 protected:
 	UPROPERTY()
