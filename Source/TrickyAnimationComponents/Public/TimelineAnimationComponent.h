@@ -12,10 +12,10 @@ class UTimelineComponent;
 UENUM(BlueprintType)
 enum class ETimelineAnimationState: uint8
 {
-	Start,
+	Begin,
 	End,
 	Transition UMETA(Hidden),
-	Stopped	UMETA(Hdidden)
+	Pause	UMETA(Hidden)
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationStartedSignature, ETimelineAnimationState, TargetState);
@@ -24,7 +24,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationReversedSignature, ETime
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationFinishedSignature, ETimelineAnimationState, NewState);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationStoppedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationPausedSignature);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationResumedSignature);
 
@@ -41,11 +41,11 @@ protected:
 
 private:
 	UPROPERTY()
-	UTimelineComponent* Timeline = nullptr;
+	UTimelineComponent* AnimationTimeline = nullptr;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Animation)
-	ETimelineAnimationState InitialState = ETimelineAnimationState::Start;
+	ETimelineAnimationState InitialState = ETimelineAnimationState::Begin;
 
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
 	FOnAnimationStartedSignature OnAnimationStarted;
@@ -57,7 +57,7 @@ public:
 	FOnAnimationFinishedSignature OnAnimationFinished;
 
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
-	FOnAnimationStoppedSignature OnAnimationStopped;
+	FOnAnimationPausedSignature OnAnimationPaused;
 	
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
 	FOnAnimationResumedSignature OnAnimationResumed;
@@ -69,23 +69,60 @@ public:
 	void Reverse();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
-	void Stop();
+	void Pause();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
 	void Resume();
+
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|TimelineAnimation")
+	float GetAnimationTime() const;
+
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|TimelineAnimation")
+	void SetAnimationTime(const float Value);
+
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|TimelineAnimation")
+	UCurveFloat* GetAnimationCurve() const;
+
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|TimelineAnimation")
+	void SetAnimationCurve(UCurveFloat* Value);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
+	void SetAnimatedComponents(UPARAM(ref) TArray<USceneComponent*>& Components);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
+	bool CanPlayAnimation() const;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
 	bool bIsReversible = false;
 
 private:
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationTime, BlueprintSetter=SetAnimationTime, Category="Animation", meta=(AllowPrivateAccess="true", ClampMin="0"))
+	float AnimationTime = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationCurve, BlueprintSetter=SetAnimationCurve, Category="Animation", meta=(AllowPrivateAccess="true"))
+	UCurveFloat* AnimationCurve = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess="true"))
+	TArray<FTransform> TransformOffsets;
+
+	UPROPERTY()
+	TArray<FTransform> InitialTransforms;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation|States", meta=(AllowPrivateAccess="true"))
 	ETimelineAnimationState CurrentState = InitialState;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation|States", meta=(AllowPrivateAccess="true"))
 	ETimelineAnimationState TargetState = ETimelineAnimationState::End;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess="true"))
+	TArray<USceneComponent*> AnimatedComponents;
+
+	UFUNCTION()
+	void AnimateTransform(const float Progress);
+
 	UFUNCTION()
 	void FinishAnimation();
 
+	void CalculatePlayRate() const;
 };
