@@ -20,29 +20,16 @@ void UFloatingAnimationComponent::BeginPlay()
 void UFloatingAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                                 FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);;
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (GetWorld())
 	{
-		const float Time = GetWorld()->GetTimeSeconds();
 		FVector CurrentLocation = GetRelativeLocation();
 
-		auto Animate = [&](const bool bIsAnimated,
-		                   float& Value,
-		                   const float& InitialValue,
-		                   const float& Amplitude,
-		                   const float& Frequency)
-		{
-			if (bIsAnimated)
-			{
-				Value = InitialValue + Amplitude * FMath::Sin(Frequency * Time);
-			}
-		};
-		
 		Animate(bAnimateX, CurrentLocation.X, InitialLocation.X, Amplitude.X, Frequency.X);
 		Animate(bAnimateY, CurrentLocation.Y, InitialLocation.Y, Amplitude.Y, Frequency.Y);
 		Animate(bAnimateZ, CurrentLocation.Z, InitialLocation.Z, Amplitude.Z, Frequency.Z);
-		
+
 		SetRelativeLocation(CurrentLocation);
 	}
 }
@@ -52,4 +39,14 @@ void UFloatingAnimationComponent::SetIsAnimated(const bool bX, const bool bY, co
 	bAnimateX = bX;
 	bAnimateY = bY;
 	bAnimateZ = bZ;
+}
+
+void UFloatingAnimationComponent::Animate(const bool bAxisAnimated, float& Value, const float& InitialValue,
+                                          const float& AxisAmplitude, const float& AxisFrequency) const
+{
+	if (bAxisAnimated)
+	{
+		const float Time = GetWorld()->GetTimeSeconds();
+		Value = InitialValue + AxisAmplitude * FMath::Sin(AxisFrequency * Time);
+	}
 }

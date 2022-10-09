@@ -31,16 +31,19 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	FVector Amplitude{FVector::UpVector};
-	
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
 	bool bAnimateX = false;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
 	bool bAnimateY = false;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
 	bool bAnimateZ = true;
 private:
 	FVector InitialLocation{FVector::ZeroVector};
+
+	void Animate(const bool bAxisAnimated, float& Value, const float& InitialValue,
+	             const float& AxisAmplitude, const float& AxisFrequency) const;
 };
