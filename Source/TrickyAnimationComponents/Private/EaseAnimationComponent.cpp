@@ -1,21 +1,21 @@
 // MIT License Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov
 
 
-#include "RibbonAnimationComponent.h"
+#include "EaseAnimationComponent.h"
 
-URibbonAnimationComponent::URibbonAnimationComponent()
+UEaseAnimationComponent::UEaseAnimationComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
-void URibbonAnimationComponent::BeginPlay()
+void UEaseAnimationComponent::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 
-void URibbonAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UEaseAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 

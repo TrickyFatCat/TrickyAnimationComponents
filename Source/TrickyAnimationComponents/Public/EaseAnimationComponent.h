@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "RibbonAnimationComponent.generated.h"
+#include "EaseAnimationComponent.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class TRICKYANIMATIONCOMPONENTS_API URibbonAnimationComponent : public UActorComponent
+class TRICKYANIMATIONCOMPONENTS_API UEaseAnimationComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	URibbonAnimationComponent();
+	UEaseAnimationComponent();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	bool bIsEnabled = true;
