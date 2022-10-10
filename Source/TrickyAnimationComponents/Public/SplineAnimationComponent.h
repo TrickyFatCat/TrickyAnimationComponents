@@ -8,6 +8,7 @@
 
 class UTimelineComponent;
 class UCurveFloat;
+class USplineComponent;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API USplineAnimationComponent : public UActorComponent
@@ -29,6 +30,15 @@ private:
 	UTimelineComponent* AnimationTimeline = nullptr;
 
 public:
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
+	void Start();
+
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
+	void Pause();
+
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
+	void Resume();
+	
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
 	UCurveFloat* GetAnimationCurve() const;
 
@@ -52,10 +62,15 @@ public:
 	
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
 	void SetConstantSpeed(const float Value);
+	
 protected:
+	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	AActor* SplineActor = nullptr;
+
+	UPROPERTY()
+	USplineComponent* SplineComponent = nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationCurve, BlueprintSetter=SetAnimationCurve, Category="Animation",
 		meta=(AllowPrivateAccess="true"))
@@ -72,4 +87,18 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetConstantSpeed, BlueprintSetter=SetConstantSpeed, Category="Animation",
 		meta=(AllowPrivateAccess="true", EditCondition="bUseConstantSpeed", ClampMin="0"))
 	float ConstantSpeed = 300.f;
+
+	UFUNCTION()
+	void AnimateAlongSpline(const float Progress);
+
+	UFUNCTION()
+	void FinishAnimation();
+
+	float GetSplineDistanceAtPoint(const int32 PointIndex);
+
+	float GetPositionAtSpline(const int32 CurrentPointIndex, const int32 NextPointIndex, const float Progress);
+
+	void CalculatePlayRate() const;
+
+	void CalculateAnimationTime(const int32 CurrentPointIndex, const int32 NextPointIndex);
 };
