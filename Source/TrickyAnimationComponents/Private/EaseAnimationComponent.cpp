@@ -22,7 +22,7 @@ void UEaseAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	if (TargetActor && bIsEnabled)
 	{
 		const FVector CurrentLocation = GetOwner()->GetActorLocation();
-		const FVector TargetLocation = TargetActor->GetActorLocation() + LocationOffset;
+		const FVector TargetLocation = TargetActor->GetActorLocation() + TargetLocationOffset;
 		const FVector NewLocation = FMath::InterpEaseInOut(CurrentLocation, TargetLocation, RibbonPower, 1.f);
 		GetOwner()->SetActorLocation(NewLocation);
 	}

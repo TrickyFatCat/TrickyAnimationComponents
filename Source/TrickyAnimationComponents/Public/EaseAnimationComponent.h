@@ -23,7 +23,7 @@ public:
 	AActor* TargetActor = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
-	FVector LocationOffset{FVector::ZeroVector};
+	FVector TargetLocationOffset{FVector::ZeroVector};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	float RibbonPower = 0.15f;
