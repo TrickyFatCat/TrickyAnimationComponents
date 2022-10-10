@@ -6,18 +6,70 @@
 #include "Components/ActorComponent.h"
 #include "SplineAnimationComponent.generated.h"
 
+class UTimelineComponent;
+class UCurveFloat;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API USplineAnimationComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	USplineAnimationComponent();
 
 protected:
 	virtual void BeginPlay() override;
 
-public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
+
+private:
+	UPROPERTY()
+	UTimelineComponent* AnimationTimeline = nullptr;
+
+public:
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
+	UCurveFloat* GetAnimationCurve() const;
+
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
+	void SetAnimationCurve(UCurveFloat* Value);
+
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
+	float GetAnimationTime() const;
+
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
+	void SetAnimationTime(const float Value);
+
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
+	bool GetUseConstantSpeed() const;
+
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
+	void SetUseConstantSpeed(const bool Value);
+	
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
+	float GetConstantSpeed() const;
+	
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
+	void SetConstantSpeed(const float Value);
+protected:
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
+	AActor* SplineActor = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationCurve, BlueprintSetter=SetAnimationCurve, Category="Animation",
+		meta=(AllowPrivateAccess="true"))
+	UCurveFloat* AnimationCurve = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationTime, BlueprintSetter=SetAnimationTime, Category="Animation",
+		meta=(AllowPrivateAccess="true", EditCondition="!bUseConstantSpeed", ClampMin="0"))
+	float AnimationTime = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetUseConstantSpeed, BlueprintSetter=SetUseConstantSpeed,
+		Category="Animation", meta=(AllowPrivateAccess="true"))
+	bool bUseConstantSpeed = false;
+
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetConstantSpeed, BlueprintSetter=SetConstantSpeed, Category="Animation",
+		meta=(AllowPrivateAccess="true", EditCondition="bUseConstantSpeed", ClampMin="0"))
+	float ConstantSpeed = 300.f;
 };
