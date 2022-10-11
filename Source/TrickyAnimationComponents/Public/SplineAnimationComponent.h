@@ -10,6 +10,24 @@ class UTimelineComponent;
 class UCurveFloat;
 class USplineComponent;
 
+UENUM()
+enum class ESplineAnimationState : uint8
+{
+	Idle,
+	Transition,
+	Wait,
+	Pause
+};
+
+UENUM()
+enum class ESplineAnimationMode : uint8
+{
+	OneWay,
+	Loop,
+	PingPong,
+	Manual
+};
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API USplineAnimationComponent : public UActorComponent
 {
@@ -38,7 +56,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
 	void Resume();
-	
+
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
 	UCurveFloat* GetAnimationCurve() const;
 
@@ -56,22 +74,24 @@ public:
 
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
 	void SetUseConstantSpeed(const bool Value);
-	
+
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
 	float GetConstantSpeed() const;
-	
+
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
 	void SetConstantSpeed(const float Value);
-	
+
 protected:
-	
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
+	ESplineAnimationMode AnimationMode = ESplineAnimationMode::OneWay;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	AActor* SplineActor = nullptr;
 
 	UPROPERTY()
 	USplineComponent* SplineComponent = nullptr;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationCurve, BlueprintSetter=SetAnimationCurve, Category="Animation",
 		meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
@@ -81,12 +101,23 @@ private:
 	float AnimationTime = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetUseConstantSpeed, BlueprintSetter=SetUseConstantSpeed,
-		Category="Animation", meta=(AllowPrivateAccess="true"))
+		Category="Animation", meta=(AllowPrivateAccess="true", InlineEditConditionToggle))
 	bool bUseConstantSpeed = false;
 
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetConstantSpeed, BlueprintSetter=SetConstantSpeed, Category="Animation",
 		meta=(AllowPrivateAccess="true", EditCondition="bUseConstantSpeed", ClampMin="0"))
 	float ConstantSpeed = 300.f;
+	
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess="true"))
+	ESplineAnimationState AnimationState = ESplineAnimationState::Idle;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess="true"))
+	int32 CurrentPointIndex = 0;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess="true"))
+	int32 NextPointIndex = 1;
+
+	void CalculateNextPointIndex();
 
 	UFUNCTION()
 	void AnimateAlongSpline(const float Progress);
@@ -94,11 +125,13 @@ private:
 	UFUNCTION()
 	void FinishAnimation();
 
-	float GetSplineDistanceAtPoint(const int32 PointIndex);
+	float GetSplineDistanceAtPoint(const int32 PointIndex) const;
 
-	float GetPositionAtSpline(const int32 CurrentPointIndex, const int32 NextPointIndex, const float Progress);
+	float GetPositionAtSpline(const int32 CurrentIndex, const int32 NextIndex, const float Progress) const;
 
 	void CalculatePlayRate() const;
 
-	void CalculateAnimationTime(const int32 CurrentPointIndex, const int32 NextPointIndex);
+	void CalculateAnimationTime(const int32 CurrentIndex, const int32 TargetIndex);
+
+	int32 GetLastPointIndex() const;
 };

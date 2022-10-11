@@ -30,6 +30,10 @@ void USplineAnimationComponent::BeginPlay()
 		{
 			// Print error
 		}
+		else
+		{
+			CalculateNextPointIndex();
+		}
 	}
 
 	if (AnimationCurve)
@@ -44,7 +48,7 @@ void USplineAnimationComponent::BeginPlay()
 
 		if (bUseConstantSpeed)
 		{
-			CalculateAnimationTime(0, 1);
+			CalculateAnimationTime(0, SplineComponent->GetNumberOfSplinePoints() - 1);
 		}
 
 		CalculatePlayRate();
@@ -60,19 +64,42 @@ void USplineAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 
 void USplineAnimationComponent::Start()
 {
+	if (AnimationState != ESplineAnimationState::Idle)
+	{
+		// Print error
+		return;
+	}
+
 	AnimationTimeline->PlayFromStart();
+	AnimationState = ESplineAnimationState::Transition;
 	// Start logic
 	// Call delegate
 }
 
 void USplineAnimationComponent::Pause()
 {
+	if (AnimationState != ESplineAnimationState::Transition)
+	{
+		// Print error
+		return;
+	}
+
+	AnimationTimeline->Stop();
+	AnimationState = ESplineAnimationState::Pause;
 	// Pause logic
 	// Call delegate
 }
 
 void USplineAnimationComponent::Resume()
 {
+	if (AnimationState != ESplineAnimationState::Pause)
+	{
+		// Print error
+		return;
+	}
+
+	AnimationTimeline->Play(); // Improve logic considering indexes
+	AnimationState = ESplineAnimationState::Transition;
 	// Resume logic
 	// Call delegate
 }
@@ -117,9 +144,12 @@ bool USplineAnimationComponent::GetUseConstantSpeed() const
 void USplineAnimationComponent::SetUseConstantSpeed(const bool Value)
 {
 	bUseConstantSpeed = Value;
-	CalculateAnimationTime(0, 1); // Change to points array;
-	CalculatePlayRate();
-	// Recalculate speed;
+
+	if (bUseConstantSpeed)
+	{
+		CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
+		CalculatePlayRate();
+	}
 }
 
 float USplineAnimationComponent::GetConstantSpeed() const
@@ -141,8 +171,34 @@ void USplineAnimationComponent::SetConstantSpeed(const float Value)
 	}
 
 	ConstantSpeed = Value;
-	CalculateAnimationTime(0, 1); // Rework
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 	CalculatePlayRate();
+}
+
+void USplineAnimationComponent::CalculateNextPointIndex()
+{
+	switch (AnimationMode)
+	{
+	case ESplineAnimationMode::OneWay:
+		NextPointIndex = GetLastPointIndex();
+	// Implement logic
+		break;
+
+	case ESplineAnimationMode::Loop:
+		NextPointIndex = GetLastPointIndex();
+	//Implement logic
+		break;
+
+	case ESplineAnimationMode::PingPong:
+		NextPointIndex = CurrentPointIndex == GetLastPointIndex() ? 0 : GetLastPointIndex();
+	// Implement logic
+		break;
+
+	case ESplineAnimationMode::Manual:
+		// No calculation required
+		break;
+	}
+
 }
 
 void USplineAnimationComponent::AnimateAlongSpline(const float Progress)
@@ -152,9 +208,9 @@ void USplineAnimationComponent::AnimateAlongSpline(const float Progress)
 		return;
 	}
 
+	const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
 	const FVector NewLocation{
-		SplineComponent->GetLocationAtDistanceAlongSpline(GetPositionAtSpline(0, 1, Progress),
-		                                                  ESplineCoordinateSpace::World)
+		SplineComponent->GetLocationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
 	};
 
 	GetOwner()->SetActorLocation(NewLocation);
@@ -162,25 +218,47 @@ void USplineAnimationComponent::AnimateAlongSpline(const float Progress)
 
 void USplineAnimationComponent::FinishAnimation()
 {
+	AnimationState = ESplineAnimationState::Idle;
+	
+	switch (AnimationMode)
+	{
+	case ESplineAnimationMode::Loop:
+		if (NextPointIndex == GetLastPointIndex())
+		{
+			CurrentPointIndex = 0;
+			Start();
+		}
+		break;
+
+	case ESplineAnimationMode::PingPong:
+		CurrentPointIndex = NextPointIndex;
+		Start();
+		break;
+
+	default:
+		CurrentPointIndex = NextPointIndex;
+		break;
+	}
+	
+	CalculateNextPointIndex();
 	// Add logic
 	// Call delegate
 }
 
-float USplineAnimationComponent::GetSplineDistanceAtPoint(const int32 PointIndex)
+float USplineAnimationComponent::GetSplineDistanceAtPoint(const int32 PointIndex) const
 {
 	if (!SplineComponent) return -1.f;
 
 	return SplineComponent->GetDistanceAlongSplineAtSplinePoint(PointIndex);
-	// Rework in the future using array of points
 }
 
-float USplineAnimationComponent::GetPositionAtSpline(const int32 CurrentPointIndex, const int32 NextPointIndex,
-                                                     const float Progress)
+float USplineAnimationComponent::GetPositionAtSpline(const int32 CurrentIndex, const int32 NextIndex,
+                                                     const float Progress) const
 {
 	if (!SplineComponent) return -1;
 
-	const float Start = GetSplineDistanceAtPoint(CurrentPointIndex);
-	const float Finish = GetSplineDistanceAtPoint(NextPointIndex);
+	const float Start = GetSplineDistanceAtPoint(CurrentIndex);
+	const float Finish = GetSplineDistanceAtPoint(NextIndex);
 
 	return FMath::Lerp(Start, Finish, Progress);
 }
@@ -206,7 +284,7 @@ void USplineAnimationComponent::CalculatePlayRate() const
 	AnimationTimeline->SetPlayRate(MaxTime / AnimationTime);
 }
 
-void USplineAnimationComponent::CalculateAnimationTime(const int32 CurrentPointIndex, const int32 NextPointIndex)
+void USplineAnimationComponent::CalculateAnimationTime(const int32 CurrentIndex, const int32 TargetIndex)
 {
 	if (!SplineComponent)
 	{
@@ -216,9 +294,14 @@ void USplineAnimationComponent::CalculateAnimationTime(const int32 CurrentPointI
 
 	if (bUseConstantSpeed)
 	{
-		const float StartDistance = GetSplineDistanceAtPoint(CurrentPointIndex);
-		const float FinishDistance = GetSplineDistanceAtPoint(NextPointIndex);
+		const float StartDistance = GetSplineDistanceAtPoint(CurrentIndex);
+		const float FinishDistance = GetSplineDistanceAtPoint(TargetIndex);
 		const float DistanceBetweenPoints = FMath::Abs(FinishDistance - StartDistance);
 		AnimationTime = DistanceBetweenPoints / ConstantSpeed;
 	}
+}
+
+int32 USplineAnimationComponent::GetLastPointIndex() const
+{
+	return SplineComponent->GetNumberOfSplinePoints() - 1;
 }
