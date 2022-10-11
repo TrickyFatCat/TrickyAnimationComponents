@@ -32,6 +32,7 @@ void USplineAnimationComponent::BeginPlay()
 		}
 		else
 		{
+			CurrentPointIndex = bIsReversed ? GetLastPointIndex() : 0;
 			CalculateNextPointIndex();
 		}
 	}
@@ -180,17 +181,24 @@ void USplineAnimationComponent::CalculateNextPointIndex()
 	switch (AnimationMode)
 	{
 	case ESplineAnimationMode::OneWay:
-		NextPointIndex = GetLastPointIndex();
+		NextPointIndex = bIsReversed ? 0 : GetLastPointIndex();
 	// Implement logic
 		break;
 
 	case ESplineAnimationMode::Loop:
-		NextPointIndex = GetLastPointIndex();
+		NextPointIndex = bIsReversed ? 0 : GetLastPointIndex();
 	//Implement logic
 		break;
 
 	case ESplineAnimationMode::PingPong:
-		NextPointIndex = CurrentPointIndex == GetLastPointIndex() ? 0 : GetLastPointIndex();
+		if (bIsReversed)
+		{
+			NextPointIndex = CurrentPointIndex == 0 ? GetLastPointIndex() : 0;
+		}
+		else
+		{
+			NextPointIndex = CurrentPointIndex == GetLastPointIndex() ? 0 : GetLastPointIndex();
+		}
 	// Implement logic
 		break;
 
@@ -198,7 +206,6 @@ void USplineAnimationComponent::CalculateNextPointIndex()
 		// No calculation required
 		break;
 	}
-
 }
 
 void USplineAnimationComponent::AnimateAlongSpline(const float Progress)
@@ -213,21 +220,26 @@ void USplineAnimationComponent::AnimateAlongSpline(const float Progress)
 		SplineComponent->GetLocationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
 	};
 
-	GetOwner()->SetActorLocation(NewLocation);
+	GetOwner()->SetActorLocation(NewLocation + LocationOffset);
 }
 
 void USplineAnimationComponent::FinishAnimation()
 {
 	AnimationState = ESplineAnimationState::Idle;
-	
+
 	switch (AnimationMode)
 	{
 	case ESplineAnimationMode::Loop:
-		if (NextPointIndex == GetLastPointIndex())
+		if (bIsReversed)
 		{
-			CurrentPointIndex = 0;
-			Start();
+			CurrentPointIndex = NextPointIndex == 0 ? GetLastPointIndex() : 0;
 		}
+		else
+		{
+			CurrentPointIndex = NextPointIndex == GetLastPointIndex() ? 0 : GetLastPointIndex();
+		}
+		
+		Start();
 		break;
 
 	case ESplineAnimationMode::PingPong:
@@ -239,7 +251,7 @@ void USplineAnimationComponent::FinishAnimation()
 		CurrentPointIndex = NextPointIndex;
 		break;
 	}
-	
+
 	CalculateNextPointIndex();
 	// Add logic
 	// Call delegate

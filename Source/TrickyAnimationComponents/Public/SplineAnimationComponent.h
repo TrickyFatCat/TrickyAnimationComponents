@@ -41,7 +41,7 @@ protected:
 
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+							   FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	UPROPERTY()
@@ -96,17 +96,23 @@ private:
 		meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess))
+	bool bIsReversed = false;
+
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationTime, BlueprintSetter=SetAnimationTime, Category="Animation",
-		meta=(AllowPrivateAccess="true", EditCondition="!bUseConstantSpeed", ClampMin="0"))
+		meta=(AllowPrivateAccess, EditCondition="!bUseConstantSpeed", ClampMin="0"))
 	float AnimationTime = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetUseConstantSpeed, BlueprintSetter=SetUseConstantSpeed,
-		Category="Animation", meta=(AllowPrivateAccess="true", InlineEditConditionToggle))
+		Category="Animation", meta=(AllowPrivateAccess, InlineEditConditionToggle))
 	bool bUseConstantSpeed = false;
 
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetConstantSpeed, BlueprintSetter=SetConstantSpeed, Category="Animation",
 		meta=(AllowPrivateAccess="true", EditCondition="bUseConstantSpeed", ClampMin="0"))
 	float ConstantSpeed = 300.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
+	FVector LocationOffset{FVector::ZeroVector};
 	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess="true"))
 	ESplineAnimationState AnimationState = ESplineAnimationState::Idle;
