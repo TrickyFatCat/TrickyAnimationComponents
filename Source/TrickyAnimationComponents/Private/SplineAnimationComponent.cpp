@@ -32,8 +32,14 @@ void USplineAnimationComponent::BeginPlay()
 		}
 		else
 		{
-			CurrentPointIndex = bIsReversed ? GetLastPointIndex() : 0;
+			if (StartPointIndex > GetLastPointIndex())
+			{
+				StartPointIndex = 0;
+				// Print error
+			}
+			CurrentPointIndex = StartPointIndex;
 			CalculateNextPointIndex();
+			CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO Rework for stopping on each point
 		}
 	}
 
@@ -46,11 +52,6 @@ void USplineAnimationComponent::BeginPlay()
 		FOnTimelineEvent AnimationFinished;
 		AnimationFinished.BindUFunction(this, FName("FinishAnimation"));
 		AnimationTimeline->SetTimelineFinishedFunc(AnimationFinished);
-
-		if (bUseConstantSpeed)
-		{
-			CalculateAnimationTime(0, SplineComponent->GetNumberOfSplinePoints() - 1);
-		}
 
 		CalculatePlayRate();
 	}
@@ -71,6 +72,8 @@ void USplineAnimationComponent::Start()
 		return;
 	}
 
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO rework for stopping on each point
+	CalculatePlayRate();
 	AnimationTimeline->PlayFromStart();
 	AnimationState = ESplineAnimationState::Transition;
 	// Start logic
@@ -148,7 +151,7 @@ void USplineAnimationComponent::SetUseConstantSpeed(const bool Value)
 
 	if (bUseConstantSpeed)
 	{
-		CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
+		CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO Rework for stopping on each point
 		CalculatePlayRate();
 	}
 }
@@ -172,7 +175,7 @@ void USplineAnimationComponent::SetConstantSpeed(const float Value)
 	}
 
 	ConstantSpeed = Value;
-	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO Rework for stopping on each point
 	CalculatePlayRate();
 }
 
@@ -239,11 +242,13 @@ void USplineAnimationComponent::FinishAnimation()
 			CurrentPointIndex = NextPointIndex == GetLastPointIndex() ? 0 : GetLastPointIndex();
 		}
 		
+		CalculateNextPointIndex();
 		Start();
 		break;
 
 	case ESplineAnimationMode::PingPong:
 		CurrentPointIndex = NextPointIndex;
+		CalculateNextPointIndex();
 		Start();
 		break;
 
@@ -252,7 +257,7 @@ void USplineAnimationComponent::FinishAnimation()
 		break;
 	}
 
-	CalculateNextPointIndex();
+
 	// Add logic
 	// Call delegate
 }
