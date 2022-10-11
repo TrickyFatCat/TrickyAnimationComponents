@@ -28,6 +28,21 @@ enum class ESplineAnimationMode : uint8
 	Manual
 };
 
+USTRUCT(BlueprintType)
+struct FAxisInheritance
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category="Inheritance")
+	bool bX = false;
+	
+	UPROPERTY(EditAnywhere, Category="Inheritance")
+	bool bY = false;
+	
+	UPROPERTY(EditAnywhere, Category="Inheritance")
+	bool bZ = false;
+};
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API USplineAnimationComponent : public UActorComponent
 {
@@ -100,7 +115,7 @@ private:
 	int32 StartPointIndex = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess))
-	bool bIsReversed = false;
+	bool bIsReversed = false; // TODO create a custom getter and setter
 
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationTime, BlueprintSetter=SetAnimationTime, Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="!bUseConstantSpeed", ClampMin="0"))
@@ -114,8 +129,14 @@ private:
 		meta=(AllowPrivateAccess="true", EditCondition="bUseConstantSpeed", ClampMin="0"))
 	float ConstantSpeed = 300.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess="true"))
 	FVector LocationOffset{FVector::ZeroVector};
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess="true"))
+	FAxisInheritance InheritRotation;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess="true"))
+	FAxisInheritance InheritScale;
 	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess="true"))
 	ESplineAnimationState AnimationState = ESplineAnimationState::Idle;
@@ -130,6 +151,12 @@ private:
 
 	UFUNCTION()
 	void AnimateAlongSpline(const float Progress);
+
+	void MoveAlongSpline(const float Progress) const;
+
+	void RotateAlongSpline(const float Progress) const;
+
+	void ScaleAlongSpline(const float Progress) const;
 
 	UFUNCTION()
 	void FinishAnimation();

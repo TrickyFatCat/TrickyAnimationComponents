@@ -215,15 +215,75 @@ void USplineAnimationComponent::AnimateAlongSpline(const float Progress)
 {
 	if (!SplineComponent)
 	{
+		// Print error
 		return;
 	}
 
+	MoveAlongSpline(Progress);
+	RotateAlongSpline(Progress);
+	ScaleAlongSpline(Progress);
+}
+
+void USplineAnimationComponent::MoveAlongSpline(const float Progress) const
+{
+	if (!SplineComponent)
+	{
+		// Print error
+		return;
+	}
+	
 	const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
 	const FVector NewLocation{
 		SplineComponent->GetLocationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
 	};
 
 	GetOwner()->SetActorLocation(NewLocation + LocationOffset);
+}
+
+void USplineAnimationComponent::RotateAlongSpline(const float Progress) const
+{
+	if (!SplineComponent)
+	{
+		// Print error
+		return;
+	}
+
+	if (InheritRotation.bX || InheritRotation.bY || InheritRotation.bZ)
+	{
+		const FRotator CurrentRotation{GetOwner()->GetActorRotation()};
+		const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
+		const FRotator RotationAlongSpline{
+			SplineComponent->GetRotationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
+		};
+
+		const float NewRoll = InheritRotation.bX ? RotationAlongSpline.Roll : CurrentRotation.Roll;
+		const float NewPitch = InheritRotation.bY ? RotationAlongSpline.Pitch : CurrentRotation.Pitch;
+		const float NewYaw = InheritRotation.bZ ? RotationAlongSpline.Yaw : CurrentRotation.Yaw;
+
+		GetOwner()->SetActorRotation(FRotator{NewPitch, NewYaw, NewRoll});
+	}
+}
+
+void USplineAnimationComponent::ScaleAlongSpline(const float Progress) const
+{
+	if (!SplineComponent)
+	{
+		// Print error
+		return;
+	}
+
+	if (InheritScale.bX || InheritScale.bY || InheritScale.bZ)
+	{
+		const FVector CurrentScale{GetOwner()->GetActorScale3D()};
+		const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
+		const FVector ScaleAlongSpline{SplineComponent->GetScaleAtDistanceAlongSpline(Position)};
+
+		const float NewScaleX = InheritScale.bX ? ScaleAlongSpline.X : CurrentScale.X;
+		const float NewScaleY = InheritScale.bY ? ScaleAlongSpline.Y : CurrentScale.Y;
+		const float NewScaleZ = InheritScale.bZ ? ScaleAlongSpline.Z : CurrentScale.Z;
+
+		GetOwner()->SetActorScale3D(FVector{NewScaleX, NewScaleY, NewScaleZ});
+	}
 }
 
 void USplineAnimationComponent::FinishAnimation()
@@ -241,7 +301,7 @@ void USplineAnimationComponent::FinishAnimation()
 		{
 			CurrentPointIndex = NextPointIndex == GetLastPointIndex() ? 0 : GetLastPointIndex();
 		}
-		
+
 		CalculateNextPointIndex();
 		Start();
 		break;
@@ -256,9 +316,6 @@ void USplineAnimationComponent::FinishAnimation()
 		CurrentPointIndex = NextPointIndex;
 		break;
 	}
-
-
-	// Add logic
 	// Call delegate
 }
 
