@@ -72,11 +72,16 @@ void USplineAnimationComponent::Start()
 		return;
 	}
 
+	if (bStopAtPoints && bWaitAtStart)
+	{
+		StartWaitTimer();
+		return;
+	}
+
 	CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO rework for stopping on each point
 	CalculatePlayRate();
 	AnimationTimeline->PlayFromStart();
 	AnimationState = ESplineAnimationState::Transition;
-	// Start logic
 	// Call delegate
 }
 
@@ -184,34 +189,61 @@ void USplineAnimationComponent::CalculateNextPointIndex()
 	switch (AnimationMode)
 	{
 	case ESplineAnimationMode::OneWay:
-		NextPointIndex = bIsReversed ? 0 : GetLastPointIndex();
-	// Implement logic
+		if (bStopAtPoints)
+		{
+			NextPointIndex = bIsReversed ? CurrentPointIndex - 1 : CurrentPointIndex + 1;
+			NextPointIndex = FMath::Clamp(NextPointIndex, 0, GetLastPointIndex());
+		}
+		else
+		{
+			NextPointIndex = bIsReversed ? 0 : GetLastPointIndex();
+		}
 		break;
 
 	case ESplineAnimationMode::Loop:
 		NextPointIndex = bIsReversed ? 0 : GetLastPointIndex();
-	//Implement logic
+
+		if (bStopAtPoints)
+		{
+			NextPointIndex = bIsReversed ? CurrentPointIndex - 1 : CurrentPointIndex + 1;
+			NextPointIndex = FMath::Clamp(NextPointIndex, 0, GetLastPointIndex());
+		}
 		break;
 
 	case ESplineAnimationMode::PingPong:
-		if (bIsReversed)
+		if (bStopAtPoints)
 		{
-			NextPointIndex = CurrentPointIndex == 0 ? GetLastPointIndex() : 0;
+			if (CurrentPointIndex == 0)
+			{
+				bIsReversed = false;
+			}
+			else if (CurrentPointIndex == GetLastPointIndex())
+			{
+				bIsReversed = true;
+			}
+
+			NextPointIndex = bIsReversed ? CurrentPointIndex - 1 : CurrentPointIndex + 1;
+			NextPointIndex = FMath::Clamp(NextPointIndex, 0, GetLastPointIndex());
 		}
 		else
 		{
-			NextPointIndex = CurrentPointIndex == GetLastPointIndex() ? 0 : GetLastPointIndex();
+			if (bIsReversed)
+			{
+				NextPointIndex = CurrentPointIndex == 0 ? GetLastPointIndex() : 0;
+			}
+			else
+			{
+				NextPointIndex = CurrentPointIndex == GetLastPointIndex() ? 0 : GetLastPointIndex();
+			}
 		}
-	// Implement logic
 		break;
 
 	case ESplineAnimationMode::Manual:
-		// No calculation required
 		break;
 	}
 }
 
-void USplineAnimationComponent::AnimateAlongSpline(const float Progress)
+void USplineAnimationComponent::AnimateAlongSpline(const float Progress) const
 {
 	if (!SplineComponent)
 	{
@@ -231,7 +263,7 @@ void USplineAnimationComponent::MoveAlongSpline(const float Progress) const
 		// Print error
 		return;
 	}
-	
+
 	const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
 	const FVector NewLocation{
 		SplineComponent->GetLocationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
@@ -292,24 +324,49 @@ void USplineAnimationComponent::FinishAnimation()
 
 	switch (AnimationMode)
 	{
-	case ESplineAnimationMode::Loop:
-		if (bIsReversed)
+	case ESplineAnimationMode::OneWay:
+		if (bStopAtPoints)
 		{
-			CurrentPointIndex = NextPointIndex == 0 ? GetLastPointIndex() : 0;
+			CurrentPointIndex = NextPointIndex;
+			CalculateNextPointIndex();
+			StartWaitTimer();
+		}
+		break;
+
+	case ESplineAnimationMode::Loop:
+		if (bStopAtPoints)
+		{
+			CurrentPointIndex = NextPointIndex;
+
+			if (CurrentPointIndex == 0)
+			{
+				CurrentPointIndex = GetLastPointIndex();
+			}
+			else if (CurrentPointIndex == GetLastPointIndex())
+			{
+				CurrentPointIndex = 0;
+			}
 		}
 		else
 		{
-			CurrentPointIndex = NextPointIndex == GetLastPointIndex() ? 0 : GetLastPointIndex();
+			if (bIsReversed)
+			{
+				CurrentPointIndex = NextPointIndex == 0 ? GetLastPointIndex() : 0;
+			}
+			else
+			{
+				CurrentPointIndex = NextPointIndex == GetLastPointIndex() ? 0 : GetLastPointIndex();
+			}
 		}
 
 		CalculateNextPointIndex();
-		Start();
+		bStopAtPoints ? StartWaitTimer() : Start();
 		break;
 
 	case ESplineAnimationMode::PingPong:
 		CurrentPointIndex = NextPointIndex;
 		CalculateNextPointIndex();
-		Start();
+		bStopAtPoints ? StartWaitTimer() : Start();
 		break;
 
 	default:
@@ -377,5 +434,35 @@ void USplineAnimationComponent::CalculateAnimationTime(const int32 CurrentIndex,
 
 int32 USplineAnimationComponent::GetLastPointIndex() const
 {
-	return SplineComponent->GetNumberOfSplinePoints() - 1;
+	return SplineComponent->GetNumberOfSplinePoints() - !SplineComponent->IsClosedLoop();
+}
+
+void USplineAnimationComponent::StartWaitTimer()
+{
+	if (!bStopAtPoints)
+	{
+		return;
+	}
+
+	const UWorld* World = GetWorld();
+
+	if (World)
+	{
+		World->GetTimerManager().SetTimer(WaitTimerHandle, this, &USplineAnimationComponent::Continue, WaitTime);
+		AnimationState = ESplineAnimationState::Wait;
+	}
+}
+
+void USplineAnimationComponent::Continue()
+{
+	if (AnimationState != ESplineAnimationState::Wait)
+	{
+		// Print error
+		return;
+	}
+	
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO rework for stopping on each point
+	CalculatePlayRate();
+	AnimationTimeline->PlayFromStart();
+	AnimationState = ESplineAnimationState::Transition;
 }

@@ -129,6 +129,18 @@ private:
 		meta=(AllowPrivateAccess="true", EditCondition="bUseConstantSpeed", ClampMin="0"))
 	float ConstantSpeed = 300.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
+	bool bStopAtPoints = false; // TODO Consider creating custom getter and setter
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess, EditCondition="bStopAtPoints"))
+	bool bWaitAtStart = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|StopsOptions", meta=(AllowPrivateAccess, EditCondition="bStopAtPoints", ClampMin=0.f))
+	float WaitTime = 1.f;
+
+	UPROPERTY(BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
+	FTimerHandle WaitTimerHandle;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess="true"))
 	FVector LocationOffset{FVector::ZeroVector};
 	
@@ -150,7 +162,7 @@ private:
 	void CalculateNextPointIndex();
 
 	UFUNCTION()
-	void AnimateAlongSpline(const float Progress);
+	void AnimateAlongSpline(const float Progress) const;
 
 	void MoveAlongSpline(const float Progress) const;
 
@@ -170,4 +182,8 @@ private:
 	void CalculateAnimationTime(const int32 CurrentIndex, const int32 TargetIndex);
 
 	int32 GetLastPointIndex() const;
+
+	void StartWaitTimer();
+
+	void Continue();
 };
