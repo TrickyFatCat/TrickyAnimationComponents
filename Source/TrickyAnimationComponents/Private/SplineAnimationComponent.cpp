@@ -66,6 +66,11 @@ void USplineAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 
 void USplineAnimationComponent::Start()
 {
+	if (AnimationMode == ESplineAnimationMode::Manual)
+	{
+		return;
+	}
+	
 	if (AnimationState != ESplineAnimationState::Idle)
 	{
 		// Print error
@@ -83,6 +88,26 @@ void USplineAnimationComponent::Start()
 	AnimationTimeline->PlayFromStart();
 	AnimationState = ESplineAnimationState::Transition;
 	// Call delegate
+}
+
+void USplineAnimationComponent::MoveTo(const int32 PointIndex)
+{
+	if (AnimationMode != ESplineAnimationMode::Manual)
+	{
+		return;
+	}
+	
+	if (PointIndex < 0 || PointIndex > GetLastPointIndex())
+	{
+		// Print error
+		return;
+	}
+
+	NextPointIndex = PointIndex;
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO rework for stopping on each point
+	CalculatePlayRate();
+	AnimationTimeline->PlayFromStart();
+	AnimationState = ESplineAnimationState::Transition;
 }
 
 void USplineAnimationComponent::Pause()
@@ -369,7 +394,7 @@ void USplineAnimationComponent::FinishAnimation()
 		bStopAtPoints ? StartWaitTimer() : Start();
 		break;
 
-	default:
+	case ESplineAnimationMode::Manual:
 		CurrentPointIndex = NextPointIndex;
 		break;
 	}

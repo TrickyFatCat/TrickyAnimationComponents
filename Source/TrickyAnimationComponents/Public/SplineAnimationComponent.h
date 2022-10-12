@@ -67,6 +67,9 @@ public:
 	void Start();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
+	void MoveTo(const int32 PointIndex);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
 	void Pause();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
