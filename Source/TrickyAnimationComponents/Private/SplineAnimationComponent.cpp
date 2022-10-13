@@ -18,25 +18,22 @@ void USplineAnimationComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!SplineActor)
+	if (!IsValid(SplineActor))
 	{
-		//Print error
+		LogWarning("SplineActor isn't set for an spline animation component.");
 	}
 	else
 	{
 		SplineComponent = SplineActor->FindComponentByClass<USplineComponent>();
 
-		if (!SplineComponent)
-		{
-			// Print error
-		}
-		else
+		if (HasSplineComponent())
 		{
 			if (StartPointIndex > GetLastPointIndex())
 			{
 				StartPointIndex = 0;
-				// Print error
+				LogWarning("Incorrect StartPointIndex value, it can't be <= 0 or > LastPointIndex. Reset it to 0.");
 			}
+			
 			CurrentPointIndex = StartPointIndex;
 			CalculateNextPointIndex();
 			CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
@@ -68,12 +65,13 @@ void USplineAnimationComponent::Start()
 {
 	if (AnimationMode == ESplineAnimationMode::Manual)
 	{
+		LogWarning("Can't use the Start() function in the manual animation mode.");
 		return;
 	}
 
 	if (AnimationState != ESplineAnimationState::Idle)
 	{
-		// Print error
+		LogWarning("Can't use the Start() function when the component not in the idle state.");
 		return;
 	}
 
@@ -99,17 +97,18 @@ void USplineAnimationComponent::MoveTo(const int32 PointIndex)
 {
 	if (AnimationMode != ESplineAnimationMode::Manual)
 	{
+		LogWarning("Can't use the MoveTo() function while the component isn't in manual mode");
 		return;
 	}
 
 	if (PointIndex < 0 || PointIndex > GetLastPointIndex())
 	{
-		// Print error
+		LogWarning(FString::Printf(TEXT("Can't move the actor to the point index %d"), PointIndex));
 		return;
 	}
 
 	NextPointIndex = PointIndex;
-	CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO rework for stopping on each point
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 	CalculatePlayRate();
 	AnimationTimeline->PlayFromStart();
 	AnimationState = ESplineAnimationState::Transition;
@@ -120,7 +119,7 @@ void USplineAnimationComponent::Pause()
 {
 	if (AnimationState != ESplineAnimationState::Transition)
 	{
-		// Print error
+		LogWarning("Can't use the Pause() function while the component isn't in the transition state.");
 		return;
 	}
 
@@ -133,7 +132,7 @@ void USplineAnimationComponent::Resume()
 {
 	if (AnimationState != ESplineAnimationState::Pause)
 	{
-		// Print error
+		LogWarning("Can't use the Resume() function while the component isn't in the pause state");
 		return;
 	}
 
@@ -163,7 +162,7 @@ void USplineAnimationComponent::SetIsReversed(const bool Value)
 	{
 		return;
 	}
-	
+
 	bIsReversed = Value;
 	CalculateNextPointIndex();
 	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
@@ -184,7 +183,7 @@ void USplineAnimationComponent::SetAnimationTime(const float Value)
 
 	if (Value <= 0.f)
 	{
-		// Print error
+		LogWarning("Insufficient new value of the AnimationTime variable. It's <= 0");
 		return;
 	}
 
@@ -222,7 +221,7 @@ void USplineAnimationComponent::SetConstantSpeed(const float Value)
 
 	if (Value <= 0.f)
 	{
-		// Print error
+		LogWarning("Insufficient new value of the ConstantSpeed variable. It's <= 0");
 		return;
 	}
 
@@ -292,9 +291,8 @@ void USplineAnimationComponent::CalculateNextPointIndex()
 
 void USplineAnimationComponent::AnimateAlongSpline(const float Progress) const
 {
-	if (!SplineComponent)
+	if (!HasSplineComponent())
 	{
-		// Print error
 		return;
 	}
 
@@ -305,12 +303,6 @@ void USplineAnimationComponent::AnimateAlongSpline(const float Progress) const
 
 void USplineAnimationComponent::MoveAlongSpline(const float Progress) const
 {
-	if (!SplineComponent)
-	{
-		// Print error
-		return;
-	}
-
 	const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
 	const FVector NewLocation{
 		SplineComponent->GetLocationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
@@ -321,12 +313,6 @@ void USplineAnimationComponent::MoveAlongSpline(const float Progress) const
 
 void USplineAnimationComponent::RotateAlongSpline(const float Progress) const
 {
-	if (!SplineComponent)
-	{
-		// Print error
-		return;
-	}
-
 	if (InheritRotation.bX || InheritRotation.bY || InheritRotation.bZ)
 	{
 		const FRotator CurrentRotation{GetOwner()->GetActorRotation()};
@@ -345,12 +331,6 @@ void USplineAnimationComponent::RotateAlongSpline(const float Progress) const
 
 void USplineAnimationComponent::ScaleAlongSpline(const float Progress) const
 {
-	if (!SplineComponent)
-	{
-		// Print error
-		return;
-	}
-
 	if (InheritScale.bX || InheritScale.bY || InheritScale.bZ)
 	{
 		const FVector CurrentScale{GetOwner()->GetActorScale3D()};
@@ -445,7 +425,10 @@ void USplineAnimationComponent::FinishAnimation()
 
 float USplineAnimationComponent::GetSplineDistanceAtPoint(const int32 PointIndex) const
 {
-	if (!SplineComponent) return -1.f;
+	if (!HasSplineComponent())
+	{
+		return 0.f;
+	}
 
 	return SplineComponent->GetDistanceAlongSplineAtSplinePoint(PointIndex);
 }
@@ -453,7 +436,10 @@ float USplineAnimationComponent::GetSplineDistanceAtPoint(const int32 PointIndex
 float USplineAnimationComponent::GetPositionAtSpline(const int32 CurrentIndex, const int32 NextIndex,
                                                      const float Progress) const
 {
-	if (!SplineComponent) return -1;
+	if (!HasSplineComponent())
+	{
+		return 0.f;
+	}
 
 	const float Start = GetSplineDistanceAtPoint(CurrentIndex);
 	const float Finish = GetSplineDistanceAtPoint(NextIndex);
@@ -465,6 +451,7 @@ void USplineAnimationComponent::CalculatePlayRate() const
 {
 	if (!AnimationCurve)
 	{
+		LogWarning("AnimationCurve wasn't set.");
 		return;
 	}
 
@@ -475,7 +462,7 @@ void USplineAnimationComponent::CalculatePlayRate() const
 
 	if (MaxTime <= 0.f)
 	{
-		// Print error
+		LogWarning("The length of AnimationCurve is <= 0.");
 		MaxTime = 1.f;
 	}
 
@@ -484,9 +471,8 @@ void USplineAnimationComponent::CalculatePlayRate() const
 
 void USplineAnimationComponent::CalculateAnimationTime(const int32 CurrentIndex, const int32 TargetIndex)
 {
-	if (!SplineComponent)
+	if (!HasSplineComponent())
 	{
-		// Print error
 		return;
 	}
 
@@ -524,7 +510,7 @@ void USplineAnimationComponent::Continue()
 {
 	if (AnimationState != ESplineAnimationState::Wait)
 	{
-		// Print error
+		LogWarning("Can't continue playing animation");	
 		return;
 	}
 
@@ -537,4 +523,25 @@ void USplineAnimationComponent::Continue()
 	{
 		OnAnimationResumed.Broadcast();
 	}
+}
+
+void USplineAnimationComponent::LogWarning(const FString& Message) const
+{
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	const FString ErrorMessage{FString::Printf(TEXT("%s | Actor: %s"), *Message, *GetOwner()->GetName())};
+	UE_LOG(LogSplineAnimationComponent, Error, TEXT("%s"), *ErrorMessage);
+}
+
+bool USplineAnimationComponent::HasSplineComponent() const
+{
+	if (!IsValid(SplineComponent))
+	{
+		LogWarning("Spline component wasn't found in chosen SplineActor.");
+	}
+
+	return IsValid(SplineComponent);
 }

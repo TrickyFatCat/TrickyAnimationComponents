@@ -10,6 +10,8 @@ class UTimelineComponent;
 class UCurveFloat;
 class USplineComponent;
 
+DECLARE_LOG_CATEGORY_CLASS(LogSplineAnimationComponent, Display, Display);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplineAnimationStartedSignature);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSplineAnimationStoppedSignature, int32, PointIndex);
@@ -220,4 +222,8 @@ private:
 	void StartWaitTimer();
 
 	void Continue();
+
+	void LogWarning(const FString& Message) const;
+
+	bool HasSplineComponent() const;
 };
