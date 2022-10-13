@@ -18,15 +18,15 @@ enum class ETimelineAnimationState: uint8
 	Pause	UMETA(Hidden)
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationStartedSignature, ETimelineAnimationState, TargetState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimelineAnimationStartedSignature, ETimelineAnimationState, TargetState);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationReversedSignature, ETimelineAnimationState, NewTargetState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimelineAnimationReversedSignature, ETimelineAnimationState, NewTargetState);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationFinishedSignature, ETimelineAnimationState, NewState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimelineAnimationFinishedSignature, ETimelineAnimationState, NewState);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationPausedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTimelineAnimationPausedSignature);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationResumedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTimelineAnimationResumedSignature);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API UTimelineAnimationComponent : public UActorComponent
@@ -48,19 +48,19 @@ public:
 	ETimelineAnimationState InitialState = ETimelineAnimationState::Begin;
 
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
-	FOnAnimationStartedSignature OnAnimationStarted;
+	FOnTimelineAnimationStartedSignature OnAnimationStarted;
 	
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
-	FOnAnimationReversedSignature OnAnimationReversed;
+	FOnTimelineAnimationReversedSignature OnAnimationReversed;
 	
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
-	FOnAnimationFinishedSignature OnAnimationFinished;
+	FOnTimelineAnimationFinishedSignature OnAnimationFinished;
 
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
-	FOnAnimationPausedSignature OnAnimationPaused;
+	FOnTimelineAnimationPausedSignature OnAnimationPaused;
 	
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
-	FOnAnimationResumedSignature OnAnimationResumed;
+	FOnTimelineAnimationResumedSignature OnAnimationResumed;
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
 	void Start();
