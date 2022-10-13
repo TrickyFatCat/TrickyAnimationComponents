@@ -33,7 +33,7 @@ void USplineAnimationComponent::BeginPlay()
 				StartPointIndex = 0;
 				LogWarning("Incorrect StartPointIndex value, it can't be <= 0 or > LastPointIndex. Reset it to 0.");
 			}
-			
+
 			CurrentPointIndex = StartPointIndex;
 			CalculateNextPointIndex();
 			CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
@@ -91,6 +91,12 @@ void USplineAnimationComponent::Start()
 void USplineAnimationComponent::Stop()
 {
 	bMustStop = true;
+
+	if (GetWorld() && AnimationState == ESplineAnimationState::Wait)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(WaitTimerHandle);
+		FinishAnimation();
+	}
 }
 
 void USplineAnimationComponent::MoveTo(const int32 PointIndex)
@@ -354,6 +360,7 @@ void USplineAnimationComponent::FinishAnimation()
 		CurrentPointIndex = NextPointIndex;
 		AnimationTimeline->Stop();
 		OnAnimationStopped.Broadcast(CurrentPointIndex);
+		return;
 	}
 
 	switch (AnimationMode)
@@ -510,7 +517,7 @@ void USplineAnimationComponent::Continue()
 {
 	if (AnimationState != ESplineAnimationState::Wait)
 	{
-		LogWarning("Can't continue playing animation");	
+		LogWarning("Can't continue playing animation");
 		return;
 	}
 
