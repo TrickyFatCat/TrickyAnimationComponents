@@ -152,6 +152,24 @@ void USplineAnimationComponent::SetAnimationCurve(UCurveFloat* Value)
 	AnimationCurve = Value;
 }
 
+bool USplineAnimationComponent::GetIsReversed() const
+{
+	return bIsReversed;
+}
+
+void USplineAnimationComponent::SetIsReversed(const bool Value)
+{
+	if (bIsReversed == Value)
+	{
+		return;
+	}
+	
+	bIsReversed = Value;
+	CalculateNextPointIndex();
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
+	CalculatePlayRate();
+}
+
 float USplineAnimationComponent::GetAnimationTime() const
 {
 	return AnimationTime;

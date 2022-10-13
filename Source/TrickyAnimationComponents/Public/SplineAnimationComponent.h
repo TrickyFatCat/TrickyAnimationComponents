@@ -105,6 +105,12 @@ public:
 	void SetAnimationCurve(UCurveFloat* Value);
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
+	bool GetIsReversed() const;
+
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
+	void SetIsReversed(const bool Value);
+
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
 	float GetAnimationTime() const;
 
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
@@ -140,8 +146,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess, ClampMin = "0"))
 	int32 StartPointIndex = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess))
-	bool bIsReversed = false; // TODO create a custom getter and setter
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetIsReversed, BlueprintSetter=SetIsReversed, Category="Animation", meta=(AllowPrivateAccess))
+	bool bIsReversed = false;
 
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationTime, BlueprintSetter=SetAnimationTime, Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="!bUseConstantSpeed", ClampMin="0"))
