@@ -10,6 +10,14 @@ class UTimelineComponent;
 class UCurveFloat;
 class USplineComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationStartedSignature);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationStoppedSignature, int32, PointIndex);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationPausedSignature);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationResumedSignature);
+
 UENUM()
 enum class ESplineAnimationState : uint8
 {
@@ -58,6 +66,18 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 							   FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(BlueprintAssignable, Category="Animation")
+	FOnAnimationStartedSignature OnAnimationStarted;
+	
+	UPROPERTY(BlueprintAssignable, Category="Animation")
+	FOnAnimationStoppedSignature OnAnimationStopped;
+	
+	UPROPERTY(BlueprintAssignable, Category="Animation")
+	FOnAnimationPausedSignature OnAnimationPaused;
+
+	UPROPERTY(BlueprintAssignable, Category="Animation")
+	FOnAnimationResumedSignature OnAnimationResumed;
+	
 private:
 	UPROPERTY()
 	UTimelineComponent* AnimationTimeline = nullptr;
