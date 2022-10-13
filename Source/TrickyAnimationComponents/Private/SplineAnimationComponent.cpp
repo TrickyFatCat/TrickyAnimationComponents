@@ -39,7 +39,7 @@ void USplineAnimationComponent::BeginPlay()
 			}
 			CurrentPointIndex = StartPointIndex;
 			CalculateNextPointIndex();
-			CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO Rework for stopping on each point
+			CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 		}
 	}
 
@@ -70,7 +70,7 @@ void USplineAnimationComponent::Start()
 	{
 		return;
 	}
-	
+
 	if (AnimationState != ESplineAnimationState::Idle)
 	{
 		// Print error
@@ -83,11 +83,16 @@ void USplineAnimationComponent::Start()
 		return;
 	}
 
-	CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO rework for stopping on each point
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 	CalculatePlayRate();
 	AnimationTimeline->PlayFromStart();
 	AnimationState = ESplineAnimationState::Transition;
-	// Call delegate
+	OnAnimationStarted.Broadcast();
+}
+
+void USplineAnimationComponent::Stop()
+{
+	bMustStop = true;
 }
 
 void USplineAnimationComponent::MoveTo(const int32 PointIndex)
@@ -96,7 +101,7 @@ void USplineAnimationComponent::MoveTo(const int32 PointIndex)
 	{
 		return;
 	}
-	
+
 	if (PointIndex < 0 || PointIndex > GetLastPointIndex())
 	{
 		// Print error
@@ -108,6 +113,7 @@ void USplineAnimationComponent::MoveTo(const int32 PointIndex)
 	CalculatePlayRate();
 	AnimationTimeline->PlayFromStart();
 	AnimationState = ESplineAnimationState::Transition;
+	OnAnimationStarted.Broadcast();
 }
 
 void USplineAnimationComponent::Pause()
@@ -120,8 +126,7 @@ void USplineAnimationComponent::Pause()
 
 	AnimationTimeline->Stop();
 	AnimationState = ESplineAnimationState::Pause;
-	// Pause logic
-	// Call delegate
+	OnAnimationPaused.Broadcast();
 }
 
 void USplineAnimationComponent::Resume()
@@ -132,10 +137,9 @@ void USplineAnimationComponent::Resume()
 		return;
 	}
 
-	AnimationTimeline->Play(); // Improve logic considering indexes
+	AnimationTimeline->Play();
 	AnimationState = ESplineAnimationState::Transition;
-	// Resume logic
-	// Call delegate
+	OnAnimationResumed.Broadcast();
 }
 
 UCurveFloat* USplineAnimationComponent::GetAnimationCurve() const
@@ -146,6 +150,24 @@ UCurveFloat* USplineAnimationComponent::GetAnimationCurve() const
 void USplineAnimationComponent::SetAnimationCurve(UCurveFloat* Value)
 {
 	AnimationCurve = Value;
+}
+
+bool USplineAnimationComponent::GetIsReversed() const
+{
+	return bIsReversed;
+}
+
+void USplineAnimationComponent::SetIsReversed(const bool Value)
+{
+	if (bIsReversed == Value)
+	{
+		return;
+	}
+	
+	bIsReversed = Value;
+	CalculateNextPointIndex();
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
+	CalculatePlayRate();
 }
 
 float USplineAnimationComponent::GetAnimationTime() const
@@ -181,7 +203,7 @@ void USplineAnimationComponent::SetUseConstantSpeed(const bool Value)
 
 	if (bUseConstantSpeed)
 	{
-		CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO Rework for stopping on each point
+		CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 		CalculatePlayRate();
 	}
 }
@@ -205,7 +227,7 @@ void USplineAnimationComponent::SetConstantSpeed(const float Value)
 	}
 
 	ConstantSpeed = Value;
-	CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO Rework for stopping on each point
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 	CalculatePlayRate();
 }
 
@@ -347,6 +369,13 @@ void USplineAnimationComponent::FinishAnimation()
 {
 	AnimationState = ESplineAnimationState::Idle;
 
+	if (bMustStop)
+	{
+		CurrentPointIndex = NextPointIndex;
+		AnimationTimeline->Stop();
+		OnAnimationStopped.Broadcast(CurrentPointIndex);
+	}
+
 	switch (AnimationMode)
 	{
 	case ESplineAnimationMode::OneWay:
@@ -356,6 +385,8 @@ void USplineAnimationComponent::FinishAnimation()
 			CalculateNextPointIndex();
 			StartWaitTimer();
 		}
+
+		OnAnimationStopped.Broadcast(CurrentPointIndex);
 		break;
 
 	case ESplineAnimationMode::Loop:
@@ -371,6 +402,8 @@ void USplineAnimationComponent::FinishAnimation()
 			{
 				CurrentPointIndex = 0;
 			}
+
+			OnAnimationStopped.Broadcast(CurrentPointIndex);
 		}
 		else
 		{
@@ -391,14 +424,23 @@ void USplineAnimationComponent::FinishAnimation()
 	case ESplineAnimationMode::PingPong:
 		CurrentPointIndex = NextPointIndex;
 		CalculateNextPointIndex();
-		bStopAtPoints ? StartWaitTimer() : Start();
+
+		if (bStopAtPoints)
+		{
+			StartWaitTimer();
+			OnAnimationStopped.Broadcast(CurrentPointIndex);
+		}
+		else
+		{
+			Continue();
+		}
+
 		break;
 
 	case ESplineAnimationMode::Manual:
 		CurrentPointIndex = NextPointIndex;
 		break;
 	}
-	// Call delegate
 }
 
 float USplineAnimationComponent::GetSplineDistanceAtPoint(const int32 PointIndex) const
@@ -485,9 +527,14 @@ void USplineAnimationComponent::Continue()
 		// Print error
 		return;
 	}
-	
-	CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO rework for stopping on each point
+
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 	CalculatePlayRate();
 	AnimationTimeline->PlayFromStart();
 	AnimationState = ESplineAnimationState::Transition;
+
+	if (bStopAtPoints)
+	{
+		OnAnimationResumed.Broadcast();
+	}
 }

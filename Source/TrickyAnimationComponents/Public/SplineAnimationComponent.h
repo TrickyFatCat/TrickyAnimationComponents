@@ -10,6 +10,14 @@ class UTimelineComponent;
 class UCurveFloat;
 class USplineComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplineAnimationStartedSignature);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSplineAnimationStoppedSignature, int32, PointIndex);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplineAnimationPausedSignature);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplineAnimationResumedSignature);
+
 UENUM()
 enum class ESplineAnimationState : uint8
 {
@@ -58,6 +66,18 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 							   FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(BlueprintAssignable, Category="Animation")
+	FOnSplineAnimationStartedSignature OnAnimationStarted;
+	
+	UPROPERTY(BlueprintAssignable, Category="Animation")
+	FOnSplineAnimationStoppedSignature OnAnimationStopped;
+	
+	UPROPERTY(BlueprintAssignable, Category="Animation")
+	FOnSplineAnimationPausedSignature OnAnimationPaused;
+
+	UPROPERTY(BlueprintAssignable, Category="Animation")
+	FOnSplineAnimationResumedSignature OnAnimationResumed;
+	
 private:
 	UPROPERTY()
 	UTimelineComponent* AnimationTimeline = nullptr;
@@ -65,6 +85,9 @@ private:
 public:
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
 	void Start();
+	
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
+	void Stop();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
 	void MoveTo(const int32 PointIndex);
@@ -80,6 +103,12 @@ public:
 
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
 	void SetAnimationCurve(UCurveFloat* Value);
+
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
+	bool GetIsReversed() const;
+
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
+	void SetIsReversed(const bool Value);
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
 	float GetAnimationTime() const;
@@ -107,7 +136,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	AActor* SplineActor = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	USplineComponent* SplineComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationCurve, BlueprintSetter=SetAnimationCurve, Category="Animation",
@@ -117,8 +146,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess, ClampMin = "0"))
 	int32 StartPointIndex = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess))
-	bool bIsReversed = false; // TODO create a custom getter and setter
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetIsReversed, BlueprintSetter=SetIsReversed, Category="Animation", meta=(AllowPrivateAccess))
+	bool bIsReversed = false;
 
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationTime, BlueprintSetter=SetAnimationTime, Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="!bUseConstantSpeed", ClampMin="0"))
@@ -161,6 +190,8 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess="true"))
 	int32 NextPointIndex = 1;
+
+	bool bMustStop = false;
 
 	void CalculateNextPointIndex();
 
