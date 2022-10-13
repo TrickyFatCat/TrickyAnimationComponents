@@ -85,6 +85,9 @@ private:
 public:
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
 	void Start();
+	
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
+	void Stop();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
 	void MoveTo(const int32 PointIndex);
@@ -181,6 +184,8 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess="true"))
 	int32 NextPointIndex = 1;
+
+	bool bMustStop = false;
 
 	void CalculateNextPointIndex();
 

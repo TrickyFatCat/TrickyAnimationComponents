@@ -90,6 +90,11 @@ void USplineAnimationComponent::Start()
 	OnAnimationStarted.Broadcast();
 }
 
+void USplineAnimationComponent::Stop()
+{
+	bMustStop = true;
+}
+
 void USplineAnimationComponent::MoveTo(const int32 PointIndex)
 {
 	if (AnimationMode != ESplineAnimationMode::Manual)
@@ -345,6 +350,13 @@ void USplineAnimationComponent::ScaleAlongSpline(const float Progress) const
 void USplineAnimationComponent::FinishAnimation()
 {
 	AnimationState = ESplineAnimationState::Idle;
+
+	if (bMustStop)
+	{
+		CurrentPointIndex = NextPointIndex;
+		AnimationTimeline->Stop();
+		OnAnimationStopped.Broadcast(CurrentPointIndex);
+	}
 
 	switch (AnimationMode)
 	{
