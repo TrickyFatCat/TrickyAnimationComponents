@@ -136,7 +136,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	AActor* SplineActor = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	USplineComponent* SplineComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationCurve, BlueprintSetter=SetAnimationCurve, Category="Animation",
