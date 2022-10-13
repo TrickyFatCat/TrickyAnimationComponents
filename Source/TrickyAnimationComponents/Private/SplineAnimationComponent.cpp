@@ -39,7 +39,7 @@ void USplineAnimationComponent::BeginPlay()
 			}
 			CurrentPointIndex = StartPointIndex;
 			CalculateNextPointIndex();
-			CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO Rework for stopping on each point
+			CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 		}
 	}
 
@@ -203,7 +203,7 @@ void USplineAnimationComponent::SetUseConstantSpeed(const bool Value)
 
 	if (bUseConstantSpeed)
 	{
-		CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO Rework for stopping on each point
+		CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 		CalculatePlayRate();
 	}
 }
@@ -227,7 +227,7 @@ void USplineAnimationComponent::SetConstantSpeed(const float Value)
 	}
 
 	ConstantSpeed = Value;
-	CalculateAnimationTime(CurrentPointIndex, NextPointIndex); // TODO Rework for stopping on each point
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 	CalculatePlayRate();
 }
 
@@ -441,7 +441,6 @@ void USplineAnimationComponent::FinishAnimation()
 		CurrentPointIndex = NextPointIndex;
 		break;
 	}
-	// Call delegate
 }
 
 float USplineAnimationComponent::GetSplineDistanceAtPoint(const int32 PointIndex) const
