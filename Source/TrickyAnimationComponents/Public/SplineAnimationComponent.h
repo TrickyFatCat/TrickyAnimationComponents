@@ -10,13 +10,13 @@ class UTimelineComponent;
 class UCurveFloat;
 class USplineComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationStartedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplineAnimationStartedSignature);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationStoppedSignature, int32, PointIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSplineAnimationStoppedSignature, int32, PointIndex);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationPausedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplineAnimationPausedSignature);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationResumedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplineAnimationResumedSignature);
 
 UENUM()
 enum class ESplineAnimationState : uint8
@@ -67,16 +67,16 @@ public:
 							   FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(BlueprintAssignable, Category="Animation")
-	FOnAnimationStartedSignature OnAnimationStarted;
+	FOnSplineAnimationStartedSignature OnAnimationStarted;
 	
 	UPROPERTY(BlueprintAssignable, Category="Animation")
-	FOnAnimationStoppedSignature OnAnimationStopped;
+	FOnSplineAnimationStoppedSignature OnAnimationStopped;
 	
 	UPROPERTY(BlueprintAssignable, Category="Animation")
-	FOnAnimationPausedSignature OnAnimationPaused;
+	FOnSplineAnimationPausedSignature OnAnimationPaused;
 
 	UPROPERTY(BlueprintAssignable, Category="Animation")
-	FOnAnimationResumedSignature OnAnimationResumed;
+	FOnSplineAnimationResumedSignature OnAnimationResumed;
 	
 private:
 	UPROPERTY()
