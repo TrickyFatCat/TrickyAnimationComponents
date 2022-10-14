@@ -61,6 +61,8 @@ class TRICKYANIMATIONCOMPONENTS_API USplineAnimationComponent : public UActorCom
 public:
 	USplineAnimationComponent();
 
+	virtual void Activate(bool bReset) override;
+
 protected:
 	virtual void BeginPlay() override;
 
