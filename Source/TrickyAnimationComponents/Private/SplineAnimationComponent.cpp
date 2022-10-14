@@ -9,8 +9,52 @@
 USplineAnimationComponent::USplineAnimationComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	UActorComponent::SetAutoActivate(true);
 
 	AnimationTimeline = CreateDefaultSubobject<UTimelineComponent>("SplineTimeline");
+}
+
+void USplineAnimationComponent::Activate(bool bReset)
+{
+	Super::Activate(bReset);
+
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	if (!IsValid(SplineActor))
+	{
+		return;
+	}
+
+	SplineComponent = SplineActor->FindComponentByClass<USplineComponent>();
+
+	if (HasSplineComponent())
+	{
+		if (AnimationMode == ESplineAnimationMode::OneWay)
+		{
+			if (StartPointIndex == 0 && bIsReversed)
+			{
+				StartPointIndex = GetLastPointIndex();
+			}
+			else if (StartPointIndex == GetLastPointIndex() && !bIsReversed)
+			{
+				StartPointIndex = 0;
+			}
+		}
+		
+		if (StartPointIndex > GetLastPointIndex())
+		{
+			StartPointIndex = 0;
+			LogWarning("Incorrect StartPointIndex value, it can't be <= 0 or > LastPointIndex. Reset it to 0.");
+		}
+
+		CurrentPointIndex = StartPointIndex;
+		CalculateNextPointIndex();
+		CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
+		AnimateAlongSpline(0.f);
+	}
 }
 
 
@@ -22,24 +66,7 @@ void USplineAnimationComponent::BeginPlay()
 	{
 		LogWarning("SplineActor isn't set for an spline animation component.");
 	}
-	else
-	{
-		SplineComponent = SplineActor->FindComponentByClass<USplineComponent>();
-
-		if (HasSplineComponent())
-		{
-			if (StartPointIndex > GetLastPointIndex())
-			{
-				StartPointIndex = 0;
-				LogWarning("Incorrect StartPointIndex value, it can't be <= 0 or > LastPointIndex. Reset it to 0.");
-			}
-
-			CurrentPointIndex = StartPointIndex;
-			CalculateNextPointIndex();
-			CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
-		}
-	}
-
+	
 	if (AnimationCurve)
 	{
 		FOnTimelineFloat AnimationProgress;
