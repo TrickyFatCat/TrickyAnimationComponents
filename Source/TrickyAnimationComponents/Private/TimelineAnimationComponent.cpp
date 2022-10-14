@@ -158,6 +158,11 @@ void UTimelineAnimationComponent::SetAnimatedComponents(TArray<USceneComponent*>
 		AnimatedComponents.AddUnique(Component);
 		InitialTransforms.Add(Component->GetRelativeTransform());
 	}
+
+	if (CanPlayAnimation())
+	{
+		AnimateTransform(InitialState == ETimelineAnimationState::End);
+	}
 }
 
 bool UTimelineAnimationComponent::CanPlayAnimation() const
