@@ -102,6 +102,12 @@ public:
 	void Resume();
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
+	AActor* GetSplineActor() const;
+
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
+	void SetSplineActor(AActor* Value);
+
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
 	UCurveFloat* GetAnimationCurve() const;
 
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
@@ -136,7 +142,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	ESplineAnimationMode AnimationMode = ESplineAnimationMode::OneWay;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess))
+	UPROPERTY(EditInstanceOnly,
+		BlueprintGetter=GetSplineActor,
+		BlueprintSetter=SetSplineActor,
+		Category="Animation",
+		meta=(AllowPrivateAccess))
 	AActor* SplineActor = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))

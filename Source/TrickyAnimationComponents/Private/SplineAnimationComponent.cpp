@@ -148,6 +148,45 @@ void USplineAnimationComponent::Resume()
 	OnAnimationResumed.Broadcast();
 }
 
+AActor* USplineAnimationComponent::GetSplineActor() const
+{
+	return SplineActor;
+}
+
+void USplineAnimationComponent::SetSplineActor(AActor* Value)
+{
+	if (AnimationState != ESplineAnimationState::Idle)
+	{
+		LogWarning("Can't set a new spline actor if the animation state isn't idle.");
+		return;
+	}
+
+	if (!IsValid(Value))
+	{
+		return;
+	}
+
+	USplineComponent* Spline = Value->FindComponentByClass<USplineComponent>();
+
+	if (!IsValid(Spline))
+	{
+		LogWarning(FString::Printf(TEXT("The %s actor doesn't have the spline component."), *Value->GetName()));
+		return;
+	}
+
+	SplineActor = Value;
+	SplineComponent = Spline;
+
+	if (StartPointIndex < 0 || StartPointIndex > GetLastPointIndex())
+	{
+		StartPointIndex = 0;
+	}
+
+	CurrentPointIndex = StartPointIndex;
+	CalculateNextPointIndex();
+	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
+}
+
 UCurveFloat* USplineAnimationComponent::GetAnimationCurve() const
 {
 	return AnimationCurve;
@@ -159,7 +198,7 @@ void USplineAnimationComponent::SetAnimationCurve(UCurveFloat* Value)
 	{
 		return;
 	}
-	
+
 	AnimationCurve = Value;
 }
 
