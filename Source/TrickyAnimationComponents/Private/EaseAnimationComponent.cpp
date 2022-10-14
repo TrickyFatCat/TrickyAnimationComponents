@@ -9,13 +9,26 @@ UEaseAnimationComponent::UEaseAnimationComponent()
 }
 
 
+bool UEaseAnimationComponent::GetIsEnabled() const
+{
+	return bIsEnabled;
+}
+
+void UEaseAnimationComponent::SetIsEnabled(const bool Value)
+{
+	bIsEnabled = Value;
+	SetComponentTickEnabled(bIsEnabled);
+}
+
 void UEaseAnimationComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	SetComponentTickEnabled(bIsEnabled);
 }
 
 
-void UEaseAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+void UEaseAnimationComponent::TickComponent(float DeltaTime,
+                                            ELevelTick TickType,
                                             FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -31,9 +44,14 @@ void UEaseAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	}
 }
 
-void UEaseAnimationComponent::EaseAxis(const float& CurrentLocationAxis, const float& TargetLocationAxis,
+void UEaseAnimationComponent::EaseAxis(const float& CurrentLocationAxis,
+                                       const float& TargetLocationAxis,
                                        float& NewLocationAxis) const
 {
-	NewLocationAxis = UKismetMathLibrary::Ease(CurrentLocationAxis,TargetLocationAxis, Alpha, EasingFunction, Exponent,
+	NewLocationAxis = UKismetMathLibrary::Ease(CurrentLocationAxis,
+	                                           TargetLocationAxis,
+	                                           Alpha,
+	                                           EasingFunction,
+	                                           Exponent,
 	                                           SubStep);
 }
