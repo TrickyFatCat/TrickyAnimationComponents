@@ -16,7 +16,8 @@ void URotationAnimationComponent::BeginPlay()
 	ToggleTick();
 }
 
-void URotationAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+void URotationAnimationComponent::TickComponent(float DeltaTime,
+                                                ELevelTick TickType,
                                                 FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -26,7 +27,7 @@ void URotationAnimationComponent::TickComponent(float DeltaTime, ELevelTick Tick
 		DeltaRotator.Roll = bRotateX ? RotationSpeed.Roll : 0.f;
 		DeltaRotator.Pitch = bRotateY ? RotationSpeed.Pitch : 0.f;
 		DeltaRotator.Yaw = bRotateZ ? RotationSpeed.Yaw : 0.f;
-		
+
 		AddLocalRotation(DeltaRotator);
 	}
 }
