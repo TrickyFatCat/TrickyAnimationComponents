@@ -45,10 +45,10 @@ struct FAxisInheritance
 
 	UPROPERTY(EditAnywhere, Category="Inheritance")
 	bool bX = false;
-	
+
 	UPROPERTY(EditAnywhere, Category="Inheritance")
 	bool bY = false;
-	
+
 	UPROPERTY(EditAnywhere, Category="Inheritance")
 	bool bZ = false;
 };
@@ -65,21 +65,22 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-							   FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime,
+	                           ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(BlueprintAssignable, Category="Animation")
 	FOnSplineAnimationStartedSignature OnAnimationStarted;
-	
+
 	UPROPERTY(BlueprintAssignable, Category="Animation")
 	FOnSplineAnimationStoppedSignature OnAnimationStopped;
-	
+
 	UPROPERTY(BlueprintAssignable, Category="Animation")
 	FOnSplineAnimationPausedSignature OnAnimationPaused;
 
 	UPROPERTY(BlueprintAssignable, Category="Animation")
 	FOnSplineAnimationResumedSignature OnAnimationResumed;
-	
+
 private:
 	UPROPERTY()
 	UTimelineComponent* AnimationTimeline = nullptr;
@@ -87,7 +88,7 @@ private:
 public:
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
 	void Start();
-	
+
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
 	void Stop();
 
@@ -141,35 +142,57 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	USplineComponent* SplineComponent = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationCurve, BlueprintSetter=SetAnimationCurve, Category="Animation",
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetAnimationCurve,
+		BlueprintSetter=SetAnimationCurve,
+		Category="Animation",
 		meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess, ClampMin = "0"))
 	int32 StartPointIndex = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetIsReversed, BlueprintSetter=SetIsReversed, Category="Animation", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetIsReversed,
+		BlueprintSetter=SetIsReversed,
+		Category="Animation",
+		meta=(AllowPrivateAccess))
 	bool bIsReversed = false;
 
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationTime, BlueprintSetter=SetAnimationTime, Category="Animation",
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetAnimationTime,
+		BlueprintSetter=SetAnimationTime,
+		Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="!bUseConstantSpeed", ClampMin="0"))
 	float AnimationTime = 1.f;
 
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetUseConstantSpeed, BlueprintSetter=SetUseConstantSpeed,
-		Category="Animation", meta=(AllowPrivateAccess, InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetUseConstantSpeed,
+		BlueprintSetter=SetUseConstantSpeed,
+		Category="Animation",
+		meta=(AllowPrivateAccess, InlineEditConditionToggle))
 	bool bUseConstantSpeed = false;
 
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetConstantSpeed, BlueprintSetter=SetConstantSpeed, Category="Animation",
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetConstantSpeed,
+		BlueprintSetter=SetConstantSpeed,
+		Category="Animation",
 		meta=(AllowPrivateAccess="true", EditCondition="bUseConstantSpeed", ClampMin="0"))
 	float ConstantSpeed = 300.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
 	bool bStopAtPoints = false; // TODO Consider creating custom getter and setter
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess, EditCondition="bStopAtPoints"))
+	UPROPERTY(EditAnywhere,
+		BlueprintReadOnly,
+		Category="Animation|StopsOptions",
+		meta=(AllowPrivateAccess, EditCondition="bStopAtPoints"))
 	bool bWaitAtStart = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|StopsOptions", meta=(AllowPrivateAccess, EditCondition="bStopAtPoints", ClampMin=0.f))
+	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
+		Category="Animation|StopsOptions",
+		meta=(AllowPrivateAccess, EditCondition="bStopAtPoints", ClampMin=0.f))
 	float WaitTime = 1.f;
 
 	UPROPERTY(BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
@@ -177,13 +200,13 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess="true"))
 	FVector LocationOffset{FVector::ZeroVector};
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess="true"))
 	FAxisInheritance InheritRotation;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess="true"))
 	FAxisInheritance InheritScale;
-	
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess="true"))
 	ESplineAnimationState AnimationState = ESplineAnimationState::Idle;
 

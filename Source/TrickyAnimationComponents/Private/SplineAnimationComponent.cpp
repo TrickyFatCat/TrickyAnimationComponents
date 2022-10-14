@@ -55,7 +55,8 @@ void USplineAnimationComponent::BeginPlay()
 }
 
 
-void USplineAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+void USplineAnimationComponent::TickComponent(float DeltaTime,
+                                              ELevelTick TickType,
                                               FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -311,7 +312,7 @@ void USplineAnimationComponent::MoveAlongSpline(const float Progress) const
 {
 	const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
 	const FVector NewLocation{
-		SplineComponent->GetLocationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
+			SplineComponent->GetLocationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
 	};
 
 	GetOwner()->SetActorLocation(NewLocation + LocationOffset);
@@ -324,7 +325,7 @@ void USplineAnimationComponent::RotateAlongSpline(const float Progress) const
 		const FRotator CurrentRotation{GetOwner()->GetActorRotation()};
 		const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
 		const FRotator RotationAlongSpline{
-			SplineComponent->GetRotationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
+				SplineComponent->GetRotationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
 		};
 
 		const float NewRoll = InheritRotation.bX ? RotationAlongSpline.Roll : CurrentRotation.Roll;
@@ -440,7 +441,8 @@ float USplineAnimationComponent::GetSplineDistanceAtPoint(const int32 PointIndex
 	return SplineComponent->GetDistanceAlongSplineAtSplinePoint(PointIndex);
 }
 
-float USplineAnimationComponent::GetPositionAtSpline(const int32 CurrentIndex, const int32 NextIndex,
+float USplineAnimationComponent::GetPositionAtSpline(const int32 CurrentIndex,
+                                                     const int32 NextIndex,
                                                      const float Progress) const
 {
 	if (!HasSplineComponent())
