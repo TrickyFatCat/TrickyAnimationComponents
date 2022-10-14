@@ -135,7 +135,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	ESplineAnimationMode AnimationMode = ESplineAnimationMode::OneWay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess))
 	AActor* SplineActor = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
