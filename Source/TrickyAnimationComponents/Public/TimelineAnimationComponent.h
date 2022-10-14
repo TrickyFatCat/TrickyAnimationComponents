@@ -15,12 +15,14 @@ enum class ETimelineAnimationState: uint8
 	Begin,
 	End,
 	Transition UMETA(Hidden),
-	Pause	UMETA(Hidden)
+	Pause UMETA(Hidden)
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimelineAnimationStartedSignature, ETimelineAnimationState, TargetState);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimelineAnimationReversedSignature, ETimelineAnimationState, NewTargetState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimelineAnimationReversedSignature,
+                                            ETimelineAnimationState,
+                                            NewTargetState);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimelineAnimationFinishedSignature, ETimelineAnimationState, NewState);
 
@@ -49,16 +51,16 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
 	FOnTimelineAnimationStartedSignature OnAnimationStarted;
-	
+
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
 	FOnTimelineAnimationReversedSignature OnAnimationReversed;
-	
+
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
 	FOnTimelineAnimationFinishedSignature OnAnimationFinished;
 
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
 	FOnTimelineAnimationPausedSignature OnAnimationPaused;
-	
+
 	UPROPERTY(BlueprintAssignable, Category="TrickyAnimations|TimelineAnimation")
 	FOnTimelineAnimationResumedSignature OnAnimationResumed;
 
@@ -97,10 +99,18 @@ protected:
 	bool bIsReversible = false;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationTime, BlueprintSetter=SetAnimationTime, Category="Animation", meta=(AllowPrivateAccess="true", ClampMin="0"))
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetAnimationTime,
+		BlueprintSetter=SetAnimationTime,
+		Category="Animation",
+		meta=(AllowPrivateAccess="true", ClampMin="0"))
 	float AnimationTime = 1.f;
 
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetAnimationCurve, BlueprintSetter=SetAnimationCurve, Category="Animation", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetAnimationCurve,
+		BlueprintSetter=SetAnimationCurve,
+		Category="Animation",
+		meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess="true"))
@@ -108,14 +118,14 @@ private:
 
 	UPROPERTY()
 	TArray<FTransform> InitialTransforms;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation|States", meta=(AllowPrivateAccess="true"))
 	ETimelineAnimationState CurrentState = InitialState;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation|States", meta=(AllowPrivateAccess="true"))
 	ETimelineAnimationState TargetState = ETimelineAnimationState::End;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess="true"))
 	TArray<USceneComponent*> AnimatedComponents;
 
 	UFUNCTION()

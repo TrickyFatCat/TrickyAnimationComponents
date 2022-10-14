@@ -12,7 +12,6 @@ UTimelineAnimationComponent::UTimelineAnimationComponent()
 	AnimationTimeline = CreateDefaultSubobject<UTimelineComponent>("AnimationTimeline");
 }
 
-
 void UTimelineAnimationComponent::BeginPlay()
 {
 	CurrentState = InitialState;
@@ -48,17 +47,17 @@ void UTimelineAnimationComponent::Start()
 	{
 		return;
 	}
-	
+
 	if (CurrentState != ETimelineAnimationState::Transition && CurrentState != ETimelineAnimationState::Pause)
 	{
 		TargetState = CurrentState == ETimelineAnimationState::Begin
 			              ? ETimelineAnimationState::End
 			              : ETimelineAnimationState::Begin;
-		
+
 		TargetState == ETimelineAnimationState::End
 			? AnimationTimeline->PlayFromStart()
 			: AnimationTimeline->ReverseFromEnd();
-		
+
 		CurrentState = ETimelineAnimationState::Transition;
 		OnAnimationStarted.Broadcast(TargetState);
 	}
@@ -147,6 +146,7 @@ void UTimelineAnimationComponent::SetAnimatedComponents(TArray<USceneComponent*>
 	}
 
 	AnimatedComponents.Empty();
+	AnimatedComponents = Components;
 
 	for (auto Component : Components)
 	{
@@ -154,7 +154,7 @@ void UTimelineAnimationComponent::SetAnimatedComponents(TArray<USceneComponent*>
 		{
 			continue;
 		}
-
+	
 		AnimatedComponents.AddUnique(Component);
 		InitialTransforms.Add(Component->GetRelativeTransform());
 	}
@@ -188,7 +188,7 @@ void UTimelineAnimationComponent::AnimateTransform(const float Progress)
 	{
 		return;
 	}
-	
+
 	for (int32 i = 0; i < AnimatedComponents.Num(); ++i)
 	{
 		FTransform NewTransform = InitialTransforms[i];
@@ -205,8 +205,8 @@ void UTimelineAnimationComponent::AnimateTransform(const float Progress)
 		if (TargetTransform.GetRotation() != FRotator::ZeroRotator.Quaternion())
 		{
 			FQuat NewRotation{
-				FRotator(NewTransform.GetRotation().Rotator() + TargetTransform.GetRotation().Rotator() *
-					Progress).Quaternion()
+					FRotator(NewTransform.GetRotation().Rotator() + TargetTransform.GetRotation().Rotator() *
+					         Progress).Quaternion()
 			};
 			NewTransform.SetRotation(NewRotation);
 		}
@@ -243,6 +243,6 @@ void UTimelineAnimationComponent::CalculatePlayRate() const
 		// Print error
 		MaxTime = 1.f;
 	}
-	
+
 	AnimationTimeline->SetPlayRate(MaxTime / AnimationTime);
 }
