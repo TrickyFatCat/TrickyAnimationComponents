@@ -155,6 +155,11 @@ UCurveFloat* USplineAnimationComponent::GetAnimationCurve() const
 
 void USplineAnimationComponent::SetAnimationCurve(UCurveFloat* Value)
 {
+	if (!Value)
+	{
+		return;
+	}
+	
 	AnimationCurve = Value;
 }
 
