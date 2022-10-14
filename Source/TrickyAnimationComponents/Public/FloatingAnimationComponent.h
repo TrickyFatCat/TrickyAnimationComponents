@@ -19,7 +19,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+	virtual void TickComponent(float DeltaTime,
+	                           ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|FloatingAnimaton")
@@ -44,6 +45,11 @@ protected:
 private:
 	FVector InitialLocation{FVector::ZeroVector};
 
-	void Animate(const bool bAxisAnimated, float& Value, const float& InitialValue,
-	             const float& AxisAmplitude, const float& AxisFrequency) const;
+	void Animate(const bool bAxisAnimated,
+	             float& Value,
+	             const float& InitialValue,
+	             const float& AxisAmplitude,
+	             const float& AxisFrequency) const;
+
+	void ToggleTick();
 };
