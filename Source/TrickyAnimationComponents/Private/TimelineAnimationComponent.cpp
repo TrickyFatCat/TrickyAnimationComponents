@@ -146,7 +146,7 @@ void UTimelineAnimationComponent::SetAnimatedComponents(TArray<USceneComponent*>
 	}
 
 	AnimatedComponents.Empty();
-	AnimatedComponents = Components;
+	InitialTransforms.Empty();
 
 	for (auto Component : Components)
 	{
