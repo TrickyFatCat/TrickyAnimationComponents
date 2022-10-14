@@ -47,4 +47,7 @@ protected:
 protected:
 	UPROPERTY()
 	FRotator DeltaRotator{FRotator::ZeroRotator};
+
+private:
+	void ToggleTick();
 };

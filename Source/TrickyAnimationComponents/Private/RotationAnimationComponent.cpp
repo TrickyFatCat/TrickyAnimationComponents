@@ -13,6 +13,7 @@ void URotationAnimationComponent::BeginPlay()
 	Super::BeginPlay();
 
 	DeltaRotator = RotationSpeed;
+	ToggleTick();
 }
 
 void URotationAnimationComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -46,4 +47,10 @@ void URotationAnimationComponent::SetIsRotating(const bool bX, const bool bY, co
 	bRotateX = bX;
 	bRotateY = bY;
 	bRotateZ = bZ;
+	ToggleTick();
+}
+
+void URotationAnimationComponent::ToggleTick()
+{
+	SetComponentTickEnabled((!bRotateX && !bRotateY && !bRotateZ) || (bRotateX || bRotateY || bRotateZ));
 }
