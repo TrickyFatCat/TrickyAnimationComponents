@@ -586,7 +586,7 @@ void USplineAnimationComponent::LogWarning(const FString& Message) const
 	}
 
 	const FString ErrorMessage{FString::Printf(TEXT("%s | Actor: %s"), *Message, *GetOwner()->GetName())};
-	UE_LOG(LogSplineAnimationComponent, Error, TEXT("%s"), *ErrorMessage);
+	UE_LOG(LogSplineAnimationComponent, Warning, TEXT("%s"), *ErrorMessage);
 }
 
 bool USplineAnimationComponent::HasSplineComponent() const
