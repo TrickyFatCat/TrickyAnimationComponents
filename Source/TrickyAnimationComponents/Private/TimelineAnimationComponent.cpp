@@ -19,7 +19,7 @@ void UTimelineAnimationComponent::BeginPlay()
 	if (AnimationTime <= 0.f)
 	{
 		AnimationTime = 1.f;
-		// Print Error
+		LogWarning("Animation time can't be <= 0. It was set to 1.");
 	}
 
 	CalculatePlayRate();
@@ -85,7 +85,7 @@ void UTimelineAnimationComponent::Pause()
 {
 	if (CurrentState != ETimelineAnimationState::Transition)
 	{
-		// Print error
+		LogWarning("Can't use the Pause() function if the current state isn't transition");
 		return;
 	}
 	CurrentState = ETimelineAnimationState::Pause;
@@ -97,7 +97,7 @@ void UTimelineAnimationComponent::Resume()
 {
 	if (CurrentState != ETimelineAnimationState::Pause)
 	{
-		// Print error
+		LogWarning("Can't use the Resume() function if the current state isn't pause.");
 		return;
 	}
 
@@ -169,19 +169,19 @@ bool UTimelineAnimationComponent::CanPlayAnimation() const
 {
 	if (!AnimationCurve)
 	{
-		// Print error
+		LogWarning("AnimationCurve isn't set, can't play the animation.");
 		return false;
 	}
 
 	if (AnimatedComponents.Num() == 0)
 	{
-		// Print error
+		LogWarning("AnimatedComponents array is empty, can't play the animation.");
 		return false;
 	}
 
 	if (TransformOffsets.Num() == 0 || TransformOffsets.Num() != AnimatedComponents.Num())
 	{
-		// Print error
+		LogWarning("TransformOffsets array either empty or don't have enough values to start play the animation.");
 		return false;
 	}
 	return true;
@@ -245,9 +245,20 @@ void UTimelineAnimationComponent::CalculatePlayRate() const
 
 	if (MaxTime <= 0.f)
 	{
-		// Print error
 		MaxTime = 1.f;
+		LogWarning("Length of the chosen curve is <= 0.");
 	}
 
 	AnimationTimeline->SetPlayRate(MaxTime / AnimationTime);
+}
+
+void UTimelineAnimationComponent::LogWarning(const FString& Message) const
+{
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	const FString ErrorMessage{FString::Printf(TEXT("%s | Actor: %s"), *Message, *GetOwner()->GetName())};
+	UE_LOG(LogTimelineAnimationComponent, Warning, TEXT("%s"), *ErrorMessage);
 }

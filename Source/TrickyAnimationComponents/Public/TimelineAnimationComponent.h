@@ -18,6 +18,8 @@ enum class ETimelineAnimationState: uint8
 	Pause UMETA(Hidden)
 };
 
+DECLARE_LOG_CATEGORY_CLASS(LogTimelineAnimationComponent, Display, Display);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimelineAnimationStartedSignature, ETimelineAnimationState, TargetState);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimelineAnimationReversedSignature,
@@ -135,4 +137,6 @@ private:
 	void FinishAnimation();
 
 	void CalculatePlayRate() const;
+	
+	void LogWarning(const FString& Message) const;
 };
