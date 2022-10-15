@@ -6,7 +6,9 @@
 #include "Components/SceneComponent.h"
 #include "FloatingAnimationComponent.generated.h"
 
-
+/**
+ * A simple scene component which creates a floating animation.
+ */
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API UFloatingAnimationComponent : public USceneComponent
 {
@@ -26,10 +28,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|FloatingAnimaton")
 	void SetIsAnimated(const bool bX, const bool bY, const bool bZ);
 
-public:
+	/**
+	 * Determines the animation speed. 
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	FVector Frequency{FVector::UpVector};
 
+	/**
+	 * Determines the position offset.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	FVector Amplitude{FVector::UpVector};
 
