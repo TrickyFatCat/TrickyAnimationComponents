@@ -7,6 +7,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "EaseAnimationComponent.generated.h"
 
+/**
+ * A simple component which interpolates its owner towards the chosen actor in the level.
+ */
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API UEaseAnimationComponent : public UActorComponent
@@ -19,18 +22,32 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
 	AActor* TargetActor = nullptr;
 
+	/**
+	 * Location offset relative to the target actor.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
 	FVector TargetLocationOffset{FVector::ZeroVector};
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
 	TEnumAsByte<EEasingFunc::Type> EasingFunction = EEasingFunc::EaseInOut;
 
+	/**
+	 * Determines the speed of interpolation.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
 	float Alpha = 0.15f;
 
+	/**
+	 * Blend exponent, used only with EaseIn, EaseOut, EaseInOut easing functions.
+	 * 
+	 * The higher the steeper the graph.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
 	float Exponent = 2.f;
 
+	/**
+	 * Amount of substeps, used only with the Step easing function.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
 	int32 SubStep = 10.f;
 
