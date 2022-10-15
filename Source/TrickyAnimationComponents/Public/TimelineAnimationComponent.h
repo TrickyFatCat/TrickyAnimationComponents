@@ -32,6 +32,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTimelineAnimationPausedSignature);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTimelineAnimationResumedSignature);
 
+/**
+ * An actor component which animates transforms of chosen scene components using timeline.
+ */
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API UTimelineAnimationComponent : public UActorComponent
 {
@@ -48,6 +52,9 @@ private:
 	UTimelineComponent* AnimationTimeline = nullptr;
 
 public:
+	/**
+	 * The initial state of the component.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Animation)
 	ETimelineAnimationState InitialState = ETimelineAnimationState::Begin;
 
@@ -90,6 +97,11 @@ public:
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|TimelineAnimation")
 	void SetAnimationCurve(UCurveFloat* Value);
 
+	/**
+	 * Fills the AnimatedComponents array.
+	 *
+	 * @warning This function checks if the given scene component isn't a nullptr. If true, it won't be added to the array.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
 	void SetAnimatedComponents(UPARAM(ref) TArray<USceneComponent*>& Components);
 
@@ -97,6 +109,9 @@ public:
 	bool CanPlayAnimation() const;
 
 protected:
+	/**
+	 * Determines if the animation can be reversed while it's playing.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
 	bool bIsReversible = false;
 
@@ -115,6 +130,11 @@ private:
 		meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
+	/**
+	 * Contain transform offsets for each scene component in AnimatedComponents array.
+	 *
+	 * @warning The number of transforms must be equal to the number of animated components.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess="true"))
 	TArray<FTransform> TransformOffsets;
 
@@ -137,6 +157,6 @@ private:
 	void FinishAnimation();
 
 	void CalculatePlayRate() const;
-	
+
 	void LogWarning(const FString& Message) const;
 };
