@@ -53,6 +53,10 @@ struct FAxisInheritance
 	bool bZ = false;
 };
 
+/**
+ * A simple actor component which can animate the owner along the spline component.
+ */
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API USplineAnimationComponent : public UActorComponent
 {
@@ -144,6 +148,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	ESplineAnimationMode AnimationMode = ESplineAnimationMode::OneWay;
 
+	/**
+	 * An actor which has a spline component.
+	 *
+	 * @warning Use a separate actor with a spline component.
+	 */
 	UPROPERTY(EditInstanceOnly,
 		BlueprintGetter=GetSplineActor,
 		BlueprintSetter=SetSplineActor,
@@ -161,9 +170,15 @@ private:
 		meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
+	/**
+	 * The index of the point from which animation will be started.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess, ClampMin = "0"))
 	int32 StartPointIndex = 0;
 
+	/**
+	 * Determines if the order of points will be reversed or not.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetIsReversed,
 		BlueprintSetter=SetIsReversed,
@@ -185,6 +200,11 @@ private:
 		meta=(AllowPrivateAccess, InlineEditConditionToggle))
 	bool bUseConstantSpeed = false;
 
+	/**
+	 * Using for calculating the animation time.
+	 *
+	 * Great for splines with many points and a the speed must be consistent.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetConstantSpeed,
 		BlueprintSetter=SetConstantSpeed,
@@ -192,20 +212,31 @@ private:
 		meta=(AllowPrivateAccess="true", EditCondition="bUseConstantSpeed", ClampMin="0"))
 	float ConstantSpeed = 300.f;
 
+	/**
+	 * The actor will stop at all points on the spline.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
 	bool bStopAtPoints = false; // TODO Consider creating custom getter and setter
 
+	/**
+	 * If true, the actor will "stop" at start point at the beginning of the animation.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintReadOnly,
 		Category="Animation|StopsOptions",
 		meta=(AllowPrivateAccess, EditCondition="bStopAtPoints"))
 	bool bWaitAtStart = true;
 
+	/**
+	 * How long the actor will wait at the point.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
 		Category="Animation|StopsOptions",
 		meta=(AllowPrivateAccess, EditCondition="bStopAtPoints", ClampMin=0.f))
 	float WaitTime = 1.f;
+
+	// TODO Implement the custom array of stop indexes.
 
 	UPROPERTY(BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
 	FTimerHandle WaitTimerHandle;
