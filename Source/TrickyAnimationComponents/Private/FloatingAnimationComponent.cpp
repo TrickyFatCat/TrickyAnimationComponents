@@ -2,6 +2,7 @@
 
 
 #include "FloatingAnimationComponent.h"
+#include "Engine/World.h"
 
 UFloatingAnimationComponent::UFloatingAnimationComponent()
 {

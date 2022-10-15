@@ -5,6 +5,8 @@
 
 #include "Components/SplineComponent.h"
 #include "Components/TimelineComponent.h"
+#include "TimerManager.h"
+#include "Curves/CurveFloat.h"
 
 USplineAnimationComponent::USplineAnimationComponent()
 {

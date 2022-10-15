@@ -2,6 +2,7 @@
 
 
 #include "EaseAnimationComponent.h"
+#include "GameFramework/Actor.h"
 
 UEaseAnimationComponent::UEaseAnimationComponent()
 {

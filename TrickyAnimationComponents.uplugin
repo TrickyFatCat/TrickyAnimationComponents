@@ -4,7 +4,7 @@
 	"VersionName": "1.0",
 	"FriendlyName": "TrickyAnimationComponents",
 	"Description": "A small plugin with a collection of components which  can help to create simple animations for actors and scene components.",
-	"Category": "Other",
+	"Category": "TrickyPrototyping",
 	"CreatedBy": "Artyom \"Tricky_Fat_Cat\" Volkov",
 	"CreatedByURL": "https://twitter.com/tricky_fat_cat",
 	"DocsURL": "",
@@ -13,12 +13,17 @@
 	"CanContainContent": false,
 	"IsBetaVersion": true,
 	"IsExperimentalVersion": false,
-	"Installed": false,
+	"Installed": true,
 	"Modules": [
 		{
 			"Name": "TrickyAnimationComponents",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Linux",
+				"Mac"
+			]
 		}
 	]
 }
