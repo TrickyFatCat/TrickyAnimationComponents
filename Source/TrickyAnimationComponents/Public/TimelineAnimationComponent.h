@@ -108,13 +108,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
 	bool CanPlayAnimation() const;
 
-protected:
-	/**
-	 * Determines if the animation can be reversed while it's playing.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
-	bool bIsReversible = false;
-
 private:
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnimationTime,

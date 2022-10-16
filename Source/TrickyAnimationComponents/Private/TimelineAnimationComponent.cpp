@@ -70,7 +70,7 @@ void UTimelineAnimationComponent::Reverse()
 		return;
 	}
 
-	if (CurrentState == ETimelineAnimationState::Transition && bIsReversible)
+	if (CurrentState == ETimelineAnimationState::Transition)
 	{
 		TargetState = TargetState == ETimelineAnimationState::Begin
 			              ? ETimelineAnimationState::End
