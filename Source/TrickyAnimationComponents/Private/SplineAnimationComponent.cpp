@@ -34,7 +34,7 @@ void USplineAnimationComponent::Activate(bool bReset)
 
 	if (HasSplineComponent())
 	{
-		if (AnimationMode == ESplineAnimationMode::OneWay)
+		if (AnimationMode == ESplineAnimationMode::OneWay || AnimationMode == ESplineAnimationMode::PingPong)
 		{
 			if (StartPointIndex == 0 && bIsReversed)
 			{

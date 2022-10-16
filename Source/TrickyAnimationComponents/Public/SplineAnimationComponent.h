@@ -166,6 +166,11 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	USplineComponent* SplineComponent = nullptr;
 
+	/**
+	 * A float curve object used by the timeline component for the animation.
+	 *
+	 * It's better to use a curve with length equal 1.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnimationCurve,
 		BlueprintSetter=SetAnimationCurve,
@@ -179,13 +184,17 @@ private:
 		Category="Animation",
 		meta=(AllowPrivateAccess, InlineEditConditionToggle))
 	bool bUseAnimationSpeed = false;
-	
+
+	/**
+	 * Length of the animation.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnimationTime,
 		BlueprintSetter=SetAnimationTime,
 		Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="!bUseAnimationSpeed", ClampMin="0"))
 	float AnimationTime = 1.f;
+	
 	/**
 	 * Using for calculating the animation time.
 	 *
@@ -199,7 +208,7 @@ private:
 	float AnimationSpeed = 300.f;
 
 	/**
-	 * The index of the point from which animation will be started.
+	 * The point index from which the animation will be started.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess, ClampMin = "0"))
 	int32 StartPointIndex = 0;
@@ -215,7 +224,7 @@ private:
 	bool bIsReversed = false;
 
 	/**
-	 * The actor will stop at all points on the spline.
+	 * Toggle if should an owner stopped at the spline points during the animation.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
 	bool bStopAtPoints = false; // TODO Consider creating custom getter and setter
@@ -230,7 +239,7 @@ private:
 	bool bWaitAtStart = true;
 
 	/**
-	 * How long the actor will wait at the point.
+	 * How long the owner will wait at the point.
 	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
@@ -243,15 +252,27 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
 	FTimerHandle WaitTimerHandle;
 
+	/**
+	 * The offset along the spline.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess))
 	float SplineOffset = 0.f;
-	
+
+	/**
+	 * Location offset relative to the current location along the spline.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess))
 	FVector LocationOffset{FVector::ZeroVector};
 
+	/**
+	 * Determines if the rotation along spline must be applied to the owner.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess))
 	FAxisInheritance InheritRotation;
 
+	/**
+	 * Determines if the scale along spline must be applied to the owner.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess))
 	FAxisInheritance InheritScale;
 
