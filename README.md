@@ -37,7 +37,14 @@ A scene component which rotates along the chosen axis.
 
 #### Parameters
 
+1. `RotateX` - toggle rotation along the X axis;
+2. `RotateY` - toggle rotation along the Y axis;
+3. `RotateZ` - toggle rotation along the Z axis;
+4. `RotationSpeed` - determines the rotation speed along each axis;
+
 #### Functions
+
+1. `SetIsRotating` - toggles rotation along XYZ axis;
 
 ### FloatingAnimationComponent
 
@@ -45,7 +52,15 @@ A scene component which creates a floating animation along the chosen axis.
 
 #### Parameters
 
+1. `FloatX` - toggle floating along X axis;
+2. `FloatY` - toggle floating along Y axis;
+3. `FloatY` - toggle floating along Z axis;
+4. `Frequency` - determines the animation speed;
+5. `Amplitude` - determines the position offset;
+
 #### Functions
+
+1. `SetIsFloating` - toggles floating animation along XYZ axis;
 
 ### EaseAnimationComponent
 
