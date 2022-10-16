@@ -42,7 +42,10 @@ public:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
 	FVector LocationOffset{FVector::ZeroVector};
-	
+
+	/**
+	 * A type of the function which will be used for moving an owner.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
 	TEnumAsByte<EEasingFunc::Type> EasingFunction = EEasingFunc::EaseInOut;
 
