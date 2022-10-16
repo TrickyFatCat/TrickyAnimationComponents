@@ -82,9 +82,31 @@ An actor component which moves the actor towards a target using interpolation fu
 
 An actor component which animates transforms of the chosen scene components of an actor using a timeline.
 
+#### Setup
+
+1. Add the component to the chosen actor;
+2. Fill the `AnimatedComponents` array using the `SetAnimatedComponents` function in the construction script;
+   * Only for scene components;
+   * Omits nullptr entries;
+3. Fill the `TransformOffsets` array by hand;
+   * The number of offsets must be equal to the number of animated components;
+4. Create or use existing curve float for the `AnimationCurve` variable;
+
 #### Parameters
 
+1. `InitialState` - the initial state of the animation on begin play;
+2. `AnimationTime` - the length of the animation;
+3. `AnimationCurve` - a float curve object used by the timeline component for the animation. It's better to use a curve with length equal 1.f;
+4. `TransformOffsets` - an array with transform offsets for each scene component in the AnimatedComponents array. The number of offsets must be equal to the number of animated components;
+
 #### Functions
+
+1. `Start` - starts the animation;
+2. `Reverse` - reverse the current animation. Works only if current state is a transition state;
+3. `Pause` - pauses the animation;
+4. `Resume` - resumes the animation;
+5. `SetAnimatedComponents` - fills the Animated components array with the chosen scene components. It'll omit nullptr entries;
+6. `CanPlayAnimation` - returns if the animation can be played or not;
 
 ### SplineAnimationComponent
 
