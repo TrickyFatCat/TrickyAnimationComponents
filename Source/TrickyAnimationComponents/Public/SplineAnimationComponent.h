@@ -32,10 +32,10 @@ enum class ESplineAnimationState : uint8
 UENUM()
 enum class ESplineAnimationMode : uint8
 {
-	OneWay,
-	Loop,
-	PingPong,
-	Manual
+	OneWay UMETA(ToolTip="Animate from the first to the last spline point."),
+	Loop UMETA(ToolTip="Loop the animation from first to the last spline point."),
+	PingPong UMETA(ToolTip="Move forth and beck between the first and the last spline point."),
+	Manual UMETA(ToolTip="Create the custom movement pattern using the AnimateTo function.")
 };
 
 USTRUCT(BlueprintType)
@@ -99,7 +99,7 @@ public:
 	void Stop();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
-	void MoveTo(const int32 PointIndex);
+	void AnimateTo(const int32 PointIndex);
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|SplineAnimation")
 	void Pause();
@@ -132,19 +132,22 @@ public:
 	void SetAnimationTime(const float Value);
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|SplineAnimation")
-	bool GetUseConstantSpeed() const;
+	bool GetUseAnimationSpeed() const;
 
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
-	void SetUseConstantSpeed(const bool Value);
+	void SetUseAnimationSpeed(const bool Value);
 
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
-	float GetConstantSpeed() const;
+	float GetAnimationSpeed() const;
 
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|SplineAnimation")
-	void SetConstantSpeed(const float Value);
+	void SetAnimationSpeed(const float Value);
 
 protected:
 private:
+	/**
+	 * Determines the behavior of the animation.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	ESplineAnimationMode AnimationMode = ESplineAnimationMode::OneWay;
 
@@ -170,6 +173,31 @@ private:
 		meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetUseAnimationSpeed,
+		BlueprintSetter=SetUseAnimationSpeed,
+		Category="Animation",
+		meta=(AllowPrivateAccess, InlineEditConditionToggle))
+	bool bUseAnimationSpeed = false;
+	
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetAnimationTime,
+		BlueprintSetter=SetAnimationTime,
+		Category="Animation",
+		meta=(AllowPrivateAccess, EditCondition="!bUseAnimationSpeed", ClampMin="0"))
+	float AnimationTime = 1.f;
+	/**
+	 * Using for calculating the animation time.
+	 *
+	 * Great for splines with many points and when the animation time between them must be constant.
+	 */
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetAnimationSpeed,
+		BlueprintSetter=SetAnimationSpeed,
+		Category="Animation",
+		meta=(AllowPrivateAccess="true", EditCondition="bUseAnimationSpeed", ClampMin="0"))
+	float AnimationSpeed = 300.f;
+
 	/**
 	 * The index of the point from which animation will be started.
 	 */
@@ -185,32 +213,6 @@ private:
 		Category="Animation",
 		meta=(AllowPrivateAccess))
 	bool bIsReversed = false;
-
-	UPROPERTY(EditAnywhere,
-		BlueprintGetter=GetAnimationTime,
-		BlueprintSetter=SetAnimationTime,
-		Category="Animation",
-		meta=(AllowPrivateAccess, EditCondition="!bUseConstantSpeed", ClampMin="0"))
-	float AnimationTime = 1.f;
-
-	UPROPERTY(EditAnywhere,
-		BlueprintGetter=GetUseConstantSpeed,
-		BlueprintSetter=SetUseConstantSpeed,
-		Category="Animation",
-		meta=(AllowPrivateAccess, InlineEditConditionToggle))
-	bool bUseConstantSpeed = false;
-
-	/**
-	 * Using for calculating the animation time.
-	 *
-	 * Great for splines with many points and a the speed must be consistent.
-	 */
-	UPROPERTY(EditAnywhere,
-		BlueprintGetter=GetConstantSpeed,
-		BlueprintSetter=SetConstantSpeed,
-		Category="Animation",
-		meta=(AllowPrivateAccess="true", EditCondition="bUseConstantSpeed", ClampMin="0"))
-	float ConstantSpeed = 300.f;
 
 	/**
 	 * The actor will stop at all points on the spline.
@@ -241,22 +243,25 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
 	FTimerHandle WaitTimerHandle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess))
+	float SplineOffset = 0.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess))
 	FVector LocationOffset{FVector::ZeroVector};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess))
 	FAxisInheritance InheritRotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|TransformOptions", meta=(AllowPrivateAccess))
 	FAxisInheritance InheritScale;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
 	ESplineAnimationState AnimationState = ESplineAnimationState::Idle;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
 	int32 CurrentPointIndex = 0;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
 	int32 NextPointIndex = 1;
 
 	bool bMustStop = false;

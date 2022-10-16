@@ -129,7 +129,7 @@ void USplineAnimationComponent::Stop()
 	}
 }
 
-void USplineAnimationComponent::MoveTo(const int32 PointIndex)
+void USplineAnimationComponent::AnimateTo(const int32 PointIndex)
 {
 	if (AnimationMode != ESplineAnimationMode::Manual)
 	{
@@ -256,7 +256,7 @@ float USplineAnimationComponent::GetAnimationTime() const
 
 void USplineAnimationComponent::SetAnimationTime(const float Value)
 {
-	if (bUseConstantSpeed)
+	if (bUseAnimationSpeed)
 	{
 		return;
 	}
@@ -271,30 +271,30 @@ void USplineAnimationComponent::SetAnimationTime(const float Value)
 	CalculatePlayRate();
 }
 
-bool USplineAnimationComponent::GetUseConstantSpeed() const
+bool USplineAnimationComponent::GetUseAnimationSpeed() const
 {
-	return bUseConstantSpeed;
+	return bUseAnimationSpeed;
 }
 
-void USplineAnimationComponent::SetUseConstantSpeed(const bool Value)
+void USplineAnimationComponent::SetUseAnimationSpeed(const bool Value)
 {
-	bUseConstantSpeed = Value;
+	bUseAnimationSpeed = Value;
 
-	if (bUseConstantSpeed)
+	if (bUseAnimationSpeed)
 	{
 		CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 		CalculatePlayRate();
 	}
 }
 
-float USplineAnimationComponent::GetConstantSpeed() const
+float USplineAnimationComponent::GetAnimationSpeed() const
 {
-	return ConstantSpeed;
+	return AnimationSpeed;
 }
 
-void USplineAnimationComponent::SetConstantSpeed(const float Value)
+void USplineAnimationComponent::SetAnimationSpeed(const float Value)
 {
-	if (!bUseConstantSpeed)
+	if (!bUseAnimationSpeed)
 	{
 		return;
 	}
@@ -305,7 +305,7 @@ void USplineAnimationComponent::SetConstantSpeed(const float Value)
 		return;
 	}
 
-	ConstantSpeed = Value;
+	AnimationSpeed = Value;
 	CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
 	CalculatePlayRate();
 }
@@ -385,7 +385,7 @@ void USplineAnimationComponent::MoveAlongSpline(const float Progress) const
 {
 	const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
 	const FVector NewLocation{
-			SplineComponent->GetLocationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
+			SplineComponent->GetLocationAtDistanceAlongSpline(Position + SplineOffset, ESplineCoordinateSpace::World)
 	};
 
 	GetOwner()->SetActorLocation(NewLocation + LocationOffset);
@@ -558,12 +558,12 @@ void USplineAnimationComponent::CalculateAnimationTime(const int32 CurrentIndex,
 		return;
 	}
 
-	if (bUseConstantSpeed)
+	if (bUseAnimationSpeed)
 	{
 		const float StartDistance = GetSplineDistanceAtPoint(CurrentIndex);
 		const float FinishDistance = GetSplineDistanceAtPoint(TargetIndex);
 		const float DistanceBetweenPoints = FMath::Abs(FinishDistance - StartDistance);
-		AnimationTime = DistanceBetweenPoints / ConstantSpeed;
+		AnimationTime = DistanceBetweenPoints / AnimationSpeed;
 	}
 }
 
