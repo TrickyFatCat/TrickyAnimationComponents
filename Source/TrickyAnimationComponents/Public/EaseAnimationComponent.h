@@ -26,7 +26,7 @@ public:
 	 * Location offset relative to the target actor.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
-	FVector TargetLocationOffset{FVector::ZeroVector};
+	FVector LocationOffset{FVector::ZeroVector};
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
 	TEnumAsByte<EEasingFunc::Type> EasingFunction = EEasingFunc::EaseInOut;
