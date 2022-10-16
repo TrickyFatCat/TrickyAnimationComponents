@@ -3,7 +3,7 @@
 
 #include "TimelineAnimationComponent.h"
 #include "Components/TimelineComponent.h"
-
+#include "Curves/CurveFloat.h"
 
 UTimelineAnimationComponent::UTimelineAnimationComponent()
 {

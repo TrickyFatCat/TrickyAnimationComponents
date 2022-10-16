@@ -2,6 +2,7 @@
 
 
 #include "FloatingAnimationComponent.h"
+#include "Engine/World.h"
 
 UFloatingAnimationComponent::UFloatingAnimationComponent()
 {
@@ -28,24 +29,24 @@ void UFloatingAnimationComponent::TickComponent(float DeltaTime,
 	{
 		FVector CurrentLocation = GetRelativeLocation();
 
-		Animate(bAnimateX, CurrentLocation.X, InitialLocation.X, Amplitude.X, Frequency.X);
-		Animate(bAnimateY, CurrentLocation.Y, InitialLocation.Y, Amplitude.Y, Frequency.Y);
-		Animate(bAnimateZ, CurrentLocation.Z, InitialLocation.Z, Amplitude.Z, Frequency.Z);
+		Float(bAnimateX, CurrentLocation.X, InitialLocation.X, Amplitude.X, Frequency.X);
+		Float(bFloatY, CurrentLocation.Y, InitialLocation.Y, Amplitude.Y, Frequency.Y);
+		Float(bFloatZ, CurrentLocation.Z, InitialLocation.Z, Amplitude.Z, Frequency.Z);
 
 		SetRelativeLocation(CurrentLocation);
 	}
 }
 
-void UFloatingAnimationComponent::SetIsAnimated(const bool bX, const bool bY, const bool bZ)
+void UFloatingAnimationComponent::SetIsFloating(const bool bX, const bool bY, const bool bZ)
 {
 	bAnimateX = bX;
-	bAnimateY = bY;
-	bAnimateZ = bZ;
+	bFloatY = bY;
+	bFloatZ = bZ;
 
 	ToggleTick();
 }
 
-void UFloatingAnimationComponent::Animate(const bool bAxisAnimated,
+void UFloatingAnimationComponent::Float(const bool bAxisAnimated,
                                           float& Value,
                                           const float& InitialValue,
                                           const float& AxisAmplitude,
@@ -60,5 +61,5 @@ void UFloatingAnimationComponent::Animate(const bool bAxisAnimated,
 
 void UFloatingAnimationComponent::ToggleTick()
 {
-	SetComponentTickEnabled((!bAnimateX && !bAnimateY && !bAnimateZ) || (bAnimateX || bAnimateY || bAnimateZ));
+	SetComponentTickEnabled((!bAnimateX && !bFloatY && !bFloatZ) || (bAnimateX || bFloatY || bFloatZ));
 }

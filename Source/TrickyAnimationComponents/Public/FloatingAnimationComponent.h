@@ -26,7 +26,7 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|FloatingAnimaton")
-	void SetIsAnimated(const bool bX, const bool bY, const bool bZ);
+	void SetIsFloating(const bool bX, const bool bY, const bool bZ);
 
 	/**
 	 * Determines the animation speed. 
@@ -41,18 +41,28 @@ public:
 	FVector Amplitude{FVector::UpVector};
 
 protected:
+	/**
+	 * Toggles floating along the X axis.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
-	bool bAnimateX = false;
+	bool bFloatX = false;
 
+	/**
+	 * Toggles floating along the Y axis.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
-	bool bAnimateY = false;
+	bool bFloatY = false;
 
+	/**
+	 * Toggles floating along the Z axis.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
-	bool bAnimateZ = true;
+	bool bFloatZ = true;
+	
 private:
 	FVector InitialLocation{FVector::ZeroVector};
 
-	void Animate(const bool bAxisAnimated,
+	void Float(const bool bAxisAnimated,
 	             float& Value,
 	             const float& InitialValue,
 	             const float& AxisAmplitude,
