@@ -4,10 +4,22 @@ A small plugin with a collection of actor and scene components which can help wi
 
 ## Installation
 
+The plugin can be used in both C++ and Blueprint projects.
+
+### Blueprint projects
+
 1. Download package file;
-2. Create folder **Plugins**in your project folder;
-3. Unzip the package in the Plugins folder;
-4. Reload the engine;
+2. Unzip the package to the Plugins folder in engine folder, e.g. `C:\Program Files\Epic Games\UE_4.27\Engine\Plugins`;
+3. Restart the project;
+
+In this case the plugin can be used for any blueprint project.
+
+### C++ projects
+
+1. Create the Plugins folder in the project directory;
+2. Create the TrickyAnimationComponents folder in the Plugins folder;
+3. Download the plugin source code into that folder;
+4. Rebuild the project;
 
 ## Components
 
