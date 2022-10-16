@@ -268,6 +268,7 @@ void USplineAnimationComponent::SetAnimationTime(const float Value)
 	}
 
 	AnimationTime = Value;
+	CurrentAnimationTime = AnimationTime;
 	CalculatePlayRate();
 }
 
@@ -548,7 +549,7 @@ void USplineAnimationComponent::CalculatePlayRate() const
 		MaxTime = 1.f;
 	}
 
-	AnimationTimeline->SetPlayRate(MaxTime / AnimationTime);
+	AnimationTimeline->SetPlayRate(MaxTime / CurrentAnimationTime);
 }
 
 void USplineAnimationComponent::CalculateAnimationTime(const int32 CurrentIndex, const int32 TargetIndex)
@@ -563,7 +564,11 @@ void USplineAnimationComponent::CalculateAnimationTime(const int32 CurrentIndex,
 		const float StartDistance = GetSplineDistanceAtPoint(CurrentIndex);
 		const float FinishDistance = GetSplineDistanceAtPoint(TargetIndex);
 		const float DistanceBetweenPoints = FMath::Abs(FinishDistance - StartDistance);
-		AnimationTime = DistanceBetweenPoints / AnimationSpeed;
+		CurrentAnimationTime = DistanceBetweenPoints / AnimationSpeed;
+	}
+	else
+	{
+		CurrentAnimationTime = AnimationTime;
 	}
 }
 

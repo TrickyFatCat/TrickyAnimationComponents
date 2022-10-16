@@ -259,6 +259,9 @@ private:
 	ESplineAnimationState AnimationState = ESplineAnimationState::Idle;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
+	float CurrentAnimationTime = 0.f;
+	
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
 	int32 CurrentPointIndex = 0;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
