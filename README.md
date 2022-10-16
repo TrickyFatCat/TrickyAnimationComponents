@@ -68,7 +68,15 @@ An actor component which moves the actor towards a target using interpolation fu
 
 #### Parameters
 
-#### Functions
+1. `IsEnabled` - toggles the easing animation;
+2. `FollowActor` - switches between using location from a target actor or a specific world location.
+3. `TargetActor` - an actor which world location will be used as a target location;
+4. `SpecificLocation` - a world location which will be used as a target location;
+5. `LocationOffset` - location offset relative to the target location;
+6. `EasingFunction` - a type of the function which will be used for moving an owner;
+7. `Alpha` - determines the speed of the movement;
+8. `Exponent` - blend exponent, used only with EaseIn, EaseOut, EaseInOut easing functions. The higher the steeper the graph.
+9. `SubSteps` - the number of substeps for the Step easing function;
 
 ### TimelineAnimationComponent
 
