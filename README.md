@@ -54,7 +54,7 @@ A scene component which creates a floating animation along the chosen axis.
 
 1. `FloatX` - toggle floating along X axis;
 2. `FloatY` - toggle floating along Y axis;
-3. `FloatY` - toggle floating along Z axis;
+3. `FloatZ` - toggle floating along Z axis;
 4. `Frequency` - determines the animation speed;
 5. `Amplitude` - determines the position offset;
 
@@ -90,7 +90,8 @@ An actor component which animates transforms of the chosen scene components of a
    * Omits nullptr entries;
 3. Fill the `TransformOffsets` array by hand;
    * The number of offsets must be equal to the number of animated components;
-4. Create or use existing curve float for the `AnimationCurve` variable;
+4. Create or use the existing curve float object for the `AnimationCurve` variable;
+5. Setup animation behavior in blueprints;
 
 #### Parameters
 
@@ -112,6 +113,37 @@ An actor component which animates transforms of the chosen scene components of a
 
 An actor component which moves an actor along a spline component using a timeline component.
 
+#### Setup
+
+1. Add component to an actor;
+2. Create or use the existing curve float object for the `AnimationCurve` variable;
+3. Place the actor in the world;
+4. Choose an actor with a spline component as `TargetActor`;
+5. Setup animation behavior in blueprints if needed;
+
 #### Parameters
 
-#### Functions
+1. `AnimationMode` - a mode which determines how the animation will work;
+2. `SplineActor` - an actor which contains a spline component;
+3. `AnimationCurve` - a float curve object used by the timeline component for the animation;
+    * It's better to use a curve with length equal 1.f;
+4. `AnimationTime` - length of the animation;
+5. `AnimationSpeed` - used for calculation of the animation time;
+   * Great for splines with many points and when the animation time between them must be constant;
+6. `StartPointIndex` - the point index from which the animation will be started;
+7. `IsReversed` - determines if the order of points will be reversed or not;
+8. `StopAtPoints` - toggles if the owner will stop at the spline points during the animation;
+9. `WaitAtStart` - toggles if the owner will "stop" at the start point;
+10. `WaitTimer` - how long the owner will wait at the point;
+11. `SplineOffset` - the offset along the spline;
+12. `LocationOffset` - location offset relative to the current location along the spline;
+13. `InheritRotation` - determines if the rotation along spline must be applied to the owner;
+14. `InheritScale` - determines if the scale along spline must be applied to the owner;
+
+### Functions
+
+1. `Start` - starts the animation;
+2. `Stop` - stops the animation at the next spline point;
+3. `AnimateTo` - animates to the chosen point. Works only in the manual mode;
+4. `Pause` - pauses the animation;
+5. `Resume` - resumes the animation;
