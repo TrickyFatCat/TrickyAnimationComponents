@@ -45,7 +45,7 @@ void USplineAnimationComponent::Activate(bool bReset)
 				StartPointIndex = 0;
 			}
 		}
-		
+
 		if (StartPointIndex > GetLastPointIndex())
 		{
 			StartPointIndex = 0;
@@ -68,7 +68,7 @@ void USplineAnimationComponent::BeginPlay()
 	{
 		LogWarning("SplineActor isn't set for an spline animation component.");
 	}
-	
+
 	if (AnimationCurve)
 	{
 		FOnTimelineFloat AnimationProgress;
@@ -584,12 +584,22 @@ void USplineAnimationComponent::StartWaitTimer()
 		return;
 	}
 
+	AnimationState = ESplineAnimationState::Wait;
+	
+	if (WaitTime <= 0.f)
+	{
+		Continue();
+	}
+
 	const UWorld* World = GetWorld();
 
 	if (World)
 	{
 		World->GetTimerManager().SetTimer(WaitTimerHandle, this, &USplineAnimationComponent::Continue, WaitTime);
-		AnimationState = ESplineAnimationState::Wait;
+	}
+	else
+	{
+		Continue();
 	}
 }
 
