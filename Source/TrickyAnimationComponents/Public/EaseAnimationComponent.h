@@ -19,11 +19,26 @@ class TRICKYANIMATIONCOMPONENTS_API UEaseAnimationComponent : public UActorCompo
 public:
 	UEaseAnimationComponent();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
+	/**
+	 * Toggles if the component will interpolate position towards a target actor or a specific location.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", InlineEditConditionToggle))
+	bool bFollowActor= true;
+
+	/**
+	 * An actor which world location will be used as a target location.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", EditCondition="bFollowActor"))
 	AActor* TargetActor = nullptr;
 
 	/**
-	 * Location offset relative to the target actor.
+	 * The world location which will be used as a target location.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", EditCondition="bUseSpecificLocation"))
+	FVector SpecificLocation{FVector::ZeroVector};
+	
+	/**
+	 * Location offset relative to the target location.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
 	FVector LocationOffset{FVector::ZeroVector};

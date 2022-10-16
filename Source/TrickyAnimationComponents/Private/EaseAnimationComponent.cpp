@@ -37,7 +37,8 @@ void UEaseAnimationComponent::TickComponent(float DeltaTime,
 	if (TargetActor && bIsEnabled)
 	{
 		CurrentLocation = GetOwner()->GetActorLocation();
-		TargetLocation = TargetActor->GetActorLocation() + LocationOffset;
+		TargetLocation = bFollowActor ? TargetActor->GetActorLocation() : SpecificLocation;
+		TargetLocation += LocationOffset;
 		EaseAxis(CurrentLocation.X, TargetLocation.X, NewLocation.X);
 		EaseAxis(CurrentLocation.Y, TargetLocation.Y, NewLocation.Y);
 		EaseAxis(CurrentLocation.Z, TargetLocation.Z, NewLocation.Z);
