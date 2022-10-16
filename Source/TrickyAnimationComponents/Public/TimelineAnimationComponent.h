@@ -116,6 +116,11 @@ private:
 		meta=(AllowPrivateAccess="true", ClampMin="0"))
 	float AnimationTime = 1.f;
 
+	/**
+	 * A float curve which is used by the timeline component for the animation.
+	 *
+	 * It's better to use a curve with length equal 1.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnimationCurve,
 		BlueprintSetter=SetAnimationCurve,
@@ -124,9 +129,9 @@ private:
 	UCurveFloat* AnimationCurve = nullptr;
 
 	/**
-	 * Contain transform offsets for each scene component in AnimatedComponents array.
+	 * Contain transform offsets for each scene component in the AnimatedComponents array.
 	 *
-	 * @warning The number of transforms must be equal to the number of animated components.
+	 * @warning The number of offsets must be equal to the number of animated components.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess="true"))
 	TArray<FTransform> TransformOffsets;
