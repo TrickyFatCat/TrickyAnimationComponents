@@ -262,11 +262,6 @@ private:
 		meta=(AllowPrivateAccess, EditCondition="bUseCustomStops && bStopAtPoints"))
 	TMap<int32, float> CustomStops;
 
-	UPROPERTY(VisibleInstanceOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
-	TArray<int32> PointsIndexes;
-
-	// TODO Implement the custom array of stop indexes.
-
 	UPROPERTY(BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
 	FTimerHandle WaitTimerHandle;
 
@@ -305,7 +300,10 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
 	int32 NextPointIndex = 1;
-
+	
+	UPROPERTY(VisibleInstanceOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
+	TArray<int32> PointsIndexes;
+	
 	bool bMustStop = false;
 
 	void CalculateNextPointIndex();
