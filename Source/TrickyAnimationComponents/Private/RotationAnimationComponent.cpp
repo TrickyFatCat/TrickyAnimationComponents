@@ -28,7 +28,7 @@ void URotationAnimationComponent::TickComponent(float DeltaTime,
 		DeltaRotator.Pitch = bRotateY ? RotationSpeed.Pitch : 0.f;
 		DeltaRotator.Yaw = bRotateZ ? RotationSpeed.Yaw : 0.f;
 
-		AddLocalRotation(DeltaRotator);
+		AddLocalRotation(DeltaRotator * DeltaTime);
 	}
 }
 
