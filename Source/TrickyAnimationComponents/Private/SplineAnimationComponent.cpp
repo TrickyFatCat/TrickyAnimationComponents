@@ -34,6 +34,47 @@ void USplineAnimationComponent::Activate(bool bReset)
 
 	if (HasSplineComponent())
 	{
+		if (bStopAtPoints && !bUseCustomStops)
+		{
+			PointsIndexes.Empty();
+			for (int32 i = 0; i <= GetLastSplinePoint(); i++)
+			{
+				PointsIndexes.Emplace(i);
+			}
+		}
+		else if (bStopAtPoints && bUseCustomStops)
+		{
+			PointsIndexes.Empty();
+			if (!StopsIndexes.Contains(0))
+			{
+				StopsIndexes.Emplace(0);
+			}
+
+			if (!StopsIndexes.Contains(GetLastSplinePoint()))
+			{
+				StopsIndexes.Emplace(GetLastSplinePoint());
+			}
+
+			for (const int32& Index : StopsIndexes)
+			{
+				if (Index < 0 || Index > GetLastSplinePoint())
+				{
+					StopsIndexes.Remove(Index);
+				}
+			}
+
+			auto PredicateSort = [&](const int32& Lhs, const int32& Rhs) { return Lhs <= Rhs; };
+			StopsIndexes.Sort(PredicateSort);
+
+			PointsIndexes = StopsIndexes.Array();
+		}
+		else if (!bStopAtPoints)
+		{
+			PointsIndexes.Empty();
+			PointsIndexes.Emplace(0);
+			PointsIndexes.Emplace(GetLastSplinePoint());
+		}
+
 		if (AnimationMode == ESplineAnimationMode::OneWay || AnimationMode == ESplineAnimationMode::PingPong)
 		{
 			if (StartPointIndex == 0 && bIsReversed)
@@ -51,7 +92,6 @@ void USplineAnimationComponent::Activate(bool bReset)
 			StartPointIndex = 0;
 			LogWarning("Incorrect StartPointIndex value, it can't be <= 0 or > LastPointIndex. Reset it to 0.");
 		}
-
 		CurrentPointIndex = StartPointIndex;
 		CalculateNextPointIndex();
 		CalculateAnimationTime(CurrentPointIndex, NextPointIndex);
@@ -524,8 +564,8 @@ float USplineAnimationComponent::GetPositionAtSpline(const int32 CurrentIndex,
 		return 0.f;
 	}
 
-	const float Start = GetSplineDistanceAtPoint(CurrentIndex);
-	const float Finish = GetSplineDistanceAtPoint(NextIndex);
+	const float Start = GetSplineDistanceAtPoint(PointsIndexes[CurrentIndex]);
+	const float Finish = GetSplineDistanceAtPoint(PointsIndexes[NextIndex]);
 
 	return FMath::Lerp(Start, Finish, Progress);
 }
@@ -561,8 +601,8 @@ void USplineAnimationComponent::CalculateAnimationTime(const int32 CurrentIndex,
 
 	if (bUseAnimationSpeed)
 	{
-		const float StartDistance = GetSplineDistanceAtPoint(CurrentIndex);
-		const float FinishDistance = GetSplineDistanceAtPoint(TargetIndex);
+		const float StartDistance = GetSplineDistanceAtPoint(PointsIndexes[CurrentIndex]);
+		const float FinishDistance = GetSplineDistanceAtPoint(PointsIndexes[TargetIndex]);
 		const float DistanceBetweenPoints = FMath::Abs(FinishDistance - StartDistance);
 		CurrentAnimationTime = DistanceBetweenPoints / AnimationSpeed;
 	}
@@ -573,6 +613,11 @@ void USplineAnimationComponent::CalculateAnimationTime(const int32 CurrentIndex,
 }
 
 int32 USplineAnimationComponent::GetLastPointIndex() const
+{
+	return PointsIndexes.Num() - 1;
+}
+
+int32 USplineAnimationComponent::GetLastSplinePoint() const
 {
 	return SplineComponent->GetNumberOfSplinePoints() - !SplineComponent->IsClosedLoop();
 }
@@ -585,7 +630,7 @@ void USplineAnimationComponent::StartWaitTimer()
 	}
 
 	AnimationState = ESplineAnimationState::Wait;
-	
+
 	if (WaitTime <= 0.f)
 	{
 		Continue();

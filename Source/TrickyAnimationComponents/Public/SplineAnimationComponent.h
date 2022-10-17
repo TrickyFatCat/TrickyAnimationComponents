@@ -194,7 +194,7 @@ private:
 		Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="!bUseAnimationSpeed", ClampMin="0"))
 	float AnimationTime = 1.f;
-	
+
 	/**
 	 * Using for calculating the animation time.
 	 *
@@ -231,7 +231,7 @@ private:
 
 	/**
 	 * If true, the actor will "stop" at start point at the beginning of the animation.
-	 */
+	 */ 
 	UPROPERTY(EditAnywhere,
 		BlueprintReadOnly,
 		Category="Animation|StopsOptions",
@@ -246,6 +246,24 @@ private:
 		Category="Animation|StopsOptions",
 		meta=(AllowPrivateAccess, EditCondition="bStopAtPoints", ClampMin=0.f))
 	float WaitTime = 1.f;
+
+	UPROPERTY(EditInstanceOnly,
+		BlueprintReadOnly,
+		Category="Animation|StopsOptions",
+		meta=(AllowPrivateAccess, EditCondition="bStopAtpoints"))
+	bool bUseCustomStops = false;
+
+	/**
+	 * 
+	 */
+	UPROPERTY(EditInstanceOnly,
+		BlueprintReadOnly,
+		Category="Animation|StopsOptions",
+		meta=(AllowPrivateAccess, EditCondition="bUseCustomStops && bStopAtPoints"))
+	TSet<int32> StopsIndexes;
+
+	UPROPERTY(VisibleInstanceOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
+	TArray<int32> PointsIndexes;
 
 	// TODO Implement the custom array of stop indexes.
 
@@ -281,7 +299,7 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
 	float CurrentAnimationTime = 0.f;
-	
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
 	int32 CurrentPointIndex = 0;
 
@@ -313,6 +331,8 @@ private:
 	void CalculateAnimationTime(const int32 CurrentIndex, const int32 TargetIndex);
 
 	int32 GetLastPointIndex() const;
+
+	int32 GetLastSplinePoint() const;
 
 	void StartWaitTimer();
 
