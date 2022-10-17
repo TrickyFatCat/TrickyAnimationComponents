@@ -244,7 +244,7 @@ private:
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
 		Category="Animation|StopsOptions",
-		meta=(AllowPrivateAccess, EditCondition="bStopAtPoints", ClampMin=0.f))
+		meta=(AllowPrivateAccess, EditCondition="bStopAtPoints && !bUseCustomStops", ClampMin=0.f))
 	float WaitTime = 1.f;
 
 	UPROPERTY(EditInstanceOnly,
@@ -260,7 +260,7 @@ private:
 		BlueprintReadOnly,
 		Category="Animation|StopsOptions",
 		meta=(AllowPrivateAccess, EditCondition="bUseCustomStops && bStopAtPoints"))
-	TSet<int32> StopsIndexes;
+	TMap<int32, float> CustomStops;
 
 	UPROPERTY(VisibleInstanceOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
 	TArray<int32> PointsIndexes;

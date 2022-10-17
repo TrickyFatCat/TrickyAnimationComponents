@@ -45,28 +45,28 @@ void USplineAnimationComponent::Activate(bool bReset)
 		else if (bStopAtPoints && bUseCustomStops)
 		{
 			PointsIndexes.Empty();
-			if (!StopsIndexes.Contains(0))
+			if (!CustomStops.Contains(0))
 			{
-				StopsIndexes.Emplace(0);
+				CustomStops.Emplace(0, 0.f);
 			}
 
-			if (!StopsIndexes.Contains(GetLastSplinePoint()))
+			if (!CustomStops.Contains(GetLastSplinePoint()))
 			{
-				StopsIndexes.Emplace(GetLastSplinePoint());
+				CustomStops.Emplace(GetLastSplinePoint(), 0.f);
 			}
 
-			for (const int32& Index : StopsIndexes)
+			for (const auto Index : CustomStops)
 			{
-				if (Index < 0 || Index > GetLastSplinePoint())
+				if (Index.Key < 0 || Index.Key > GetLastSplinePoint())
 				{
-					StopsIndexes.Remove(Index);
+					CustomStops.Remove(Index.Key);
 				}
 			}
 
 			auto PredicateSort = [&](const int32& Lhs, const int32& Rhs) { return Lhs <= Rhs; };
-			StopsIndexes.Sort(PredicateSort);
+			CustomStops.KeySort(PredicateSort);
 
-			PointsIndexes = StopsIndexes.Array();
+			CustomStops.GetKeys(PointsIndexes);
 		}
 		else if (!bStopAtPoints)
 		{
@@ -632,7 +632,9 @@ void USplineAnimationComponent::StartWaitTimer()
 
 	AnimationState = ESplineAnimationState::Wait;
 
-	if (WaitTime <= 0.f)
+	const float CurrentWaitTime = bUseCustomStops ? CustomStops[PointsIndexes[CurrentPointIndex]] : WaitTime;
+
+	if (CurrentWaitTime <= 0.f)
 	{
 		Continue();
 	}
@@ -641,7 +643,7 @@ void USplineAnimationComponent::StartWaitTimer()
 
 	if (World)
 	{
-		World->GetTimerManager().SetTimer(WaitTimerHandle, this, &USplineAnimationComponent::Continue, WaitTime);
+		World->GetTimerManager().SetTimer(WaitTimerHandle, this, &USplineAnimationComponent::Continue, CurrentWaitTime);
 	}
 	else
 	{
