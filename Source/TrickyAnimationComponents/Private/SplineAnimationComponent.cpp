@@ -534,6 +534,7 @@ void USplineAnimationComponent::FinishAnimation()
 		}
 		else
 		{
+			AnimationState = ESplineAnimationState::Wait;
 			Continue();
 		}
 
