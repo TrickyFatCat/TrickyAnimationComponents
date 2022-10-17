@@ -134,6 +134,8 @@ An actor component which moves an actor along a spline component using a timelin
 7. `IsReversed` - determines if the order of points will be reversed or not;
 8. `StopAtPoints` - toggles if the owner will stop at the spline points during the animation;
 9. `WaitAtStart` - toggles if the owner will "stop" at the start point;
+10. `UseCustomStops` - enables custom stops adjustments;
+11. `CustomStops` - map with point indexes and wait time;
 10. `WaitTimer` - how long the owner will wait at the point;
 11. `SplineOffset` - the offset along the spline;
 12. `LocationOffset` - location offset relative to the current location along the spline;
