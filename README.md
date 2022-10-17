@@ -8,7 +8,7 @@ The plugin can be used in both C++ and Blueprint projects.
 
 ### Blueprint projects
 
-1. Download package file;
+1. Download [**package file**](https://github.com/TrickyFatCat/TrickyAnimationComponents/releases/tag/v1.0);
 2. Unzip the package to the Plugins folder in engine folder, e.g. `C:\Program Files\Epic Games\UE_4.27\Engine\Plugins`;
 3. Restart the project;
 
