@@ -4,18 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "FloatingAnimationComponent.generated.h"
+#include "OscillationAnimationComponent.generated.h"
+
+
 
 /**
  * A simple scene component which creates a floating animation.
  */
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class TRICKYANIMATIONCOMPONENTS_API UFloatingAnimationComponent : public USceneComponent
+class TRICKYANIMATIONCOMPONENTS_API UOscillationAnimationComponent : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:
-	UFloatingAnimationComponent();
+	UOscillationAnimationComponent();
 
 protected:
 	virtual void BeginPlay() override;

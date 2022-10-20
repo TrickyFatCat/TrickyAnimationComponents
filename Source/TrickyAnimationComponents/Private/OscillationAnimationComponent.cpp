@@ -1,16 +1,16 @@
 // MIT License Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov
 
 
-#include "FloatingAnimationComponent.h"
+#include "OscillationAnimationComponent.h"
 #include "Engine/World.h"
 
-UFloatingAnimationComponent::UFloatingAnimationComponent()
+UOscillationAnimationComponent::UOscillationAnimationComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
-void UFloatingAnimationComponent::BeginPlay()
+void UOscillationAnimationComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -19,7 +19,7 @@ void UFloatingAnimationComponent::BeginPlay()
 }
 
 
-void UFloatingAnimationComponent::TickComponent(float DeltaTime,
+void UOscillationAnimationComponent::TickComponent(float DeltaTime,
                                                 ELevelTick TickType,
                                                 FActorComponentTickFunction* ThisTickFunction)
 {
@@ -37,7 +37,7 @@ void UFloatingAnimationComponent::TickComponent(float DeltaTime,
 	}
 }
 
-void UFloatingAnimationComponent::SetIsFloating(const bool bX, const bool bY, const bool bZ)
+void UOscillationAnimationComponent::SetIsFloating(const bool bX, const bool bY, const bool bZ)
 {
 	bFloatX = bX;
 	bFloatY = bY;
@@ -46,7 +46,7 @@ void UFloatingAnimationComponent::SetIsFloating(const bool bX, const bool bY, co
 	ToggleTick();
 }
 
-void UFloatingAnimationComponent::Float(const bool bAxisAnimated,
+void UOscillationAnimationComponent::Float(const bool bAxisAnimated,
                                           float& Value,
                                           const float& InitialValue,
                                           const float& AxisAmplitude,
@@ -59,7 +59,7 @@ void UFloatingAnimationComponent::Float(const bool bAxisAnimated,
 	}
 }
 
-void UFloatingAnimationComponent::ToggleTick()
+void UOscillationAnimationComponent::ToggleTick()
 {
 	SetComponentTickEnabled((!bFloatX && !bFloatY && !bFloatZ) || (bFloatX || bFloatY || bFloatZ));
 }
