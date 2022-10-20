@@ -15,51 +15,79 @@ void UOscillationAnimationComponent::BeginPlay()
 	Super::BeginPlay();
 
 	InitialLocation = GetRelativeLocation();
-	ToggleTick();
+	InitialRotation = GetRelativeRotation();
+	InitialScale = GetRelativeScale3D();
 }
 
 
 void UOscillationAnimationComponent::TickComponent(float DeltaTime,
-                                                ELevelTick TickType,
-                                                FActorComponentTickFunction* ThisTickFunction)
+                                                   ELevelTick TickType,
+                                                   FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (GetWorld())
 	{
-		FVector CurrentLocation = GetRelativeLocation();
+		NewLocation = GetRelativeLocation();
+		OscillateVector(NewLocation, InitialLocation, LocationAnimationSettings);
+		SetRelativeLocation(NewLocation);
 
-		Float(bFloatX, CurrentLocation.X, InitialLocation.X, Amplitude.X, Frequency.X);
-		Float(bFloatY, CurrentLocation.Y, InitialLocation.Y, Amplitude.Y, Frequency.Y);
-		Float(bFloatZ, CurrentLocation.Z, InitialLocation.Z, Amplitude.Z, Frequency.Z);
+		NewRotation = GetRelativeRotation();
+		OscillateRotator(NewRotation, InitialRotation, RotationAnimationSettings);
+		SetRelativeRotation(NewRotation);
 
-		SetRelativeLocation(CurrentLocation);
+		NewScale = GetRelativeScale3D();
+		OscillateVector(NewScale, InitialScale, ScaleAnimationSettings);
+		// NewScale = NewScale.GetAbs();
+		SetRelativeScale3D(NewScale);
 	}
 }
 
-void UOscillationAnimationComponent::SetIsFloating(const bool bX, const bool bY, const bool bZ)
+void UOscillationAnimationComponent::OscillateAxis(float& Value,
+                                                   const float& InitialValue,
+                                                   const float& Amplitude,
+                                                   const float& Frequency) const
 {
-	bFloatX = bX;
-	bFloatY = bY;
-	bFloatZ = bZ;
-
-	ToggleTick();
+	const float Time = GetWorld()->GetTimeSeconds();
+	Value = InitialValue + Amplitude * FMath::Sin(Frequency * Time);
 }
 
-void UOscillationAnimationComponent::Float(const bool bAxisAnimated,
-                                          float& Value,
-                                          const float& InitialValue,
-                                          const float& AxisAmplitude,
-                                          const float& AxisFrequency) const
+void UOscillationAnimationComponent::OscillateVector(FVector& Vector,
+                                                     const FVector& InitialVector,
+                                                     const FOscillationSettings& Settings) const
 {
-	if (bAxisAnimated)
+	if (Settings.bAnimateX)
 	{
-		const float Time = GetWorld()->GetTimeSeconds();
-		Value = InitialValue + AxisAmplitude * FMath::Sin(AxisFrequency * Time);
+		OscillateAxis(Vector.X, InitialVector.X, Settings.Amplitude.X, Settings.Frequency.X);
+	}
+
+	if (Settings.bAnimateY)
+	{
+		OscillateAxis(Vector.Y, InitialVector.Y, Settings.Amplitude.Y, Settings.Frequency.Y);
+	}
+
+	if (Settings.bAnimateZ)
+	{
+		OscillateAxis(Vector.Z, InitialVector.Z, Settings.Amplitude.Z, Settings.Frequency.Z);
 	}
 }
 
-void UOscillationAnimationComponent::ToggleTick()
+void UOscillationAnimationComponent::OscillateRotator(FRotator& Rotator,
+                                                      const FRotator& InitialRotator,
+                                                      const FOscillationSettings& Settings) const
 {
-	SetComponentTickEnabled((!bFloatX && !bFloatY && !bFloatZ) || (bFloatX || bFloatY || bFloatZ));
+	if (Settings.bAnimateX)
+	{
+		OscillateAxis(Rotator.Roll, InitialRotator.Roll, Settings.Amplitude.X, Settings.Amplitude.X);
+	}
+
+	if (Settings.bAnimateY)
+	{
+		OscillateAxis(Rotator.Pitch, InitialRotator.Pitch, Settings.Amplitude.Y, Settings.Amplitude.Y);
+	}
+
+	if (Settings.bAnimateZ)
+	{
+		OscillateAxis(Rotator.Yaw, InitialRotator.Yaw, Settings.Amplitude.Z, Settings.Amplitude.Z);
+	}
 }

@@ -7,11 +7,32 @@
 #include "OscillationAnimationComponent.generated.h"
 
 
+USTRUCT(BlueprintType)
+struct FOscillationSettings
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="OscillationSettings")
+	bool bAnimateX = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="OscillationSettings")
+	bool bAnimateY = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="OscillationSettings")
+	bool bAnimateZ = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="OscillationSettings")
+	FVector Amplitude{FVector::ZeroVector};
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="OscillationSettings")
+	FVector Frequency{FVector::ZeroVector};
+};
+
 
 /**
  * A simple scene component which creates a floating animation.
  */
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(TrickyAnimationComponents), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API UOscillationAnimationComponent : public USceneComponent
 {
 	GENERATED_BODY()
@@ -27,48 +48,32 @@ public:
 	                           ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|FloatingAnimaton")
-	void SetIsFloating(const bool bX, const bool bY, const bool bZ);
-
-	/**
-	 * Determines the animation speed. 
-	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
-	FVector Frequency{FVector::UpVector};
+	FOscillationSettings LocationAnimationSettings{};
 
-	/**
-	 * Determines the position offset.
-	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
-	FVector Amplitude{FVector::UpVector};
-
-protected:
-	/**
-	 * Toggles floating along the X axis.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
-	bool bFloatX = false;
-
-	/**
-	 * Toggles floating along the Y axis.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
-	bool bFloatY = false;
-
-	/**
-	 * Toggles floating along the Z axis.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
-	bool bFloatZ = true;
+	FOscillationSettings RotationAnimationSettings{};
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
+	FOscillationSettings ScaleAnimationSettings{};
+
 private:
 	FVector InitialLocation{FVector::ZeroVector};
+	FRotator InitialRotation{FRotator::ZeroRotator};
+	FVector InitialScale{FVector::ZeroVector};
+	
+	FVector NewLocation{FVector::ZeroVector};
+	FRotator NewRotation{FRotator::ZeroRotator};
+	FVector NewScale{FVector::ZeroVector};
+	
+	void OscillateAxis(float& Value,
+	                   const float& InitialValue,
+	                   const float& Amplitude,
+	                   const float& Frequency) const;
 
-	void Float(const bool bAxisAnimated,
-	             float& Value,
-	             const float& InitialValue,
-	             const float& AxisAmplitude,
-	             const float& AxisFrequency) const;
+	void OscillateVector(FVector& Vector, const FVector& InitialVector, const FOscillationSettings& Settings) const;
 
-	void ToggleTick();
+	void OscillateRotator(FRotator& Rotator,
+	                      const FRotator& InitialRotator,
+	                      const FOscillationSettings& Settings) const;
 };
