@@ -10,7 +10,7 @@ The plugin can be used in both C++ and Blueprint projects.
 
 **At the moment, the package is compatible only with Unreal Engine 4.**
 
-1. Download [**package file**](https://github.com/TrickyFatCat/TrickyAnimationComponents/releases/tag/v1.0);
+1. Download [**package file**](https://github.com/TrickyFatCat/TrickyAnimationComponents/releases/tag/v1.1);
 2. Unzip the package to the Plugins folder in engine folder, e.g. `C:\Program Files\Epic Games\UE_4.27\Engine\Plugins`;
 3. Restart the project;
 
@@ -48,17 +48,19 @@ A scene component which rotates along the chosen axis.
 
 1. `SetIsRotating` - toggles rotation along XYZ axis;
 
-### FloatingAnimationComponent
+### OscillationAnimationComponent
 
-A scene component which creates a floating animation along the chosen axis.
+A scene component which create oscillation animation for location, rotation and scale.
 
 #### Parameters
 
-1. `FloatX` - toggle floating along X axis;
-2. `FloatY` - toggle floating along Y axis;
-3. `FloatZ` - toggle floating along Z axis;
-4. `Frequency` - determines the animation speed;
-5. `Amplitude` - determines the position offset;
+1. `IsEnable` - toggles all the animations;
+2. For location, rotation, scale:
+   1. `AnimateX` - toggle animation along X axis;
+   2. `AnimateY` - toggle animation along Y axis;
+   3. `AnimateZ` - toggle animation along Z axis;
+   4. `Amplitude` - determines the animation amplitude for each axis;
+   5. `Frequency` - determines the animation frequency for each axis;
 
 #### Functions
 
@@ -138,11 +140,11 @@ An actor component which moves an actor along a spline component using a timelin
 9. `WaitAtStart` - toggles if the owner will "stop" at the start point;
 10. `UseCustomStops` - enables custom stops adjustments;
 11. `CustomStops` - map with point indexes and wait time;
-10. `WaitTimer` - how long the owner will wait at the point;
-11. `SplineOffset` - the offset along the spline;
-12. `LocationOffset` - location offset relative to the current location along the spline;
-13. `InheritRotation` - determines if the rotation along spline must be applied to the owner;
-14. `InheritScale` - determines if the scale along spline must be applied to the owner;
+12. `WaitTimer` - how long the owner will wait at the point;
+13. `SplineOffset` - the offset along the spline;
+14. `LocationOffset` - location offset relative to the current location along the spline;
+15. `InheritRotation` - determines if the rotation along spline must be applied to the owner;
+16. `InheritScale` - determines if the scale along spline must be applied to the owner;
 
 ### Functions
 
