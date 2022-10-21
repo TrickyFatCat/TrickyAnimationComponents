@@ -57,7 +57,7 @@ struct FAxisInheritance
  * A simple actor component which can animate the owner along the spline component.
  */
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(TrcickyAnimationComponent), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API USplineAnimationComponent : public UActorComponent
 {
 	GENERATED_BODY()

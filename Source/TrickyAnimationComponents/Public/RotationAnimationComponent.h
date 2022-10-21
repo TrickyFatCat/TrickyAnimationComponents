@@ -10,7 +10,7 @@
  * A simple scene components which rotates along chosen axis.
  */
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(TrickyAnimationComponents), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API URotationAnimationComponent : public USceneComponent
 {
 	GENERATED_BODY()

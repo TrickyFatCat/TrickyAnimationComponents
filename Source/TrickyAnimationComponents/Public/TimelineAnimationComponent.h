@@ -36,7 +36,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTimelineAnimationResumedSignature);
  * An actor component which animates transforms of chosen scene components using timeline.
  */
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(TrickyAnimationComponents), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API UTimelineAnimationComponent : public UActorComponent
 {
 	GENERATED_BODY()

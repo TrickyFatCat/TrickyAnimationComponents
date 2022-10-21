@@ -11,7 +11,7 @@
  * A simple component which interpolates its owner towards the chosen actor in the level.
  */
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(TrickyAnimationComponents), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API UEaseAnimationComponent : public UActorComponent
 {
 	GENERATED_BODY()
