@@ -39,7 +39,6 @@ void UOscillationAnimationComponent::TickComponent(float DeltaTime,
 
 		NewScale = GetRelativeScale3D();
 		OscillateVector(NewScale, InitialScale, ScaleAnimationSettings);
-		NewScale = NewScale.GetAbs();
 		SetRelativeScale3D(NewScale);
 	}
 }
@@ -90,16 +89,16 @@ void UOscillationAnimationComponent::OscillateRotator(FRotator& Rotator,
 {
 	if (Settings.bAnimateX)
 	{
-		OscillateAxis(Rotator.Roll, InitialRotator.Roll, Settings.Amplitude.X, Settings.Amplitude.X);
+		OscillateAxis(Rotator.Roll, InitialRotator.Roll, Settings.Amplitude.X, Settings.Frequency.X);
 	}
 
 	if (Settings.bAnimateY)
 	{
-		OscillateAxis(Rotator.Pitch, InitialRotator.Pitch, Settings.Amplitude.Y, Settings.Amplitude.Y);
+		OscillateAxis(Rotator.Pitch, InitialRotator.Pitch, Settings.Amplitude.Y, Settings.Frequency.Y);
 	}
 
 	if (Settings.bAnimateZ)
 	{
-		OscillateAxis(Rotator.Yaw, InitialRotator.Yaw, Settings.Amplitude.Z, Settings.Amplitude.Z);
+		OscillateAxis(Rotator.Yaw, InitialRotator.Yaw, Settings.Amplitude.Z, Settings.Frequency.Z);
 	}
 }
