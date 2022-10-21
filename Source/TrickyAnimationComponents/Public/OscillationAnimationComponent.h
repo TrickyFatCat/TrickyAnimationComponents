@@ -48,6 +48,9 @@ public:
 	                           ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetIsEnabled, BlueprintSetter=SetIsEnabled, Category="Animation")
+	bool bIsEnabled = true;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	FOscillationSettings LocationAnimationSettings{};
 
@@ -56,6 +59,12 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	FOscillationSettings ScaleAnimationSettings{};
+	
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|OscillationAnimation")
+	bool GetIsEnabled() const;
+	
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|OscillationAnimation")
+	void SetIsEnabled(const bool Value);
 
 private:
 	FVector InitialLocation{FVector::ZeroVector};

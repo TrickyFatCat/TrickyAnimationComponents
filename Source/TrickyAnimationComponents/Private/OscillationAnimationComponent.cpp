@@ -17,6 +17,7 @@ void UOscillationAnimationComponent::BeginPlay()
 	InitialLocation = GetRelativeLocation();
 	InitialRotation = GetRelativeRotation();
 	InitialScale = GetRelativeScale3D();
+	SetIsEnabled(bIsEnabled);
 }
 
 
@@ -38,9 +39,20 @@ void UOscillationAnimationComponent::TickComponent(float DeltaTime,
 
 		NewScale = GetRelativeScale3D();
 		OscillateVector(NewScale, InitialScale, ScaleAnimationSettings);
-		// NewScale = NewScale.GetAbs();
+		NewScale = NewScale.GetAbs();
 		SetRelativeScale3D(NewScale);
 	}
+}
+
+bool UOscillationAnimationComponent::GetIsEnabled() const
+{
+	return bIsEnabled;
+}
+
+void UOscillationAnimationComponent::SetIsEnabled(const bool Value)
+{
+	bIsEnabled = Value;
+	SetComponentTickEnabled(bIsEnabled);
 }
 
 void UOscillationAnimationComponent::OscillateAxis(float& Value,
