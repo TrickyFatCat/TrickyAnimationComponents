@@ -21,10 +21,10 @@ struct FOscillationSettings
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="OscillationSettings")
 	bool bAnimateZ = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="OscillationSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="OscillationSettings", meta=(AllowPreserveRatio=false))
 	FVector Amplitude{FVector::ZeroVector};
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="OscillationSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="OscillationSettings", meta=(AllowPreserveRatio=false))
 	FVector Frequency{FVector::ZeroVector};
 };
 
