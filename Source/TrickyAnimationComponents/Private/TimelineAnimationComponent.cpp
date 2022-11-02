@@ -187,6 +187,11 @@ bool UTimelineAnimationComponent::CanPlayAnimation() const
 	return true;
 }
 
+ETimelineAnimationState UTimelineAnimationComponent::GetCurrentState() const
+{
+	return CurrentState;
+}
+
 void UTimelineAnimationComponent::AnimateTransform(const float Progress)
 {
 	if (!CanPlayAnimation())

@@ -108,6 +108,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
 	bool CanPlayAnimation() const;
 
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|TimelineAnimation")
+	ETimelineAnimationState GetCurrentState() const;
+
 private:
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnimationTime,
@@ -139,7 +142,7 @@ private:
 	UPROPERTY()
 	TArray<FTransform> InitialTransforms;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation|States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetCurrentState, Category="Animation|States", meta=(AllowPrivateAccess="true"))
 	ETimelineAnimationState CurrentState = InitialState;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation|States", meta=(AllowPrivateAccess="true"))
