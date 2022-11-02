@@ -22,21 +22,30 @@ public:
 	/**
 	 * Toggles if the component will interpolate position towards a target actor or a specific location.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", InlineEditConditionToggle))
-	bool bFollowActor= true;
+	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
+		Category="Animation",
+		meta=(DisplayAfter="bIsEnabled", InlineEditConditionToggle))
+	bool bFollowActor = true;
 
 	/**
 	 * An actor which world location will be used as a target location.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", EditCondition="bFollowActor"))
+	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
+		Category="Animation",
+		meta=(DisplayAfter="bIsEnabled", EditCondition="bFollowActor"))
 	AActor* TargetActor = nullptr;
 
 	/**
 	 * The world location which will be used as a target location.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", EditCondition="bUseSpecificLocation"))
+	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
+		Category="Animation",
+		meta=(DisplayAfter="bIsEnabled", EditCondition="!bFollowActor"))
 	FVector SpecificLocation{FVector::ZeroVector};
-	
+
 	/**
 	 * Location offset relative to the target location.
 	 */
@@ -71,7 +80,7 @@ public:
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
 	bool GetIsEnabled() const;
-	
+
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|EaseAnimation")
 	void SetIsEnabled(const bool Value);
 
