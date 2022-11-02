@@ -138,6 +138,11 @@ void UTimelineAnimationComponent::SetAnimationCurve(UCurveFloat* Value)
 	CalculatePlayRate();
 }
 
+float UTimelineAnimationComponent::GetAnimationProgress() const
+{
+	return AnimationTimeline->GetPlaybackPosition();
+}
+
 void UTimelineAnimationComponent::SetAnimatedComponents(TArray<USceneComponent*>& Components)
 {
 	if (Components.Num() == 0)

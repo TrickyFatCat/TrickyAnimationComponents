@@ -97,6 +97,9 @@ public:
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|TimelineAnimation")
 	void SetAnimationCurve(UCurveFloat* Value);
 
+	UFUNCTION(BlueprintPure, Category="TrickyAnimations|TimelineAnimation")
+	float GetAnimationProgress() const;
+
 	/**
 	 * Fills the AnimatedComponents array.
 	 *
