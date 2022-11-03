@@ -8,6 +8,7 @@
 UTimelineAnimationComponent::UTimelineAnimationComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	UActorComponent::SetAutoActivate(true);
 
 	AnimationTimeline = CreateDefaultSubobject<UTimelineComponent>("AnimationTimeline");
 }
@@ -35,11 +36,13 @@ void UTimelineAnimationComponent::BeginPlay()
 		AnimationTimeline->SetTimelineFinishedFunc(AnimationFinished);
 	}
 
-	CanPlayAnimation();
+	if (CanPlayAnimation())
+	{
+		AnimateTransform(CurrentState == ETimelineAnimationState::End);
+	}
 
 	Super::BeginPlay();
 }
-
 
 void UTimelineAnimationComponent::Start()
 {
@@ -153,13 +156,19 @@ void UTimelineAnimationComponent::SetAnimatedComponents(TArray<USceneComponent*>
 	AnimatedComponents.Empty();
 	InitialTransforms.Empty();
 
+	if (bAnimateWholeActor)
+	{
+		Components.Empty();
+		Components.Emplace(GetOwner()->GetRootComponent());
+	}
+
 	for (auto Component : Components)
 	{
 		if (!Component || AnimatedComponents.Contains(Component))
 		{
 			continue;
 		}
-	
+
 		AnimatedComponents.AddUnique(Component);
 		InitialTransforms.Add(Component->GetRelativeTransform());
 	}

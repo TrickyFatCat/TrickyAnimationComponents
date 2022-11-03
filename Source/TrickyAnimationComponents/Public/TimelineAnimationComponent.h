@@ -134,6 +134,9 @@ private:
 		meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
+	bool bAnimateWholeActor = false;
+
 	/**
 	 * Contain transform offsets for each scene component in the AnimatedComponents array.
 	 *
