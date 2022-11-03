@@ -173,7 +173,7 @@ void UTimelineAnimationComponent::SetAnimatedComponents(TArray<USceneComponent*>
 		InitialTransforms.Add(Component->GetRelativeTransform());
 	}
 
-	if (CanPlayAnimation())
+	if (CanPlayAnimation() && !bAnimateWholeActor)
 	{
 		AnimateTransform(InitialState == ETimelineAnimationState::End);
 	}
