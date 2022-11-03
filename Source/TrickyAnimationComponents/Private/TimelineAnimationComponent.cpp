@@ -13,6 +13,17 @@ UTimelineAnimationComponent::UTimelineAnimationComponent()
 	AnimationTimeline = CreateDefaultSubobject<UTimelineComponent>("AnimationTimeline");
 }
 
+void UTimelineAnimationComponent::Activate(bool bReset)
+{
+	Super::Activate(bReset);
+
+	if (bAnimateWholeActor)
+	{
+		TArray<USceneComponent*> Array{};
+		SetAnimatedComponents(Array);
+	}
+}
+
 void UTimelineAnimationComponent::BeginPlay()
 {
 	CurrentState = InitialState;
@@ -148,13 +159,13 @@ float UTimelineAnimationComponent::GetAnimationProgress() const
 
 void UTimelineAnimationComponent::SetAnimatedComponents(TArray<USceneComponent*>& Components)
 {
+	AnimatedComponents.Empty();
+	InitialTransforms.Empty();
+	
 	if (Components.Num() == 0)
 	{
 		return;
 	}
-
-	AnimatedComponents.Empty();
-	InitialTransforms.Empty();
 
 	if (bAnimateWholeActor)
 	{

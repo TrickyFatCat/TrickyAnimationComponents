@@ -44,6 +44,8 @@ class TRICKYANIMATIONCOMPONENTS_API UTimelineAnimationComponent : public UActorC
 public:
 	UTimelineAnimationComponent();
 
+	virtual void Activate(bool bReset) override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -134,6 +136,9 @@ private:
 		meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
+	/**
+	 * If true the whole actor will be animated
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
 	bool bAnimateWholeActor = false;
 
