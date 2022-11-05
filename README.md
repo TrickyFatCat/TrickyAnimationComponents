@@ -37,7 +37,7 @@ The plugin contains:
 
 A scene component which rotates along the chosen axis.
 
-#### Parameters
+#### Variables
 
 1. `RotateX` - toggle rotation along the X axis;
 2. `RotateY` - toggle rotation along the Y axis;
@@ -52,7 +52,7 @@ A scene component which rotates along the chosen axis.
 
 A scene component which create oscillation animation for location, rotation and scale.
 
-#### Parameters
+#### Variables
 
 1. `IsEnable` - toggles all the animations;
 2. For location, rotation, scale:
@@ -70,7 +70,7 @@ A scene component which create oscillation animation for location, rotation and 
 
 An actor component which moves the actor towards a target using interpolation functions.
 
-#### Parameters
+#### Variables
 
 1. `IsEnabled` - toggles the easing animation;
 2. `FollowActor` - switches between using location from a target actor or a specific world location.
@@ -97,12 +97,13 @@ An actor component which animates transforms of the chosen scene components of a
 4. Create or use the existing curve float object for the `AnimationCurve` variable;
 5. Setup animation behavior in blueprints;
 
-#### Parameters
+#### Variables
 
 1. `InitialState` - the initial state of the animation on begin play;
 2. `AnimationTime` - the length of the animation;
 3. `AnimationCurve` - a float curve object used by the timeline component for the animation. It's better to use a curve with length equal 1.f;
-4. `TransformOffsets` - an array with transform offsets for each scene component in the AnimatedComponents array. The number of offsets must be equal to the number of animated components;
+4. `AnimateWholeActor` - if true, the whole actor will be animated. Doesn't require call of `SetAnimatedComponents`;
+5. `TransformOffsets` - an array with transform offsets for each scene component in the AnimatedComponents array. The number of offsets must be equal to the number of animated components;
 
 #### Functions
 
@@ -112,6 +113,7 @@ An actor component which animates transforms of the chosen scene components of a
 4. `Resume` - resumes the animation;
 5. `SetAnimatedComponents` - fills the Animated components array with the chosen scene components. It'll omit nullptr entries;
 6. `CanPlayAnimation` - returns if the animation can be played or not;
+7. `GetAnimationProgress` - returns progress of the animation;
 
 ### SplineAnimationComponent
 
@@ -125,7 +127,7 @@ An actor component which moves an actor along a spline component using a timelin
 4. Choose an actor with a spline component as `TargetActor`;
 5. Setup animation behavior in blueprints if needed;
 
-#### Parameters
+#### Variables
 
 1. `AnimationMode` - a mode which determines how the animation will work;
 2. `SplineActor` - an actor which contains a spline component;
