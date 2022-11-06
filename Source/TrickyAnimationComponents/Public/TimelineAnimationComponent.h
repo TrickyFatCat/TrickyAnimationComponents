@@ -116,6 +116,10 @@ public:
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|TimelineAnimation")
 	ETimelineAnimationState GetCurrentState() const;
 
+	void GetTransformOffsets(TArray<FTransform>& Offsets) const;
+
+	void SetTransformOffsets(const TArray<FTransform>& Offsets);
+
 private:
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnimationTime,

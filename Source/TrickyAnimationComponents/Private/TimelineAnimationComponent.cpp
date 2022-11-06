@@ -217,6 +217,16 @@ ETimelineAnimationState UTimelineAnimationComponent::GetCurrentState() const
 	return CurrentState;
 }
 
+void UTimelineAnimationComponent::GetTransformOffsets(TArray<FTransform>& Offsets) const
+{
+	Offsets = TransformOffsets;
+}
+
+void UTimelineAnimationComponent::SetTransformOffsets(const TArray<FTransform>& Offsets)
+{
+	TransformOffsets = Offsets;
+}
+
 void UTimelineAnimationComponent::AnimateTransform(const float Progress)
 {
 	if (!CanPlayAnimation())
