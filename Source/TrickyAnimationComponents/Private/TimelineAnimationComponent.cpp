@@ -227,6 +227,11 @@ ETimelineAnimationState UTimelineAnimationComponent::GetCurrentState() const
 	return CurrentState;
 }
 
+ETimelineAnimationState UTimelineAnimationComponent::GetTargetState() const
+{
+	return TargetState;
+}
+
 void UTimelineAnimationComponent::GetTransformOffsets(TArray<FTransform>& Offsets) const
 {
 	Offsets = TransformOffsets;

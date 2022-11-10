@@ -115,6 +115,9 @@ public:
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|TimelineAnimation")
 	ETimelineAnimationState GetCurrentState() const;
+	
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|TimelineAnimation")
+	ETimelineAnimationState GetTargetState() const;
 
 	void GetTransformOffsets(TArray<FTransform>& Offsets) const;
 
@@ -160,7 +163,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetCurrentState, Category="Animation|States", meta=(AllowPrivateAccess="true"))
 	ETimelineAnimationState CurrentState = InitialState;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation|States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetTargetState, Category="Animation|States", meta=(AllowPrivateAccess="true"))
 	ETimelineAnimationState TargetState = ETimelineAnimationState::End;
 
 	UPROPERTY(BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess="true"))
