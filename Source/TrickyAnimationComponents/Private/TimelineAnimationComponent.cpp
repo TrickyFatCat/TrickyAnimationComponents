@@ -55,11 +55,11 @@ void UTimelineAnimationComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UTimelineAnimationComponent::Start()
+bool UTimelineAnimationComponent::Start()
 {
 	if (!CanPlayAnimation())
 	{
-		return;
+		return false;
 	}
 
 	if (CurrentState != ETimelineAnimationState::Transition && CurrentState != ETimelineAnimationState::Pause)
@@ -74,14 +74,18 @@ void UTimelineAnimationComponent::Start()
 
 		CurrentState = ETimelineAnimationState::Transition;
 		OnAnimationStarted.Broadcast(TargetState);
+		
+		return true;
 	}
+
+	return false;
 }
 
-void UTimelineAnimationComponent::Reverse()
+bool UTimelineAnimationComponent::Reverse()
 {
 	if (!CanPlayAnimation())
 	{
-		return;
+		return false;
 	}
 
 	if (CurrentState == ETimelineAnimationState::Transition)
@@ -92,32 +96,38 @@ void UTimelineAnimationComponent::Reverse()
 		AnimationTimeline->Stop();
 		TargetState == ETimelineAnimationState::End ? AnimationTimeline->Play() : AnimationTimeline->Reverse();
 		OnAnimationReversed.Broadcast(TargetState);
+		return true;
 	}
+
+	return false;
 }
 
-void UTimelineAnimationComponent::Pause()
+bool UTimelineAnimationComponent::Pause()
 {
 	if (CurrentState != ETimelineAnimationState::Transition)
 	{
 		LogWarning("Can't use the Pause() function if the current state isn't transition");
-		return;
+		return false;
 	}
+	
 	CurrentState = ETimelineAnimationState::Pause;
 	AnimationTimeline->Stop();
 	OnAnimationPaused.Broadcast();
+	return true;
 }
 
-void UTimelineAnimationComponent::Resume()
+bool UTimelineAnimationComponent::Resume()
 {
 	if (CurrentState != ETimelineAnimationState::Pause)
 	{
 		LogWarning("Can't use the Resume() function if the current state isn't pause.");
-		return;
+		return false;
 	}
 
 	CurrentState = ETimelineAnimationState::Transition;
 	TargetState == ETimelineAnimationState::End ? AnimationTimeline->Play() : AnimationTimeline->Reverse();
 	OnAnimationResumed.Broadcast();
+	return true;
 }
 
 float UTimelineAnimationComponent::GetAnimationTime() const

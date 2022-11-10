@@ -76,16 +76,16 @@ public:
 	FOnTimelineAnimationResumedSignature OnAnimationResumed;
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
-	void Start();
+	bool Start();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
-	void Reverse();
+	bool Reverse();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
-	void Pause();
+	bool Pause();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
-	void Resume();
+	bool Resume();
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|TimelineAnimation")
 	float GetAnimationTime() const;
