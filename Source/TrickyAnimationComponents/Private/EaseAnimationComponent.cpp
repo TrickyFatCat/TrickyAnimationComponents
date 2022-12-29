@@ -34,7 +34,7 @@ void UEaseAnimationComponent::TickComponent(float DeltaTime,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (TargetActor)
+	if (TargetActor || !bFollowActor)
 	{
 		CurrentLocation = GetOwner()->GetActorLocation();
 		TargetLocation = bFollowActor ? TargetActor->GetActorLocation() : SpecificLocation;
