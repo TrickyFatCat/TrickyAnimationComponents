@@ -57,13 +57,13 @@ public:
 	/**
 	 * Location offset relative to the target location.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
 	FVector LocationOffset{FVector::ZeroVector};
 
 	/**
 	 * A type of the function which will be used for moving an owner.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
 	TEnumAsByte<EEasingFunc::Type> EasingFunction = EEasingFunc::EaseInOut;
 
 	/**
@@ -71,13 +71,13 @@ public:
 	 * 
 	 * The higher the steeper the graph.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
 	float Exponent = 2.f;
 
 	/**
 	 * Amount of substeps, used only with the Step easing function.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
 	int32 SubStep = 10.f;
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
