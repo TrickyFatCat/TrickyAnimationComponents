@@ -106,5 +106,5 @@ private:
 
 	FVector NewLocation{FVector::ZeroVector};
 
-	void EaseAxis(const float& CurrentLocationAxis, const float& TargetLocationAxis, float& NewLocationAxis) const;
+	float EaseAxis(const float CurrentLocationAxis, const float TargetLocationAxis) const;
 };

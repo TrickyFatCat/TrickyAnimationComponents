@@ -34,26 +34,25 @@ void UEaseAnimationComponent::TickComponent(float DeltaTime,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (TargetActor && bIsEnabled)
+	if (TargetActor)
 	{
 		CurrentLocation = GetOwner()->GetActorLocation();
 		TargetLocation = bFollowActor ? TargetActor->GetActorLocation() : SpecificLocation;
 		TargetLocation += LocationOffset;
-		EaseAxis(CurrentLocation.X, TargetLocation.X, NewLocation.X);
-		EaseAxis(CurrentLocation.Y, TargetLocation.Y, NewLocation.Y);
-		EaseAxis(CurrentLocation.Z, TargetLocation.Z, NewLocation.Z);
+		NewLocation.X = EaseAxis(CurrentLocation.X, TargetLocation.X);
+		NewLocation.Y = EaseAxis(CurrentLocation.Y, TargetLocation.Y);
+		NewLocation.Z = EaseAxis(CurrentLocation.Z, TargetLocation.Z);
 		GetOwner()->SetActorLocation(NewLocation);
 	}
 }
 
-void UEaseAnimationComponent::EaseAxis(const float& CurrentLocationAxis,
-                                       const float& TargetLocationAxis,
-                                       float& NewLocationAxis) const
+float UEaseAnimationComponent::EaseAxis(const float CurrentLocationAxis,
+                                        const float TargetLocationAxis) const
 {
-	NewLocationAxis = UKismetMathLibrary::Ease(CurrentLocationAxis,
-	                                           TargetLocationAxis,
-	                                           Alpha,
-	                                           EasingFunction,
-	                                           Exponent,
-	                                           SubStep);
+	return UKismetMathLibrary::Ease(CurrentLocationAxis,
+	                                TargetLocationAxis,
+	                                Alpha,
+	                                EasingFunction,
+	                                Exponent,
+	                                SubStep);
 }
