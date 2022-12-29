@@ -8,7 +8,7 @@
 #include "EaseAnimationComponent.generated.h"
 
 /**
- * A simple component which interpolates its owner towards the chosen actor in the level.
+ * A simple component which interpolates its owner towards the chosen actor/location in the level.
  */
 
 UCLASS(ClassGroup=(TrickyAnimationComponents), meta=(BlueprintSpawnableComponent))
@@ -18,6 +18,14 @@ class TRICKYANIMATIONCOMPONENTS_API UEaseAnimationComponent : public UActorCompo
 
 public:
 	UEaseAnimationComponent();
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	virtual void TickComponent(float DeltaTime,
+	                           ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	/**
 	 * Toggles if the component will interpolate position towards a target actor or a specific location.
@@ -49,33 +57,27 @@ public:
 	/**
 	 * Location offset relative to the target location.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
 	FVector LocationOffset{FVector::ZeroVector};
 
 	/**
 	 * A type of the function which will be used for moving an owner.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
 	TEnumAsByte<EEasingFunc::Type> EasingFunction = EEasingFunc::EaseInOut;
-
-	/**
-	 * Determines the speed of interpolation.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
-	float Alpha = 0.15f;
 
 	/**
 	 * Blend exponent, used only with EaseIn, EaseOut, EaseInOut easing functions.
 	 * 
 	 * The higher the steeper the graph.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
 	float Exponent = 2.f;
 
 	/**
 	 * Amount of substeps, used only with the Step easing function.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
 	int32 SubStep = 10.f;
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
@@ -84,15 +86,15 @@ public:
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|EaseAnimation")
 	void SetIsEnabled(const bool Value);
 
-protected:
-	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
+	float GetEaseDuration() const;
 
-public:
-	virtual void TickComponent(float DeltaTime,
-	                           ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|EaseAnimation")
+	void SetEaseDuration(const float Value);
 
 private:
+	float LaunchTime = 0.f;
+
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetIsEnabled,
 		BlueprintSetter=SetIsEnabled,
@@ -100,11 +102,21 @@ private:
 		meta=(AllowPrivateAccess))
 	bool bIsEnabled = true;
 
-	FVector CurrentLocation{FVector::ZeroVector};
+	/**
+	 * Determines the duration of easing.
+	 */
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetEaseDuration,
+		BlueprintSetter=SetEaseDuration,
+		Category="Animation",
+		meta=(DisplayAfter="bIsEnabled"))
+	float EaseDuration = 1.f;
+
+	FVector InitialLocation{FVector::ZeroVector};
 
 	FVector TargetLocation{FVector::ZeroVector};
 
 	FVector NewLocation{FVector::ZeroVector};
 
-	float EaseAxis(const float CurrentLocationAxis, const float TargetLocationAxis) const;
+	float EaseAxis(const float InitialValue, const float TargetValue);
 };
