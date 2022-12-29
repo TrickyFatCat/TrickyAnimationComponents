@@ -24,8 +24,8 @@ void UEaseAnimationComponent::TickComponent(float DeltaTime,
 
 	if (TargetActor || !bFollowActor)
 	{
-		TargetLocation = bFollowActor ? TargetActor->GetActorLocation() : SpecificLocation;
-		TargetLocation += LocationOffset;
+		TargetLocation = bFollowActor ? TargetActor->GetActorLocation() : Location;
+		TargetLocation += TargetLocationOffset;
 		NewLocation.X = EaseAxis(InitialLocation.X, TargetLocation.X);
 		NewLocation.Y = EaseAxis(InitialLocation.Y, TargetLocation.Y);
 		NewLocation.Z = EaseAxis(InitialLocation.Z, TargetLocation.Z);
@@ -84,7 +84,7 @@ float UEaseAnimationComponent::EaseAxis(const float InitialValue,
 		return UKismetMathLibrary::Ease(InitialValue,
 		                                TargetValue,
 		                                Alpha,
-		                                EasingFunction,
+		                                EaseFunction,
 		                                Exponent,
 		                                SubStep);
 	}

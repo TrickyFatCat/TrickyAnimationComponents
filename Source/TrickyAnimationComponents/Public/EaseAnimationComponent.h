@@ -42,7 +42,7 @@ public:
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
 		Category="Animation",
-		meta=(DisplayAfter="bIsEnabled", EditCondition="bFollowActor"))
+		meta=(DisplayAfter="bIsEnabled", EditCondition="bFollowActor", EditConditionHides))
 	AActor* TargetActor = nullptr;
 
 	/**
@@ -51,20 +51,20 @@ public:
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
 		Category="Animation",
-		meta=(DisplayAfter="bIsEnabled", EditCondition="!bFollowActor"))
-	FVector SpecificLocation{FVector::ZeroVector};
+		meta=(DisplayAfter="bIsEnabled", EditCondition="!bFollowActor", EditConditionHides))
+	FVector Location{FVector::ZeroVector};
 
 	/**
 	 * Location offset relative to the target location.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
-	FVector LocationOffset{FVector::ZeroVector};
+	FVector TargetLocationOffset{FVector::ZeroVector};
 
 	/**
 	 * A type of the function which will be used for moving an owner.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
-	TEnumAsByte<EEasingFunc::Type> EasingFunction = EEasingFunc::EaseInOut;
+	TEnumAsByte<EEasingFunc::Type> EaseFunction = EEasingFunc::EaseInOut;
 
 	/**
 	 * Blend exponent, used only with EaseIn, EaseOut, EaseInOut easing functions.
