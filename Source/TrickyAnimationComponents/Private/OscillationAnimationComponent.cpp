@@ -54,13 +54,12 @@ void UOscillationAnimationComponent::SetIsEnabled(const bool Value)
 	SetComponentTickEnabled(bIsEnabled);
 }
 
-void UOscillationAnimationComponent::OscillateAxis(float& Value,
-                                                   const float& InitialValue,
-                                                   const float& Amplitude,
-                                                   const float& Frequency) const
+float UOscillationAnimationComponent::OscillateAxis(const float InitialValue,
+                                                    const float Amplitude,
+                                                    const float Frequency) const
 {
 	const float Time = GetWorld()->GetTimeSeconds();
-	Value = InitialValue + Amplitude * FMath::Sin(Frequency * Time);
+	return InitialValue + Amplitude * FMath::Sin(Frequency * Time);
 }
 
 void UOscillationAnimationComponent::OscillateVector(FVector& Vector,
@@ -69,17 +68,17 @@ void UOscillationAnimationComponent::OscillateVector(FVector& Vector,
 {
 	if (Settings.bAnimateX)
 	{
-		OscillateAxis(Vector.X, InitialVector.X, Settings.Amplitude.X, Settings.Frequency.X);
+		Vector.X = OscillateAxis(InitialVector.X, Settings.Amplitude.X, Settings.Frequency.X);
 	}
 
 	if (Settings.bAnimateY)
 	{
-		OscillateAxis(Vector.Y, InitialVector.Y, Settings.Amplitude.Y, Settings.Frequency.Y);
+		Vector.Y = OscillateAxis(InitialVector.Y, Settings.Amplitude.Y, Settings.Frequency.Y);
 	}
 
 	if (Settings.bAnimateZ)
 	{
-		OscillateAxis(Vector.Z, InitialVector.Z, Settings.Amplitude.Z, Settings.Frequency.Z);
+		Vector.Z = OscillateAxis(InitialVector.Z, Settings.Amplitude.Z, Settings.Frequency.Z);
 	}
 }
 
@@ -89,16 +88,16 @@ void UOscillationAnimationComponent::OscillateRotator(FRotator& Rotator,
 {
 	if (Settings.bAnimateX)
 	{
-		OscillateAxis(Rotator.Roll, InitialRotator.Roll, Settings.Amplitude.X, Settings.Frequency.X);
+		Rotator.Roll = OscillateAxis(InitialRotator.Roll, Settings.Amplitude.X, Settings.Frequency.X);
 	}
 
 	if (Settings.bAnimateY)
 	{
-		OscillateAxis(Rotator.Pitch, InitialRotator.Pitch, Settings.Amplitude.Y, Settings.Frequency.Y);
+		Rotator.Pitch = OscillateAxis(InitialRotator.Pitch, Settings.Amplitude.Y, Settings.Frequency.Y);
 	}
 
 	if (Settings.bAnimateZ)
 	{
-		OscillateAxis(Rotator.Yaw, InitialRotator.Yaw, Settings.Amplitude.Z, Settings.Frequency.Z);
+		Rotator.Yaw = OscillateAxis(InitialRotator.Yaw, Settings.Amplitude.Z, Settings.Frequency.Z);
 	}
 }
