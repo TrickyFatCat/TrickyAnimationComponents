@@ -7,10 +7,11 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "EaseAnimationComponent.generated.h"
 
+
+
 /**
  * A simple component which interpolates its owner towards the chosen actor/location in the level.
  */
-
 UCLASS(ClassGroup=(TrickyAnimationComponents), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API UEaseAnimationComponent : public UActorComponent
 {
@@ -28,37 +29,10 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	/**
-	 * Toggles if the component will interpolate position towards a target actor or a specific location.
-	 */
-	UPROPERTY(EditAnywhere,
-		BlueprintReadWrite,
-		Category="Animation",
-		meta=(DisplayAfter="bIsEnabled", InlineEditConditionToggle))
-	bool bFollowActor = true;
-
-	/**
-	 * An actor which world location will be used as a target location.
-	 */
-	UPROPERTY(EditAnywhere,
-		BlueprintReadWrite,
-		Category="Animation",
-		meta=(DisplayAfter="bIsEnabled", EditCondition="bFollowActor", EditConditionHides))
-	AActor* TargetActor = nullptr;
-
-	/**
 	 * The world location which will be used as a target location.
 	 */
-	UPROPERTY(EditAnywhere,
-		BlueprintReadWrite,
-		Category="Animation",
-		meta=(DisplayAfter="bIsEnabled", EditCondition="!bFollowActor", EditConditionHides))
-	FVector Location{FVector::ZeroVector};
-
-	/**
-	 * Location offset relative to the target location.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
-	FVector TargetLocationOffset{FVector::ZeroVector};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
+	FVector TargetLocation{FVector::ZeroVector};
 
 	/**
 	 * A type of the function which will be used for moving an owner.
@@ -114,9 +88,7 @@ private:
 
 	FVector InitialLocation{FVector::ZeroVector};
 
-	FVector TargetLocation{FVector::ZeroVector};
-
 	FVector NewLocation{FVector::ZeroVector};
 
-	float EaseAxis(const float InitialValue, const float TargetValue);
+	float EaseFloat(const float InitialValue, const float TargetValue);
 };

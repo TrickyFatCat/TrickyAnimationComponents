@@ -22,15 +22,10 @@ void UEaseAnimationComponent::TickComponent(float DeltaTime,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (TargetActor || !bFollowActor)
-	{
-		TargetLocation = bFollowActor ? TargetActor->GetActorLocation() : Location;
-		TargetLocation += TargetLocationOffset;
-		NewLocation.X = EaseAxis(InitialLocation.X, TargetLocation.X);
-		NewLocation.Y = EaseAxis(InitialLocation.Y, TargetLocation.Y);
-		NewLocation.Z = EaseAxis(InitialLocation.Z, TargetLocation.Z);
-		GetOwner()->SetActorLocation(NewLocation);
-	}
+	NewLocation.X = EaseFloat(InitialLocation.X, TargetLocation.X);
+	NewLocation.Y = EaseFloat(InitialLocation.Y, TargetLocation.Y);
+	NewLocation.Z = EaseFloat(InitialLocation.Z, TargetLocation.Z);
+	GetOwner()->SetActorLocation(NewLocation);
 }
 
 bool UEaseAnimationComponent::GetIsEnabled() const
@@ -73,8 +68,8 @@ void UEaseAnimationComponent::SetEaseDuration(const float Value)
 	EaseDuration = Value;
 }
 
-float UEaseAnimationComponent::EaseAxis(const float InitialValue,
-                                        const float TargetValue)
+float UEaseAnimationComponent::EaseFloat(const float InitialValue,
+                                         const float TargetValue)
 {
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
 
