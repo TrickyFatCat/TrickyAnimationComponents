@@ -7,7 +7,13 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "EaseAnimationComponent.generated.h"
 
-
+UENUM(BlueprintType)
+enum class EEaseAnimBehavior : uint8
+{
+	Normal,
+	Loop,
+	PingPong
+};
 
 /**
  * A simple component which interpolates its owner towards the chosen actor/location in the level.
@@ -25,15 +31,31 @@ protected:
 
 public:
 	virtual void TickComponent(float DeltaTime,
-	                           ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+							   ELevelTick TickType,
+							   FActorComponentTickFunction* ThisTickFunction) override;
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
+	bool bAnimateLocation = true;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
+	bool bAnimateRotation = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle, AllowPreserveRatio="true"))
+	bool bAnimateScale = false;
+	
 	/**
 	 * The world location which will be used as a target location.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
-	FVector TargetLocation{FVector::ZeroVector};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", EditCondition="bAnimateLocation"))
+	FVector Location{FVector::ZeroVector};
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", EditCondition="bAnimateRotation"))
+	FRotator Rotation{FRotator::ZeroRotator};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", EditCondition="bAnimateScale"))
+	FVector Scale{FVector::OneVector};
+	
 	/**
 	 * A type of the function which will be used for moving an owner.
 	 */
@@ -57,7 +79,7 @@ public:
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
 	bool GetIsEnabled() const;
 
-	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|EaseAnimation")
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EaseAnimation")
 	void SetIsEnabled(const bool Value);
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
@@ -66,15 +88,18 @@ public:
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|EaseAnimation")
 	void SetEaseDuration(const float Value);
 
+
 private:
 	float LaunchTime = 0.f;
 
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetIsEnabled,
-		BlueprintSetter=SetIsEnabled,
 		Category="Animation",
 		meta=(AllowPrivateAccess))
 	bool bIsEnabled = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess, DisplayAfter="bIsEnabled"))
+	EEaseAnimBehavior AnimationBehavior = EEaseAnimBehavior::Normal;
 
 	/**
 	 * Determines the duration of easing.
@@ -87,8 +112,10 @@ private:
 	float EaseDuration = 1.f;
 
 	FVector InitialLocation{FVector::ZeroVector};
+	FRotator InitialRotator{FRotator::ZeroRotator};
+	FVector InitialScale{FVector::ZeroVector};
 
-	FVector NewLocation{FVector::ZeroVector};
+	int32 PinPongDirection = 1;
 
-	float EaseFloat(const float InitialValue, const float TargetValue);
+	float EaseFloat(const float InitialValue, const float Value);
 };
