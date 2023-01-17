@@ -75,7 +75,7 @@ void UEaseAnimationComponent::StartAnimation()
 
 	bIsPlaying = true;
 	SetComponentTickEnabled(true);
-	GetInitialValues();
+	SetInitialValues();
 	CalculateTargetValues();
 	OnAnimationStarted.Broadcast();
 }
@@ -176,13 +176,13 @@ float UEaseAnimationComponent::EaseFloat(const float InitialValue,
 		break;
 
 	case EEaseAnimBehavior::Loop:
-		GetInitialValues();
+		SetInitialValues();
 		CalculateTargetValues();
 		break;
 
 	case EEaseAnimBehavior::PingPong:
 		PinPongDirection *= -1;
-		GetInitialValues();
+		SetInitialValues();
 		CalculateTargetValues();
 		break;
 	}
@@ -192,7 +192,7 @@ float UEaseAnimationComponent::EaseFloat(const float InitialValue,
 	return TargetValue;
 }
 
-void UEaseAnimationComponent::GetInitialValues()
+void UEaseAnimationComponent::SetInitialValues()
 {
 	LaunchTime = GetWorld()->GetTimeSeconds();
 	InitialLocation = GetOwner()->GetActorLocation();

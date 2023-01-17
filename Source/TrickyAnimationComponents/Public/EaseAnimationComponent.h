@@ -165,7 +165,7 @@ private:
 
 	float EaseFloat(const float InitialValue, const float TargetValue);
 
-	void GetInitialValues();
+	void SetInitialValues();
 
 	void CalculateTargetValues();
 };
