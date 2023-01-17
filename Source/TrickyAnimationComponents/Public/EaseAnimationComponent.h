@@ -15,6 +15,12 @@ enum class EEaseAnimBehavior : uint8
 	PingPong
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationStartedSignature);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationStoppedSignature);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationFinishedSignature);
+
 /**
  * A simple component which interpolates its owner towards the chosen actor/location in the level.
  */
@@ -31,35 +37,61 @@ protected:
 
 public:
 	virtual void TickComponent(float DeltaTime,
-							   ELevelTick TickType,
-							   FActorComponentTickFunction* ThisTickFunction) override;
+	                           ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-public:
+	UPROPERTY(BlueprintAssignable)
+	FOnAnimationStartedSignature OnAnimationStarted;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAnimationStoppedSignature OnAnimationStopped;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAnimationFinishedSignature OnAnimationFinished;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
+	bool bStartOnBeginPlay = false;
+
+	/**
+	 * Determines behavior of the animation.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
+	EEaseAnimBehavior AnimationBehavior = EEaseAnimBehavior::Normal;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
 	bool bAnimateLocation = true;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
 	bool bAnimateRotation = false;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle, AllowPreserveRatio="true"))
 	bool bAnimateScale = false;
-	
+
 	/**
-	 * The world location which will be used as a target location.
+	 * For normal mode it's target value, for others it's delta value.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", EditCondition="bAnimateLocation"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation",
+		meta=(EditCondition="bAnimateLocation"))
 	FVector Location{FVector::ZeroVector};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", EditCondition="bAnimateRotation"))
+	/**
+	 * For normal mode it's target value, for others it's delta value.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation",
+		meta=(EditCondition="bAnimateRotation"))
 	FRotator Rotation{FRotator::ZeroRotator};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled", EditCondition="bAnimateScale"))
+	/**
+	 * For normal mode it's target value, for others it's delta value.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation",
+		meta=(EditCondition="bAnimateScale"))
 	FVector Scale{FVector::OneVector};
-	
+
 	/**
 	 * A type of the function which will be used for moving an owner.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	TEnumAsByte<EEasingFunc::Type> EaseFunction = EEasingFunc::EaseInOut;
 
 	/**
@@ -67,20 +99,27 @@ public:
 	 * 
 	 * The higher the steeper the graph.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation",
+		meta=(EditCondition=
+			"EaseFunction == EEasingFunc::EaseIn || EaseFunction == EEasingFunc::EaseOut || EaseFunction == EEasingFunc::EaseInOut",
+			EditConditionHides
+		))
 	float Exponent = 2.f;
 
 	/**
 	 * Amount of substeps, used only with the Step easing function.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="EaseDuration"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(EditCondition="EaseFunction == EEasingFunc::Step", EditConditionHides))
 	int32 SubStep = 10.f;
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
-	bool GetIsEnabled() const;
+	bool GetIsPlaying() const;
+	
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EaseAnimation")
+	void StartAnimation();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EaseAnimation")
-	void SetIsEnabled(const bool Value);
+	void StopAnimation();
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
 	float GetEaseDuration() const;
@@ -88,18 +127,12 @@ public:
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|EaseAnimation")
 	void SetEaseDuration(const float Value);
 
-
 private:
 	float LaunchTime = 0.f;
 
-	UPROPERTY(EditAnywhere,
-		BlueprintGetter=GetIsEnabled,
-		Category="Animation",
-		meta=(AllowPrivateAccess))
-	bool bIsEnabled = true;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess, DisplayAfter="bIsEnabled"))
-	EEaseAnimBehavior AnimationBehavior = EEaseAnimBehavior::Normal;
+	UPROPERTY(BlueprintGetter=GetIsPlaying,
+		Category="Animation")
+	bool bIsPlaying = false;
 
 	/**
 	 * Determines the duration of easing.
@@ -107,15 +140,22 @@ private:
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetEaseDuration,
 		BlueprintSetter=SetEaseDuration,
-		Category="Animation",
-		meta=(DisplayAfter="bIsEnabled"))
-	float EaseDuration = 1.f;
+		Category="Animation", meta=(DisplayAfter="AnimationBehavior"))
+	float Duration = 1.f;
 
 	FVector InitialLocation{FVector::ZeroVector};
-	FRotator InitialRotator{FRotator::ZeroRotator};
+	FRotator InitialRotation{FRotator::ZeroRotator};
 	FVector InitialScale{FVector::ZeroVector};
+
+	FVector TargetLocation{FVector::ZeroVector};
+	FRotator TargetRotation{FRotator::ZeroRotator};
+	FVector TargetScale{FVector::ZeroVector};
 
 	int32 PinPongDirection = 1;
 
-	float EaseFloat(const float InitialValue, const float Value);
+	float EaseFloat(const float InitialValue, const float TargetValue);
+
+	void GetInitialValues();
+
+	void CalculateTargetValues();
 };

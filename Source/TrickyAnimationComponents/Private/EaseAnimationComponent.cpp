@@ -13,73 +13,89 @@ UEaseAnimationComponent::UEaseAnimationComponent()
 void UEaseAnimationComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SetIsEnabled(bIsEnabled);
+
+	if (bStartOnBeginPlay)
+	{
+		StartAnimation();
+	}
 }
 
 void UEaseAnimationComponent::TickComponent(float DeltaTime,
                                             ELevelTick TickType,
                                             FActorComponentTickFunction* ThisTickFunction)
 {
-	if (bAnimateLocation)
+	if (bIsPlaying)
 	{
-		FVector NewLocation;
-		NewLocation.X = EaseFloat(InitialLocation.X, Location.X);
-		NewLocation.Y = EaseFloat(InitialLocation.Y, Location.Y);
-		NewLocation.Z = EaseFloat(InitialLocation.Z, Location.Z);
-		GetOwner()->SetActorLocation(NewLocation);
-	}
+		if (bAnimateLocation)
+		{
+			FVector NewLocation;
+			NewLocation.X = EaseFloat(InitialLocation.X, TargetLocation.X);
+			NewLocation.Y = EaseFloat(InitialLocation.Y, TargetLocation.Y);
+			NewLocation.Z = EaseFloat(InitialLocation.Z, TargetLocation.Z);
+			GetOwner()->SetActorLocation(NewLocation);
+		}
 
-	if (bAnimateRotation)
-	{
-		FRotator NewRotator;
-		NewRotator.Pitch = EaseFloat(InitialRotator.Pitch, Rotation.Pitch);
-		NewRotator.Yaw = EaseFloat(InitialRotator.Yaw, Rotation.Yaw);
-		NewRotator.Roll = EaseFloat(InitialRotator.Roll, Rotation.Roll);
-		GetOwner()->SetActorRotation(NewRotator);
-	}
+		if (bAnimateRotation)
+		{
+			FRotator NewRotator;
+			NewRotator.Pitch = EaseFloat(InitialRotation.Pitch, TargetRotation.Pitch);
+			NewRotator.Yaw = EaseFloat(InitialRotation.Yaw, TargetRotation.Yaw);
+			NewRotator.Roll = EaseFloat(InitialRotation.Roll, TargetRotation.Roll);
+			GetOwner()->SetActorRotation(NewRotator);
+		}
 
-	if (bAnimateScale)
-	{
-		FVector NewScale;
-		NewScale.X = EaseFloat(InitialScale.X, Scale.X);
-		NewScale.Y = EaseFloat(InitialScale.Y, Scale.Y);
-		NewScale.Z = EaseFloat(InitialScale.Z, Scale.Z);
-		GetOwner()->SetActorScale3D(NewScale);
+		if (bAnimateScale)
+		{
+			FVector NewScale;
+			NewScale.X = EaseFloat(InitialScale.X, TargetScale.X);
+			NewScale.Y = EaseFloat(InitialScale.Y, TargetScale.Y);
+			NewScale.Z = EaseFloat(InitialScale.Z, TargetScale.Z);
+			GetOwner()->SetActorScale3D(NewScale);
+		}
 	}
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-bool UEaseAnimationComponent::GetIsEnabled() const
+bool UEaseAnimationComponent::GetIsPlaying() const
 {
-	return bIsEnabled;
+	return bIsPlaying;
 }
 
-void UEaseAnimationComponent::SetIsEnabled(const bool Value)
+void UEaseAnimationComponent::StartAnimation()
 {
-	if (EaseDuration <= 0.f)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Can't start ease animation because duration is < 0"));
-		EaseDuration = 1.f;
-	}
-
-	bIsEnabled = Value;
-	SetComponentTickEnabled(bIsEnabled);
-
-	if (!GetWorld() || !bIsEnabled)
+	if (bIsPlaying)
 	{
 		return;
 	}
 
-	LaunchTime = GetWorld()->GetTimeSeconds();
-	InitialLocation = GetOwner()->GetActorLocation();
-	InitialRotator = GetOwner()->GetActorRotation();
-	InitialScale = GetOwner()->GetActorScale3D();
+	if (Duration <= 0.f)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Ease animation duration is <= 0."));
+	}
+
+	bIsPlaying = true;
+	SetComponentTickEnabled(true);
+	GetInitialValues();
+	CalculateTargetValues();
+	OnAnimationStarted.Broadcast();
+}
+
+void UEaseAnimationComponent::StopAnimation()
+{
+	if (!bIsPlaying)
+	{
+		return;
+	}
+
+	bIsPlaying = false;
+	SetComponentTickEnabled(false);
+	OnAnimationStopped.Broadcast();
 }
 
 float UEaseAnimationComponent::GetEaseDuration() const
 {
-	return EaseDuration;
+	return Duration;
 }
 
 void UEaseAnimationComponent::SetEaseDuration(const float Value)
@@ -89,33 +105,17 @@ void UEaseAnimationComponent::SetEaseDuration(const float Value)
 		return;
 	}
 
-	EaseDuration = Value;
+	Duration = Value;
 }
 
 float UEaseAnimationComponent::EaseFloat(const float InitialValue,
-                                         const float Value)
+                                         const float TargetValue)
 {
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
-	float TargetValue = 0;
 
-	switch (AnimationBehavior)
+	if (CurrentTime - LaunchTime < Duration)
 	{
-	case EEaseAnimBehavior::Normal:
-		TargetValue = Value;
-		break;
-
-	case EEaseAnimBehavior::Loop:
-		TargetValue = InitialValue + Value;
-		break;
-
-	case EEaseAnimBehavior::PingPong:
-		TargetValue = InitialValue + Value * PinPongDirection;
-		break;
-	}
-
-	if (CurrentTime - LaunchTime < EaseDuration)
-	{
-		const float Alpha = (CurrentTime - LaunchTime) / EaseDuration;
+		const float Alpha = (CurrentTime - LaunchTime) / Duration;
 		return UKismetMathLibrary::Ease(InitialValue,
 		                                TargetValue,
 		                                Alpha,
@@ -127,18 +127,54 @@ float UEaseAnimationComponent::EaseFloat(const float InitialValue,
 	switch (AnimationBehavior)
 	{
 	case EEaseAnimBehavior::Normal:
-		SetIsEnabled(false);
+		bIsPlaying = false;
+		SetComponentTickEnabled(false);
 		break;
 
 	case EEaseAnimBehavior::Loop:
-		SetIsEnabled(true);
+		GetInitialValues();
+		CalculateTargetValues();
 		break;
 
 	case EEaseAnimBehavior::PingPong:
 		PinPongDirection *= -1;
-		SetIsEnabled(true);
+		GetInitialValues();
+		CalculateTargetValues();
 		break;
 	}
 
+	OnAnimationFinished.Broadcast();
+
 	return TargetValue;
+}
+
+void UEaseAnimationComponent::GetInitialValues()
+{
+	LaunchTime = GetWorld()->GetTimeSeconds();
+	InitialLocation = GetOwner()->GetActorLocation();
+	InitialRotation = GetOwner()->GetActorRotation();
+	InitialScale = GetOwner()->GetActorScale3D();
+}
+
+void UEaseAnimationComponent::CalculateTargetValues()
+{
+	switch (AnimationBehavior)
+	{
+	case EEaseAnimBehavior::Normal:
+		TargetLocation = Location;
+		TargetRotation = Rotation;
+		TargetScale = Scale;
+		break;
+
+	case EEaseAnimBehavior::Loop:
+		TargetLocation = InitialLocation + Location;
+		TargetRotation = InitialRotation + Rotation;
+		TargetScale = InitialScale + Scale;
+		break;
+
+	case EEaseAnimBehavior::PingPong:
+		TargetLocation = InitialLocation + Location * PinPongDirection;
+		TargetRotation = InitialRotation + Rotation * PinPongDirection;
+		TargetScale = InitialScale + Scale * PinPongDirection;
+	}
 }
