@@ -5,21 +5,10 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "TrickyAnimationComponentsLibrary.h"
 #include "EaseAnimationComponent.generated.h"
 
-UENUM(BlueprintType)
-enum class EEaseAnimBehavior : uint8
-{
-	Normal,
-	Loop,
-	PingPong
-};
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationStartedSignature);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationStoppedSignature);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationFinishedSignature);
 
 /**
  * A simple component which interpolates its owner towards the chosen actor/location in the level.
