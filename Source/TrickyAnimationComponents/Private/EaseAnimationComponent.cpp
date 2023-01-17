@@ -108,6 +108,51 @@ void UEaseAnimationComponent::SetEaseDuration(const float Value)
 	Duration = Value;
 }
 
+FVector UEaseAnimationComponent::GetLocation() const
+{
+	return Location;
+}
+
+void UEaseAnimationComponent::SetLocation(const FVector& Value)
+{
+	Location = Value;
+
+	if (AnimationBehavior == EEaseAnimBehavior::Normal)
+	{
+		TargetLocation = Location;
+	}
+}
+
+FRotator UEaseAnimationComponent::GetRotation() const
+{
+	return Rotation;
+}
+
+void UEaseAnimationComponent::SetRotation(const FRotator& Value)
+{
+	Rotation = Value;
+
+	if (AnimationBehavior == EEaseAnimBehavior::Normal)
+	{
+		TargetRotation = Rotation;
+	}
+}
+
+FVector UEaseAnimationComponent::GetScale() const
+{
+	return Scale;
+}
+
+void UEaseAnimationComponent::SetScale(const FVector& Value)
+{
+	Scale = Value;
+
+	if (AnimationBehavior == EEaseAnimBehavior::Normal)
+	{
+		TargetScale = Scale;
+	}
+}
+
 float UEaseAnimationComponent::EaseFloat(const float InitialValue,
                                          const float TargetValue)
 {
