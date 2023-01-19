@@ -15,7 +15,7 @@ void UEasingAnimationSceneComponent::BeginPlay()
 
 	if (bStartOnBeginPlay)
 	{
-		StartAnimation();
+		Start();
 	}
 }
 
@@ -61,7 +61,7 @@ bool UEasingAnimationSceneComponent::GetIsPlaying() const
 	return bIsPlaying;
 }
 
-void UEasingAnimationSceneComponent::StartAnimation()
+void UEasingAnimationSceneComponent::Start()
 {
 	if (bIsPlaying)
 	{
@@ -84,7 +84,7 @@ void UEasingAnimationSceneComponent::StartAnimation()
 	OnAnimationStarted.Broadcast();
 }
 
-void UEasingAnimationSceneComponent::StopAnimation()
+void UEasingAnimationSceneComponent::Stop()
 {
 	if (!bIsPlaying)
 	{
@@ -187,9 +187,9 @@ float UEasingAnimationSceneComponent::EaseFloat(const float InitialValue,
 			break;
 
 		case EEaseAnimBehavior::PingPong:
-			SwitchValues<FVector>(InitialLocation, TargetLocation);
-			SwitchValues<FRotator>(InitialRotation, TargetRotation);
-			SwitchValues<FVector>(InitialScale, TargetScale);
+			SwapValues<FVector>(InitialLocation, TargetLocation);
+			SwapValues<FRotator>(InitialRotation, TargetRotation);
+			SwapValues<FVector>(InitialScale, TargetScale);
 			break;
 		}
 	}

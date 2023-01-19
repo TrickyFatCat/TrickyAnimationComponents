@@ -87,10 +87,10 @@ public:
 	bool GetIsPlaying() const;
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EasingAnimationScene")
-	void StartAnimation();
+	void Start();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EasingAnimationScene")
-	void StopAnimation();
+	void Stop();
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EasingAnimationScene")
 	float GetEaseDuration() const;
@@ -157,20 +157,10 @@ private:
 	FRotator InitialRotation{FRotator::ZeroRotator};
 	FVector InitialScale{FVector::ZeroVector};
 
-	// FVector TargetLocation{FVector::ZeroVector};
-	// FRotator TargetRotation{FRotator::ZeroRotator};
-	// FVector TargetScale{FVector::ZeroVector};
-
-	int32 PinPongDirection = 1;
-
 	float EaseFloat(const float InitialValue, const float TargetValue);
 
-	// void SetInitialValues();
-
-	// void CalculateTargetValues();
-
 	template<typename T>
-	void SwitchValues(T& A, T& B)
+	void SwapValues(T& A, T& B)
 	{
 		const T C = A;
 		A = B;
