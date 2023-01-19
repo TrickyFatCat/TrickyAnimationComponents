@@ -171,9 +171,9 @@ float UEasingAnimationSceneComponent::EaseFloat(const float InitialValue,
 			break;
 
 		case EEaseAnimBehavior::PingPong:
-			SwapValues<FVector>(InitialLocation, TargetLocation);
-			SwapValues<FRotator>(InitialRotation, TargetRotation);
-			SwapValues<FVector>(InitialScale, TargetScale);
+			UTrickyAnimationComponentsLibrary::SwapValues<FVector>(InitialLocation, TargetLocation);
+			UTrickyAnimationComponentsLibrary::SwapValues<FRotator>(InitialRotation, TargetRotation);
+			UTrickyAnimationComponentsLibrary::SwapValues<FVector>(InitialScale, TargetScale);
 			break;
 		}
 	}

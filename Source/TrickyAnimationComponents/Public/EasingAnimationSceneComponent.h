@@ -158,12 +158,4 @@ private:
 	FVector InitialScale{FVector::ZeroVector};
 
 	float EaseFloat(const float InitialValue, const float TargetValue);
-
-	template<typename T>
-	void SwapValues(T& A, T& B)
-	{
-		const T C = A;
-		A = B;
-		B = C;
-	}
 };

@@ -27,5 +27,13 @@ UCLASS()
 class TRICKYANIMATIONCOMPONENTS_API UTrickyAnimationComponentsLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-	
+
+public:
+	template<typename T>
+	static void SwapValues(T& A, T& B)
+	{
+		const T C = A;
+		A = B;
+		B = C;
+	}
 };
