@@ -73,14 +73,13 @@ void UEasingAnimationSceneComponent::Start()
 		UE_LOG(LogTemp, Error, TEXT("Ease animation duration is <= 0."));
 	}
 
-	bIsPlaying = true;
-	SetComponentTickEnabled(true);
 	LaunchTime = GetWorld()->GetTimeSeconds();
 	InitialLocation = GetRelativeLocation();
 	InitialRotation = GetRelativeRotation();
 	InitialScale = GetRelativeScale3D();	
-	// SetInitialValues();
-	// CalculateTargetValues();
+
+	bIsPlaying = true;
+	SetComponentTickEnabled(true);
 	OnAnimationStarted.Broadcast();
 }
 
