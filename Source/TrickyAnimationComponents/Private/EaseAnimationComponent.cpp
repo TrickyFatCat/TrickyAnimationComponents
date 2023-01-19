@@ -1,6 +1,7 @@
 // MIT License Copyright. Created by Artyom "Tricky Fat Cat" Volkov
 
 #include "EaseAnimationComponent.h"
+
 #include "GameFramework/Actor.h"
 
 UEaseAnimationComponent::UEaseAnimationComponent()
@@ -15,7 +16,7 @@ void UEaseAnimationComponent::BeginPlay()
 
 	if (bStartOnBeginPlay)
 	{
-		StartAnimation();
+		Start();
 	}
 }
 
@@ -61,7 +62,7 @@ bool UEaseAnimationComponent::GetIsPlaying() const
 	return bIsPlaying;
 }
 
-void UEaseAnimationComponent::StartAnimation()
+void UEaseAnimationComponent::Start()
 {
 	if (bIsPlaying)
 	{
@@ -71,16 +72,20 @@ void UEaseAnimationComponent::StartAnimation()
 	if (Duration <= 0.f)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Ease animation duration is <= 0."));
+		return;
 	}
+
+	LaunchTime = GetWorld()->GetTimeSeconds();
+	InitialLocation = GetOwner()->GetActorLocation();
+	InitialRotation = GetOwner()->GetActorRotation();
+	InitialScale = GetOwner()->GetActorScale3D();	
 
 	bIsPlaying = true;
 	SetComponentTickEnabled(true);
-	SetInitialValues();
-	CalculateTargetValues();
 	OnAnimationStarted.Broadcast();
 }
 
-void UEaseAnimationComponent::StopAnimation()
+void UEaseAnimationComponent::Stop()
 {
 	if (!bIsPlaying)
 	{
@@ -107,49 +112,34 @@ void UEaseAnimationComponent::SetEaseDuration(const float Value)
 	Duration = Value;
 }
 
-FVector UEaseAnimationComponent::GetLocation() const
+FVector UEaseAnimationComponent::GetTargetLocation() const
 {
-	return Location;
+	return TargetLocation;
 }
 
-void UEaseAnimationComponent::SetLocation(const FVector& Value)
+void UEaseAnimationComponent::SetTargetLocation(const FVector& Value)
 {
-	Location = Value;
-
-	if (AnimationBehavior == EEaseAnimBehavior::Normal)
-	{
-		TargetLocation = Location;
-	}
+	TargetLocation = Value;
 }
 
-FRotator UEaseAnimationComponent::GetRotation() const
+FRotator UEaseAnimationComponent::GetTargetRotation() const
 {
-	return Rotation;
+	return TargetRotation;
 }
 
-void UEaseAnimationComponent::SetRotation(const FRotator& Value)
+void UEaseAnimationComponent::SetTargetRotation(const FRotator& Value)
 {
-	Rotation = Value;
-
-	if (AnimationBehavior == EEaseAnimBehavior::Normal)
-	{
-		TargetRotation = Rotation;
-	}
+	TargetRotation = Value;
 }
 
-FVector UEaseAnimationComponent::GetScale() const
+FVector UEaseAnimationComponent::GetTargetScale() const
 {
-	return Scale;
+	return TargetScale;
 }
 
-void UEaseAnimationComponent::SetScale(const FVector& Value)
+void UEaseAnimationComponent::SetTargetScale(const FVector& Value)
 {
-	Scale = Value;
-
-	if (AnimationBehavior == EEaseAnimBehavior::Normal)
-	{
-		TargetScale = Scale;
-	}
+	TargetScale = Value;
 }
 
 float UEaseAnimationComponent::EaseFloat(const float InitialValue,
@@ -168,57 +158,32 @@ float UEaseAnimationComponent::EaseFloat(const float InitialValue,
 		                                SubStep);
 	}
 
-	switch (AnimationBehavior)
-	{
-	case EEaseAnimBehavior::Normal:
-		bIsPlaying = false;
-		SetComponentTickEnabled(false);
-		break;
-
-	case EEaseAnimBehavior::Additive:
-		SetInitialValues();
-		CalculateTargetValues();
-		break;
-
-	case EEaseAnimBehavior::PingPong:
-		PinPongDirection *= -1;
-		SetInitialValues();
-		CalculateTargetValues();
-		break;
-	}
-
 	OnAnimationFinished.Broadcast();
 
-	return TargetValue;
-}
-
-void UEaseAnimationComponent::SetInitialValues()
-{
-	LaunchTime = GetWorld()->GetTimeSeconds();
-	InitialLocation = GetOwner()->GetActorLocation();
-	InitialRotation = GetOwner()->GetActorRotation();
-	InitialScale = GetOwner()->GetActorScale3D();
-}
-
-void UEaseAnimationComponent::CalculateTargetValues()
-{
-	switch (AnimationBehavior)
+	if (bIsLooping)
 	{
-	case EEaseAnimBehavior::Normal:
-		TargetLocation = Location;
-		TargetRotation = Rotation;
-		TargetScale = Scale;
-		break;
+		LaunchTime = GetWorld()->GetTimeSeconds();
+		
+		switch(AnimationBehavior)
+		{
+		case EEaseAnimBehavior::Normal:
+			GetOwner()->SetActorLocation(InitialLocation);
+			GetOwner()->SetActorRotation(InitialRotation);
+			GetOwner()->SetActorScale3D(InitialScale);
+			break;
 
-	case EEaseAnimBehavior::Additive:
-		TargetLocation = InitialLocation + Location;
-		TargetRotation = InitialRotation + Rotation;
-		TargetScale = InitialScale + Scale;
-		break;
-
-	case EEaseAnimBehavior::PingPong:
-		TargetLocation = InitialLocation + Location * PinPongDirection;
-		TargetRotation = InitialRotation + Rotation * PinPongDirection;
-		TargetScale = InitialScale + Scale * PinPongDirection;
+		case EEaseAnimBehavior::PingPong:
+			UTrickyAnimationComponentsLibrary::SwapValues<FVector>(InitialLocation, TargetLocation);
+			UTrickyAnimationComponentsLibrary::SwapValues<FRotator>(InitialRotation, TargetRotation);
+			UTrickyAnimationComponentsLibrary::SwapValues<FVector>(InitialScale, TargetScale);
+			break;
+		}
 	}
+	else
+	{
+		bIsPlaying = false;
+		SetComponentTickEnabled(false);
+	}
+	
+	return TargetValue;
 }

@@ -40,7 +40,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
 	bool bStartOnBeginPlay = false;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
+	bool bIsLooping = false;
+	
 	/**
 	 * Determines behavior of the animation.
 	 */
@@ -55,7 +58,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle, AllowPreserveRatio="true"))
 	bool bAnimateScale = false;
-
 
 	/**
 	 * A type of the function which will be used for moving an owner.
@@ -87,10 +89,10 @@ public:
 	bool GetIsPlaying() const;
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EaseAnimation")
-	void StartAnimation();
+	void Start();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EaseAnimation")
-	void StopAnimation();
+	void Stop();
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
 	float GetEaseDuration() const;
@@ -99,22 +101,22 @@ public:
 	void SetEaseDuration(const float Value);
 
 	UFUNCTION(BlueprintGetter)
-	FVector GetLocation() const;
+	FVector GetTargetLocation() const;
 
 	UFUNCTION(BlueprintSetter)
-	void SetLocation(const FVector& Value);
+	void SetTargetLocation(const FVector& Value);
 	
 	UFUNCTION(BlueprintGetter)
-	FRotator GetRotation() const;
+	FRotator GetTargetRotation() const;
 
 	UFUNCTION(BlueprintSetter)
-	void SetRotation(const FRotator& Value);
+	void SetTargetRotation(const FRotator& Value);
 
 	UFUNCTION(BlueprintGetter)
-	FVector GetScale() const;
+	FVector GetTargetScale() const;
 
 	UFUNCTION(BlueprintSetter)
-	void SetScale(const FVector& Value);
+	void SetTargetScale(const FVector& Value);
 private:
 	float LaunchTime = 0.f;
 
@@ -125,24 +127,24 @@ private:
 	/**
 	 * For normal mode it's target value, for others it's delta value.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetLocation, BlueprintSetter=SetLocation, Category="Animation",
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetTargetLocation, BlueprintSetter=SetTargetLocation, Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateLocation"))
-	FVector Location{FVector::ZeroVector};
+	FVector TargetLocation{FVector::ZeroVector};
 
 	/**
 	 * For normal mode it's target value, for others it's delta value.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetRotation, BlueprintSetter=SetRotation, BlueprintReadWrite,
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetTargetRotation, BlueprintSetter=SetTargetRotation, BlueprintReadWrite,
 		Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateRotation"))
-	FRotator Rotation{FRotator::ZeroRotator};
+	FRotator TargetRotation{FRotator::ZeroRotator};
 
 	/**
 	 * For normal mode it's target value, for others it's delta value.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetScale, BlueprintSetter=SetScale, Category="Animation",
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetTargetScale, BlueprintSetter=SetTargetScale, Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateScale"))
-	FVector Scale{FVector::OneVector};
+	FVector TargetScale{FVector::OneVector};
 
 	/**
 	 * Determines the duration of easing.
@@ -157,15 +159,5 @@ private:
 	FRotator InitialRotation{FRotator::ZeroRotator};
 	FVector InitialScale{FVector::ZeroVector};
 
-	FVector TargetLocation{FVector::ZeroVector};
-	FRotator TargetRotation{FRotator::ZeroRotator};
-	FVector TargetScale{FVector::ZeroVector};
-
-	int32 PinPongDirection = 1;
-
 	float EaseFloat(const float InitialValue, const float TargetValue);
-
-	void SetInitialValues();
-
-	void CalculateTargetValues();
 };
