@@ -39,10 +39,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
 	bool bStartOnBeginPlay = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
+	bool bIsLooping = false;
 	/**
 	 * Determines behavior of the animation.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(EditCondition="bIsLooping", EditConditionHides))
 	EEaseAnimBehavior AnimationBehavior = EEaseAnimBehavior::Normal;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
@@ -125,7 +127,7 @@ private:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetLocation, BlueprintSetter=SetLocation, Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateLocation"))
-	FVector Location{FVector::ZeroVector};
+	FVector TargetLocation{FVector::ZeroVector};
 
 	/**
 	 * For normal mode it's target value, for others it's delta value.
@@ -133,14 +135,14 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetRotation, BlueprintSetter=SetRotation, BlueprintReadWrite,
 		Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateRotation"))
-	FRotator Rotation{FRotator::ZeroRotator};
+	FRotator TargetRotation{FRotator::ZeroRotator};
 
 	/**
 	 * For normal mode it's target value, for others it's delta value.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetScale, BlueprintSetter=SetScale, Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateScale"))
-	FVector Scale{FVector::OneVector};
+	FVector TargetScale{FVector::OneVector};
 
 	/**
 	 * Determines the duration of easing.
@@ -155,15 +157,23 @@ private:
 	FRotator InitialRotation{FRotator::ZeroRotator};
 	FVector InitialScale{FVector::ZeroVector};
 
-	FVector TargetLocation{FVector::ZeroVector};
-	FRotator TargetRotation{FRotator::ZeroRotator};
-	FVector TargetScale{FVector::ZeroVector};
+	// FVector TargetLocation{FVector::ZeroVector};
+	// FRotator TargetRotation{FRotator::ZeroRotator};
+	// FVector TargetScale{FVector::ZeroVector};
 
 	int32 PinPongDirection = 1;
 
 	float EaseFloat(const float InitialValue, const float TargetValue);
 
-	void SetInitialValues();
+	// void SetInitialValues();
 
-	void CalculateTargetValues();
+	// void CalculateTargetValues();
+
+	template<typename T>
+	void SwitchValues(T& A, T& B)
+	{
+		const T C = A;
+		A = B;
+		B = C;
+	}
 };
