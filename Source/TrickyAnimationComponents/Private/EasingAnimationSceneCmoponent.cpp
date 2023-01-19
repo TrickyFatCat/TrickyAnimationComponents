@@ -111,49 +111,34 @@ void UEasingAnimationSceneComponent::SetEaseDuration(const float Value)
 	Duration = Value;
 }
 
-FVector UEasingAnimationSceneComponent::GetLocation() const
+FVector UEasingAnimationSceneComponent::GetTargetLocation() const
 {
 	return TargetLocation;
 }
 
-void UEasingAnimationSceneComponent::SetLocation(const FVector& Value)
+void UEasingAnimationSceneComponent::SetTargetLocation(const FVector& Value)
 {
 	TargetLocation = Value;
-
-	if (AnimationBehavior == EEaseAnimBehavior::Normal)
-	{
-		TargetLocation = TargetLocation;
-	}
 }
 
-FRotator UEasingAnimationSceneComponent::GetRotation() const
+FRotator UEasingAnimationSceneComponent::GetTargetRotation() const
 {
 	return TargetRotation;
 }
 
-void UEasingAnimationSceneComponent::SetRotation(const FRotator& Value)
+void UEasingAnimationSceneComponent::SetTargetRotation(const FRotator& Value)
 {
 	TargetRotation = Value;
-
-	if (AnimationBehavior == EEaseAnimBehavior::Normal)
-	{
-		TargetRotation = TargetRotation;
-	}
 }
 
-FVector UEasingAnimationSceneComponent::GetScale() const
+FVector UEasingAnimationSceneComponent::GetTargetScale() const
 {
 	return TargetScale;
 }
 
-void UEasingAnimationSceneComponent::SetScale(const FVector& Value)
+void UEasingAnimationSceneComponent::SetTargetScale(const FVector& Value)
 {
 	TargetScale = Value;
-
-	if (AnimationBehavior == EEaseAnimBehavior::Normal)
-	{
-		TargetScale = TargetScale;
-	}
 }
 
 float UEasingAnimationSceneComponent::EaseFloat(const float InitialValue,
@@ -198,51 +183,6 @@ float UEasingAnimationSceneComponent::EaseFloat(const float InitialValue,
 		bIsPlaying = false;
 		SetComponentTickEnabled(false);
 	}
-	// switch (AnimationBehavior)
-	// {
-	// case EEaseAnimBehavior::Normal:
-	// 	break;
-	//
-	// case EEaseAnimBehavior::Loop:
-	// 	SetInitialValues();
-	// 	CalculateTargetValues();
-	// 	break;
-	//
-	// case EEaseAnimBehavior::PingPong:
-	// 	PinPongDirection *= -1;
-	// 	SetInitialValues();
-	// 	CalculateTargetValues();
-	// 	break;
-	// }
-
 
 	return TargetValue;
 }
-
-// void UEasingAnimationSceneComponent::SetInitialValues()
-// {
-
-// }
-
-// void UEasingAnimationSceneComponent::CalculateTargetValues()
-// {
-	// switch (AnimationBehavior)
-	// {
-	// case EEaseAnimBehavior::Normal:
-	// 	TargetLocation = Location;
-	// 	TargetRotation = Rotation;
-	// 	TargetScale = Scale;
-	// 	break;
-	//
-	// case EEaseAnimBehavior::Loop:
-	// 	TargetLocation = InitialLocation + Location;
-	// 	TargetRotation = InitialRotation + Rotation;
-	// 	TargetScale = InitialScale + Scale;
-	// 	break;
-	//
-	// case EEaseAnimBehavior::PingPong:
-	// 	TargetLocation = InitialLocation + Location * PinPongDirection;
-	// 	TargetRotation = InitialRotation + Rotation * PinPongDirection;
-	// 	TargetScale = InitialScale + Scale * PinPongDirection;
-	// }
-// }

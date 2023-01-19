@@ -10,7 +10,7 @@ UENUM(BlueprintType)
 enum class EEaseAnimBehavior : uint8
 {
 	Normal,
-	Loop,
+	Additive,
 	PingPong
 };
 

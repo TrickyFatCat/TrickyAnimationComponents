@@ -175,7 +175,7 @@ float UEaseAnimationComponent::EaseFloat(const float InitialValue,
 		SetComponentTickEnabled(false);
 		break;
 
-	case EEaseAnimBehavior::Loop:
+	case EEaseAnimBehavior::Additive:
 		SetInitialValues();
 		CalculateTargetValues();
 		break;
@@ -210,7 +210,7 @@ void UEaseAnimationComponent::CalculateTargetValues()
 		TargetScale = Scale;
 		break;
 
-	case EEaseAnimBehavior::Loop:
+	case EEaseAnimBehavior::Additive:
 		TargetLocation = InitialLocation + Location;
 		TargetRotation = InitialRotation + Rotation;
 		TargetScale = InitialScale + Scale;

@@ -99,22 +99,22 @@ public:
 	void SetEaseDuration(const float Value);
 
 	UFUNCTION(BlueprintGetter)
-	FVector GetLocation() const;
+	FVector GetTargetLocation() const;
 
 	UFUNCTION(BlueprintSetter)
-	void SetLocation(const FVector& Value);
+	void SetTargetLocation(const FVector& Value);
 	
 	UFUNCTION(BlueprintGetter)
-	FRotator GetRotation() const;
+	FRotator GetTargetRotation() const;
 
 	UFUNCTION(BlueprintSetter)
-	void SetRotation(const FRotator& Value);
+	void SetTargetRotation(const FRotator& Value);
 
 	UFUNCTION(BlueprintGetter)
-	FVector GetScale() const;
+	FVector GetTargetScale() const;
 
 	UFUNCTION(BlueprintSetter)
-	void SetScale(const FVector& Value);
+	void SetTargetScale(const FVector& Value);
 private:
 	float LaunchTime = 0.f;
 
@@ -125,14 +125,14 @@ private:
 	/**
 	 * For normal mode it's target value, for others it's delta value.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetLocation, BlueprintSetter=SetLocation, Category="Animation",
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetTargetLocation, BlueprintSetter=SetTargetLocation, Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateLocation"))
 	FVector TargetLocation{FVector::ZeroVector};
 
 	/**
 	 * For normal mode it's target value, for others it's delta value.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetRotation, BlueprintSetter=SetRotation, BlueprintReadWrite,
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetTargetRotation, BlueprintSetter=SetTargetRotation, BlueprintReadWrite,
 		Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateRotation"))
 	FRotator TargetRotation{FRotator::ZeroRotator};
@@ -140,7 +140,7 @@ private:
 	/**
 	 * For normal mode it's target value, for others it's delta value.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintGetter=GetScale, BlueprintSetter=SetScale, Category="Animation",
+	UPROPERTY(EditAnywhere, BlueprintGetter=GetTargetScale, BlueprintSetter=SetTargetScale, Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateScale"))
 	FVector TargetScale{FVector::OneVector};
 
