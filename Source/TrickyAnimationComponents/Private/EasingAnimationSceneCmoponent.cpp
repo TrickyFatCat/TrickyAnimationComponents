@@ -1,7 +1,5 @@
 // MIT License Copyright. Created by Artyom "Tricky Fat Cat" Volkov
 
-#include <propsys.h>
-
 #include "EasingAnimationSceneComponent.h"
 #include "GameFramework/Actor.h"
 
