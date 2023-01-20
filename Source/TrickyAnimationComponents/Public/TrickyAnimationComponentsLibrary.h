@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "TrickyAnimationComponentsLibrary.generated.h"
 
 UENUM(BlueprintType)
@@ -29,11 +30,27 @@ class TRICKYANIMATIONCOMPONENTS_API UTrickyAnimationComponentsLibrary : public U
 	GENERATED_BODY()
 
 public:
-	template<typename T>
+	template <typename T>
 	static void SwapValues(T& A, T& B)
 	{
 		const T C = A;
 		A = B;
 		B = C;
 	}
+
+	static void EaseVector(FVector& Value,
+	                       const FVector& InitialValue,
+	                       const FVector& TargetValue,
+	                       const float Alpha,
+	                       const TEnumAsByte<EEasingFunc::Type> EaseFunction,
+	                       const float BlendExp,
+	                       const int32 Steps);
+
+	static void EaseRotator(FRotator& Value,
+	                        const FRotator& InitialValue,
+	                        const FRotator& TargetValue,
+	                        const float Alpha,
+	                        const TEnumAsByte<EEasingFunc::Type> EaseFunction,
+	                        const float BlendExp,
+	                        const int32 Steps);
 };
