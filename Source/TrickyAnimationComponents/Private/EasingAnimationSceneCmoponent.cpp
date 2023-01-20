@@ -7,6 +7,16 @@ UEasingAnimationSceneComponent::UEasingAnimationSceneComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	UActorComponent::SetComponentTickEnabled(false);
+	bWantsInitializeComponent = true;
+}
+
+void UEasingAnimationSceneComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+
+	DeltaLocation = TargetLocation;
+	DeltaRotation = TargetRotation;
+	DeltaScale = TargetScale;
 }
 
 void UEasingAnimationSceneComponent::BeginPlay()
@@ -23,37 +33,41 @@ void UEasingAnimationSceneComponent::TickComponent(float DeltaTime,
                                                    ELevelTick TickType,
                                                    FActorComponentTickFunction* ThisTickFunction)
 {
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
 	if (bIsPlaying)
 	{
-		if (bAnimateLocation)
-		{
-			FVector NewLocation;
-			NewLocation.X = EaseFloat(InitialLocation.X, TargetLocation.X);
-			NewLocation.Y = EaseFloat(InitialLocation.Y, TargetLocation.Y);
-			NewLocation.Z = EaseFloat(InitialLocation.Z, TargetLocation.Z);
-			SetRelativeLocation(NewLocation);
-		}
+		const float CurrentTime = GetWorld()->GetTimeSeconds() - LaunchTime;
 
-		if (bAnimateRotation)
+		if (CurrentTime < Duration)
 		{
-			FRotator NewRotation;
-			NewRotation.Pitch = EaseFloat(InitialRotation.Pitch, TargetRotation.Pitch);
-			NewRotation.Yaw = EaseFloat(InitialRotation.Yaw, TargetRotation.Yaw);
-			NewRotation.Roll = EaseFloat(InitialRotation.Roll, TargetRotation.Roll);
-			SetRelativeRotation(NewRotation);
-		}
+			const float Alpha = CurrentTime / Duration;
+			if (bAnimateLocation)
+			{
+				FVector NewLocation;
+				EaseVector(NewLocation, InitialLocation, TargetLocation, Alpha);
+				SetRelativeLocation(NewLocation);
+			}
 
-		if (bAnimateScale)
+			if (bAnimateRotation)
+			{
+				FRotator NewRotation;
+				EaseRotator(NewRotation, InitialRotation, TargetRotation, Alpha);
+				SetRelativeRotation(NewRotation);
+			}
+
+			if (bAnimateScale)
+			{
+				FVector NewScale;
+				EaseVector(NewScale, InitialScale, TargetScale, Alpha);
+				SetRelativeScale3D(NewScale);
+			}
+		}
+		else
 		{
-			FVector NewScale;
-			NewScale.X = EaseFloat(InitialScale.X, TargetScale.X);
-			NewScale.Y = EaseFloat(InitialScale.Y, TargetScale.Y);
-			NewScale.Z = EaseFloat(InitialScale.Z, TargetScale.Z);
-			SetRelativeScale3D(NewScale);
+			Finish();
 		}
 	}
-
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
 bool UEasingAnimationSceneComponent::GetIsPlaying() const
@@ -76,7 +90,7 @@ void UEasingAnimationSceneComponent::Start()
 	LaunchTime = GetWorld()->GetTimeSeconds();
 	InitialLocation = GetRelativeLocation();
 	InitialRotation = GetRelativeRotation();
-	InitialScale = GetRelativeScale3D();	
+	InitialScale = GetRelativeScale3D();
 
 	bIsPlaying = true;
 	SetComponentTickEnabled(true);
@@ -140,48 +154,62 @@ void UEasingAnimationSceneComponent::SetTargetScale(const FVector& Value)
 	TargetScale = Value;
 }
 
-float UEasingAnimationSceneComponent::EaseFloat(const float InitialValue,
-                                                const float TargetValue)
+void UEasingAnimationSceneComponent::Finish()
 {
-	const float CurrentTime = GetWorld()->GetTimeSeconds();
-
-	if (CurrentTime - LaunchTime < Duration)
-	{
-		const float Alpha = (CurrentTime - LaunchTime) / Duration;
-		return UKismetMathLibrary::Ease(InitialValue,
-		                                TargetValue,
-		                                Alpha,
-		                                EaseFunction,
-		                                Exponent,
-		                                SubStep);
-	}
-
 	OnAnimationFinished.Broadcast();
 
-	if (bIsLooping)
+	switch (AnimationBehavior)
 	{
-		LaunchTime = GetWorld()->GetTimeSeconds();
-		
-		switch(AnimationBehavior)
-		{
-		case EEaseAnimBehavior::Normal:
-			SetRelativeLocation(InitialLocation);
-			SetRelativeRotation(InitialRotation);
-			SetRelativeScale3D(InitialScale);
-			break;
-
-		case EEaseAnimBehavior::PingPong:
-			UTrickyAnimationComponentsLibrary::SwapValues<FVector>(InitialLocation, TargetLocation);
-			UTrickyAnimationComponentsLibrary::SwapValues<FRotator>(InitialRotation, TargetRotation);
-			UTrickyAnimationComponentsLibrary::SwapValues<FVector>(InitialScale, TargetScale);
-			break;
-		}
-	}
-	else
-	{
+	case EEaseAnimBehavior::Normal:
 		bIsPlaying = false;
 		SetComponentTickEnabled(false);
-	}
+		break;
 
-	return TargetValue;
+	case EEaseAnimBehavior::Additive:
+		InitialLocation = TargetLocation;
+		InitialRotation = TargetRotation;
+		InitialScale = TargetScale;
+
+		TargetLocation = InitialLocation + DeltaLocation;
+		TargetRotation = InitialRotation + DeltaRotation;
+		TargetScale = InitialScale + DeltaScale;
+
+		LaunchTime = GetWorld()->GetTimeSeconds();
+		break;
+
+	case EEaseAnimBehavior::PingPong:
+		UTrickyAnimationComponentsLibrary::SwapValues<FVector>(InitialLocation, TargetLocation);
+		UTrickyAnimationComponentsLibrary::SwapValues<FRotator>(InitialRotation, TargetRotation);
+		UTrickyAnimationComponentsLibrary::SwapValues<FVector>(InitialScale, TargetScale);
+		LaunchTime = GetWorld()->GetTimeSeconds();
+		break;
+	}
+}
+
+void UEasingAnimationSceneComponent::EaseVector(FVector& Value,
+                                                const FVector& InitialValue,
+                                                const FVector& TargetValue,
+                                                const float Alpha) const
+{
+	UTrickyAnimationComponentsLibrary::EaseVector(Value,
+	                                              InitialValue,
+	                                              TargetValue,
+	                                              Alpha,
+	                                              EaseFunction,
+	                                              BlendExp,
+	                                              Steps);
+}
+
+void UEasingAnimationSceneComponent::EaseRotator(FRotator& Value,
+                                                 const FRotator& InitialValue,
+                                                 const FRotator& TargetValue,
+                                                 const float Alpha) const
+{
+	UTrickyAnimationComponentsLibrary::EaseRotator(Value,
+	                                               InitialValue,
+	                                               TargetValue,
+	                                               Alpha,
+	                                               EaseFunction,
+	                                               BlendExp,
+	                                               Steps);
 }

@@ -20,6 +20,8 @@ public:
 	UEasingAnimationSceneComponent();
 
 protected:
+	virtual void InitializeComponent() override;
+	
 	virtual void BeginPlay() override;
 
 public:
@@ -39,12 +41,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
 	bool bStartOnBeginPlay = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
-	bool bIsLooping = false;
 	/**
 	 * Determines behavior of the animation.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(EditCondition="bIsLooping", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	EEaseAnimBehavior AnimationBehavior = EEaseAnimBehavior::Normal;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
@@ -74,14 +74,14 @@ public:
 			,
 			EditConditionHides
 		))
-	float Exponent = 2.f;
+	float BlendExp = 2.f;
 
 	/**
 	 * Amount of substeps, used only with the Step easing function.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation",
 		meta=(EditCondition="EaseFunction == EEasingFunc::Step", EditConditionHides))
-	int32 SubStep = 10.f;
+	int32 Steps = 10.f;
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EasingAnimationScene")
 	bool GetIsPlaying() const;
@@ -157,5 +157,14 @@ private:
 	FRotator InitialRotation{FRotator::ZeroRotator};
 	FVector InitialScale{FVector::ZeroVector};
 
-	float EaseFloat(const float InitialValue, const float TargetValue);
+	// Used only for additive behaviour
+	FVector DeltaLocation = TargetLocation;
+	FRotator DeltaRotation = TargetRotation;
+	FVector DeltaScale = TargetScale;
+
+	void Finish();
+
+	void EaseVector(FVector& Value, const FVector& InitialValue, const FVector& TargetValue, const float Alpha) const;
+
+	void EaseRotator(FRotator& Value, const FRotator& InitialValue, const FRotator& TargetValue, const float Alpha) const;
 };
