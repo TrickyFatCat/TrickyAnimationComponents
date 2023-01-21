@@ -34,6 +34,11 @@ bool UFollowAnimationComponent::StopFollowing()
 	return true;
 }
 
+bool UFollowAnimationComponent::GetIsFollowing() const
+{
+	return bIsFollowing;
+}
+
 void UFollowAnimationComponent::BeginPlay()
 {
 	Super::BeginPlay();

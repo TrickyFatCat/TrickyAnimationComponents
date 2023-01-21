@@ -58,9 +58,12 @@ public:
 
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|EaseAnimation")
 	bool StartFollowing();
-	
+
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|EaseAnimation")
 	bool StopFollowing();
+
+	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
+	bool GetIsFollowing() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -72,7 +75,7 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere,
-		BlueprintReadOnly,
+		BlueprintGetter=GetIsFollowing,
 		Category="Animation",
 		meta=(AllowPrivateAccess))
 	bool bIsFollowing = true;
