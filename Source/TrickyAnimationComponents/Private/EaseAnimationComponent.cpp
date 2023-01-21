@@ -14,19 +14,19 @@ UEaseAnimationComponent::UEaseAnimationComponent()
 void UEaseAnimationComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
-	
-	DeltaLocation = TargetLocation;
-	DeltaRotation = TargetRotation;
-	DeltaScale = TargetScale;
 }
 
 void UEaseAnimationComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (bStartOnBeginPlay)
+	InitialLocation = GetOwner()->GetActorLocation();
+	InitialRotation = GetOwner()->GetActorRotation();
+	InitialScale = GetOwner()->GetActorScale();
+
+	if (bAutoPlay)
 	{
-		Start();
+		bPlayFromEnd ? PlayFromEnd() : PlayFromStart();
 	}
 }
 
@@ -46,21 +46,21 @@ void UEaseAnimationComponent::TickComponent(float DeltaTime,
 			if (bAnimateLocation)
 			{
 				FVector NewLocation;
-				EaseVector(NewLocation, InitialLocation, TargetLocation, Alpha);
+				EaseVector(NewLocation, StartLocation, EndLocation, Alpha);
 				GetOwner()->SetActorLocation(NewLocation);
 			}
 
 			if (bAnimateRotation)
 			{
 				FRotator NewRotation;
-				EaseRotator(NewRotation, InitialRotation, TargetRotation, Alpha);
+				EaseRotator(NewRotation, StartRotation, EndRotation, Alpha);
 				GetOwner()->SetActorRotation(NewRotation);
 			}
 
 			if (bAnimateScale)
 			{
 				FVector NewScale;
-				EaseVector(NewScale, InitialScale, TargetScale, Alpha);
+				EaseVector(NewScale, StartScale, EndScale, Alpha);
 				GetOwner()->SetActorScale3D(NewScale);
 			}
 		}
@@ -76,7 +76,7 @@ bool UEaseAnimationComponent::GetIsPlaying() const
 	return bIsPlaying;
 }
 
-bool UEaseAnimationComponent::Start()
+bool UEaseAnimationComponent::PlayFromStart()
 {
 	if (bIsPlaying)
 	{
@@ -90,9 +90,42 @@ bool UEaseAnimationComponent::Start()
 	}
 
 	LaunchTime = GetWorld()->GetTimeSeconds();
-	InitialLocation = GetOwner()->GetActorLocation();
-	InitialRotation = GetOwner()->GetActorRotation();
-	InitialScale = GetOwner()->GetActorScale3D();
+
+	StartLocation = InitialLocation;
+	StartRotation = InitialRotation;
+	StartScale = InitialScale;
+
+	EndLocation = TargetLocation;
+	EndRotation = TargetRotation;
+	EndScale = TargetScale;
+
+	bIsPlaying = true;
+	SetComponentTickEnabled(true);
+	return true;
+}
+
+bool UEaseAnimationComponent::PlayFromEnd()
+{
+	if (bIsPlaying)
+	{
+		return false;
+	}
+
+	if (Duration <= 0.f)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Ease animation duration is <= 0."));
+		return false;
+	}
+
+	LaunchTime = GetWorld()->GetTimeSeconds();
+
+	StartLocation = TargetLocation;
+	StartRotation = TargetRotation;
+	StartScale = TargetScale;
+
+	EndLocation = InitialLocation;
+	EndRotation = InitialRotation;
+	EndScale = InitialScale;
 
 	bIsPlaying = true;
 	SetComponentTickEnabled(true);
@@ -168,21 +201,21 @@ void UEaseAnimationComponent::Finish()
 		break;
 
 	case EEaseAnimBehavior::Additive:
-		InitialLocation = TargetLocation;
-		InitialRotation = TargetRotation;
-		InitialScale = TargetScale;
+		StartLocation = EndLocation;
+		StartRotation = EndRotation;
+		StartScale = EndScale;
 
-		TargetLocation = InitialLocation + DeltaLocation;
-		TargetRotation = InitialRotation + DeltaRotation;
-		TargetScale = InitialScale + DeltaScale;
-
+		EndLocation = StartLocation + TargetLocation;
+		EndRotation = StartRotation + TargetRotation;
+		EndScale = StartScale + TargetScale;
+		
 		LaunchTime = GetWorld()->GetTimeSeconds();
 		break;
 
 	case EEaseAnimBehavior::PingPong:
-		UTrickyAnimationComponentsLibrary::SwapValues<FVector>(InitialLocation, TargetLocation);
-		UTrickyAnimationComponentsLibrary::SwapValues<FRotator>(InitialRotation, TargetRotation);
-		UTrickyAnimationComponentsLibrary::SwapValues<FVector>(InitialScale, TargetScale);
+		UTrickyAnimationComponentsLibrary::SwapValues<FVector>(StartLocation, EndLocation);
+		UTrickyAnimationComponentsLibrary::SwapValues<FRotator>(StartRotation, EndRotation);
+		UTrickyAnimationComponentsLibrary::SwapValues<FVector>(StartScale, EndScale);
 		LaunchTime = GetWorld()->GetTimeSeconds();
 		break;
 	}

@@ -33,7 +33,10 @@ public:
 	FOnAnimationFinishedSignature OnAnimationFinished;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
-	bool bStartOnBeginPlay = false;
+	bool bAutoPlay = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(EditCondition="bAutoPlay", EditConditionHides))
+	bool bPlayFromEnd = false;
 	
 	/**
 	 * Determines behavior of the animation.
@@ -80,8 +83,11 @@ public:
 	bool GetIsPlaying() const;
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EaseAnimation")
-	bool Start();
+	bool PlayFromStart();
 
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EaseAnimation")
+	bool PlayFromEnd();
+	
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EaseAnimation")
 	bool Stop();
 
@@ -150,11 +156,14 @@ private:
 	FRotator InitialRotation{FRotator::ZeroRotator};
 	FVector InitialScale{FVector::ZeroVector};
 
-	// Used only for additive behaviour
-	FVector DeltaLocation = TargetLocation;
-	FRotator DeltaRotation = TargetRotation;
-	FVector DeltaScale = TargetScale;
+	FVector StartLocation{FVector::ZeroVector};
+	FRotator StartRotation{FRotator::ZeroRotator};
+	FVector StartScale{FVector::OneVector};
 
+	FVector EndLocation{FVector::ZeroVector};
+	FRotator EndRotation{FRotator::ZeroRotator};
+	FVector EndScale{FVector::OneVector};
+	
 	void Finish();
 
 	void EaseVector(FVector& Value, const FVector& InitialValue, const FVector& TargetValue, const float Alpha) const;
