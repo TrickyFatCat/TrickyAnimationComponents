@@ -54,7 +54,7 @@ public:
 	 * Determines the speed of interpolation.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
-	float Speed = 100;
+	float Speed = 5;
 
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|EaseAnimation")
 	bool StartFollowing();
@@ -74,8 +74,7 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	UPROPERTY(EditAnywhere,
-		BlueprintGetter=GetIsFollowing,
+	UPROPERTY(BlueprintGetter=GetIsFollowing,
 		Category="Animation",
 		meta=(AllowPrivateAccess))
 	bool bIsFollowing = true;
