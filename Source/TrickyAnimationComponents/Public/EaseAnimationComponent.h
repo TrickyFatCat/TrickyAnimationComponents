@@ -30,12 +30,6 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnAnimationStartedSignature OnAnimationStarted;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnAnimationStoppedSignature OnAnimationStopped;
-
-	UPROPERTY(BlueprintAssignable)
 	FOnAnimationFinishedSignature OnAnimationFinished;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")

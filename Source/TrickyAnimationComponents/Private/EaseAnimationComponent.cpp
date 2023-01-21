@@ -96,7 +96,6 @@ bool UEaseAnimationComponent::Start()
 
 	bIsPlaying = true;
 	SetComponentTickEnabled(true);
-	OnAnimationStarted.Broadcast();
 	return true;
 }
 
@@ -109,7 +108,6 @@ bool UEaseAnimationComponent::Stop()
 
 	bIsPlaying = false;
 	SetComponentTickEnabled(false);
-	OnAnimationStopped.Broadcast();
 	return true;
 }
 

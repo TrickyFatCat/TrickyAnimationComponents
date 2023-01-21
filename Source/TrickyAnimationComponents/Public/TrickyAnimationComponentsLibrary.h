@@ -15,10 +15,6 @@ enum class EEaseAnimBehavior : uint8
 	PingPong
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationStartedSignature);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationStoppedSignature);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimationFinishedSignature);
 
 /**
