@@ -1,4 +1,4 @@
-﻿// MIT License Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov
+﻿// MIT License Copyright. Created by Artyom "Tricky Fat Cat" Volkov
 
 #pragma once
 
@@ -56,11 +56,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(DisplayAfter="bIsEnabled"))
 	float Speed = 100;
 
-	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
-	bool GetIsEnabled() const;
-
 	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|EaseAnimation")
-	void SetIsEnabled(const bool Value);
+	bool StartFollowing();
+	
+	UFUNCTION(BlueprintSetter, Category="TrickyAnimations|EaseAnimation")
+	bool StopFollowing();
 
 protected:
 	virtual void BeginPlay() override;
@@ -72,11 +72,10 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere,
-		BlueprintGetter=GetIsEnabled,
-		BlueprintSetter=SetIsEnabled,
+		BlueprintReadOnly,
 		Category="Animation",
 		meta=(AllowPrivateAccess))
-	bool bIsEnabled = true;
+	bool bIsFollowing = true;
 
 	FVector CurrentLocation{FVector::ZeroVector};
 

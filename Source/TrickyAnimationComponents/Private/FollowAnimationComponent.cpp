@@ -1,5 +1,4 @@
-﻿// MIT License Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov
-
+﻿// MIT License Copyright. Created by Artyom "Tricky Fat Cat" Volkov
 
 #include "FollowAnimationComponent.h"
 #include "GameFramework/Actor.h"
@@ -7,24 +6,38 @@
 UFollowAnimationComponent::UFollowAnimationComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	UActorComponent::SetComponentTickEnabled(false);
 }
 
 
-bool UFollowAnimationComponent::GetIsEnabled() const
+bool UFollowAnimationComponent::StartFollowing()
 {
-	return bIsEnabled;
+	if (bIsFollowing)
+	{
+		return false;
+	}
+	
+	bIsFollowing = true;
+	SetComponentTickEnabled(true);
+	return true;
 }
 
-void UFollowAnimationComponent::SetIsEnabled(const bool Value)
+bool UFollowAnimationComponent::StopFollowing()
 {
-	bIsEnabled = Value;
-	SetComponentTickEnabled(bIsEnabled);
+	if (!bIsFollowing)
+	{
+		return false;
+	}
+	
+	bIsFollowing = false;
+	SetComponentTickEnabled(false);
+	return true;
 }
 
 void UFollowAnimationComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SetComponentTickEnabled(bIsEnabled);
+	SetComponentTickEnabled(bIsFollowing);
 }
 
 
@@ -34,7 +47,7 @@ void UFollowAnimationComponent::TickComponent(float DeltaTime,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (TargetActor || !bFollowActor)
+	if (bIsFollowing && (TargetActor || !bFollowActor))
 	{
 		CurrentLocation = GetOwner()->GetActorLocation();
 		TargetLocation = bFollowActor ? TargetActor->GetActorLocation() : Location;
