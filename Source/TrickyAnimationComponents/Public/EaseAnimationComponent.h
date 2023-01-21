@@ -86,10 +86,10 @@ public:
 	bool GetIsPlaying() const;
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EaseAnimation")
-	void Start();
+	bool Start();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EaseAnimation")
-	void Stop();
+	bool Stop();
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
 	float GetEaseDuration() const;

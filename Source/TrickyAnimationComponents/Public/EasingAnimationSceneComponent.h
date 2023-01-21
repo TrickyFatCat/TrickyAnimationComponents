@@ -9,7 +9,7 @@
 #include "EasingAnimationSceneComponent.generated.h"
 
 /**
- * A simple component which interpolates its owner towards the chosen actor/location in the level.
+ * A scene component which allows to animate location, rotation and scale using easing functions.
  */
 UCLASS(ClassGroup=(TrickyAnimationComponents), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API UEasingAnimationSceneComponent : public USceneComponent
@@ -28,12 +28,6 @@ public:
 	virtual void TickComponent(float DeltaTime,
 	                           ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnAnimationStartedSignature OnAnimationStarted;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnAnimationStoppedSignature OnAnimationStopped;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAnimationFinishedSignature OnAnimationFinished;
@@ -87,10 +81,10 @@ public:
 	bool GetIsPlaying() const;
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EasingAnimationScene")
-	void Start();
+	bool Start();
 
 	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|EasingAnimationScene")
-	void Stop();
+	bool Stop();
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EasingAnimationScene")
 	float GetEaseDuration() const;

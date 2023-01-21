@@ -75,16 +75,17 @@ bool UEasingAnimationSceneComponent::GetIsPlaying() const
 	return bIsPlaying;
 }
 
-void UEasingAnimationSceneComponent::Start()
+bool UEasingAnimationSceneComponent::Start()
 {
 	if (bIsPlaying)
 	{
-		return;
+		return false;
 	}
 
 	if (Duration <= 0.f)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Ease animation duration is <= 0."));
+		return false;
 	}
 
 	LaunchTime = GetWorld()->GetTimeSeconds();
@@ -94,19 +95,19 @@ void UEasingAnimationSceneComponent::Start()
 
 	bIsPlaying = true;
 	SetComponentTickEnabled(true);
-	OnAnimationStarted.Broadcast();
+	return true;
 }
 
-void UEasingAnimationSceneComponent::Stop()
+bool UEasingAnimationSceneComponent::Stop()
 {
 	if (!bIsPlaying)
 	{
-		return;
+		return false;
 	}
 
 	bIsPlaying = false;
 	SetComponentTickEnabled(false);
-	OnAnimationStopped.Broadcast();
+	return true;
 }
 
 float UEasingAnimationSceneComponent::GetEaseDuration() const
