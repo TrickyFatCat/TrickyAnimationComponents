@@ -201,9 +201,9 @@ void UEaseAnimationComponent::Finish()
 		break;
 
 	case EEaseAnimBehavior::Loop:
-		GetOwner()->SetActorLocation(InitialLocation);
-		GetOwner()->SetActorRotation(InitialRotation);
-		GetOwner()->SetActorScale3D(InitialScale);
+		GetOwner()->SetActorLocation(StartLocation);
+		GetOwner()->SetActorRotation(StartRotation);
+		GetOwner()->SetActorScale3D(StartScale);
 		LaunchTime = GetWorld()->GetTimeSeconds();
 		break;
 
