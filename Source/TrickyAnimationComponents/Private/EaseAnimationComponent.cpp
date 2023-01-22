@@ -200,6 +200,13 @@ void UEaseAnimationComponent::Finish()
 		SetComponentTickEnabled(false);
 		break;
 
+	case EEaseAnimBehavior::Loop:
+		GetOwner()->SetActorLocation(InitialLocation);
+		GetOwner()->SetActorRotation(InitialRotation);
+		GetOwner()->SetActorScale3D(InitialScale);
+		LaunchTime = GetWorld()->GetTimeSeconds();
+		break;
+
 	case EEaseAnimBehavior::AdditiveLoop:
 		StartLocation = EndLocation;
 		StartRotation = EndRotation;

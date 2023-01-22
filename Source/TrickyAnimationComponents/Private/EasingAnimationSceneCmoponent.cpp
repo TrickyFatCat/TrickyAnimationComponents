@@ -199,6 +199,13 @@ void UEasingAnimationSceneComponent::Finish()
 		SetComponentTickEnabled(false);
 		break;
 
+	case EEaseAnimBehavior::Loop:
+		SetRelativeLocation(InitialLocation);
+		SetRelativeRotation(InitialRotation);
+		SetRelativeScale3D(InitialScale);
+		LaunchTime = GetWorld()->GetTimeSeconds();
+		break;
+
 	case EEaseAnimBehavior::AdditiveLoop:
 		StartLocation = EndLocation;
 		StartRotation = EndRotation;
