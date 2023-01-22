@@ -29,7 +29,7 @@ public:
 	                           ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-	/**Called when the animation is finished.*/
+	/**Called when the animation cycle is finished.*/
 	UPROPERTY(BlueprintAssignable)
 	FOnAnimationFinishedSignature OnAnimationFinished;
 
