@@ -44,13 +44,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	EEaseAnimBehavior AnimationBehavior = EEaseAnimBehavior::Normal;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(InlineEditConditionToggle))
 	bool bAnimateLocation = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(InlineEditConditionToggle))
 	bool bAnimateRotation = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle, AllowPreserveRatio="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(InlineEditConditionToggle, AllowPreserveRatio="true"))
 	bool bAnimateScale = false;
 
 	/**
