@@ -57,7 +57,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(InlineEditConditionToggle, AllowPreserveRatio="true"))
 	bool bAnimateScale = false;
 
-	/**Ease function which will be used for animation.*/
+	/**Ease function which will be used for the animation.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	TEnumAsByte<EEasingFunc::Type> EaseFunction = EEasingFunc::EaseInOut;
 
@@ -120,18 +120,18 @@ private:
 		Category="Animation")
 	bool bIsPlaying = false;
 
-	/**Target relative location of the animation.*/
+	/**Target world location of the animation.*/
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetTargetLocation, BlueprintSetter=SetTargetLocation, Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateLocation"))
 	FVector TargetLocation{FVector::ZeroVector};
 
-	/**Target relative rotation of the animation.*/
+	/**Target world rotation of the animation.*/
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetTargetRotation, BlueprintSetter=SetTargetRotation, BlueprintReadWrite,
 		Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateRotation"))
 	FRotator TargetRotation{FRotator::ZeroRotator};
 
-	/**Target relative scale of the animation.*/
+	/**Target world scale of the animation.*/
 	UPROPERTY(EditAnywhere, BlueprintGetter=GetTargetScale, BlueprintSetter=SetTargetScale, Category="Animation",
 		meta=(AllowPrivateAccess, EditCondition="bAnimateScale"))
 	FVector TargetScale{FVector::OneVector};
