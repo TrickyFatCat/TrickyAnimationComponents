@@ -200,7 +200,7 @@ void UEaseAnimationComponent::Finish()
 		SetComponentTickEnabled(false);
 		break;
 
-	case EEaseAnimBehavior::Additive:
+	case EEaseAnimBehavior::AdditiveLoop:
 		StartLocation = EndLocation;
 		StartRotation = EndRotation;
 		StartScale = EndScale;
