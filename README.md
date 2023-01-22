@@ -10,7 +10,7 @@ The plugin can be used in both C++ and Blueprint projects.
 
 **At the moment, the package is compatible only with Unreal Engine 4.**
 
-1. Download [**package file**](https://github.com/TrickyFatCat/TrickyAnimationComponents/releases/tag/v1.1);
+1. Download [**package file**](https://github.com/TrickyFatCat/TrickyAnimationComponents/releases/);
 2. Unzip the package to the Plugins folder in engine folder, e.g. `C:\Program Files\Epic Games\UE_4.27\Engine\Plugins`;
 3. Restart the project;
 
@@ -27,11 +27,109 @@ In this case the plugin can be used for any blueprint project.
 
 The plugin contains:
 
-1. RotationAnimationComponent;
-2. FloatingAnimationComponent;
-3. EaseAnimationComponent;
-4. TimelineAnimationComponent;
-5. SplineAnimationComponent;
+1. EaseAnimationComponent;
+2. EasingAnimationSceneComponent;
+3. FollowAnimationComponent;
+4. OscillationAnimationComponent;
+5. RotationAnimationComponent;
+6. SplineAnimationComponent;
+7. TimelineAnimationComponent;
+
+### EaseAnimationComponent
+
+An actor component which can animate owners location, rotation and scale using easing functions.
+
+#### Variables
+
+1. `AutoPlay` - toggles if the animation will start on begin play or not;
+2. `bPlayFromEnd` - if true, PlayFromEnd function will be called on begin play, else PlayFromStart;
+3. `AnimationBehavior` - Determines behavior of the animation:
+   - `Normal` plays once;
+   - `Loop` loops normal behavior;
+   - `AdditiveLoop` increment target values by their initial value each cycle;
+   - `PingPong` animates from initial values to target and back;
+4. `EaseFunction` - ease function which will be used for the animation;
+5. `TargetLocation` - target world location of the animation;
+6. `TargetRotation` - target world rotation of the animation;
+7. `TargetScale` - target world scale of the animation;
+8. `Duration` - animation duration;
+9. `IsPlaying` - shows if the animation is playing;
+
+#### Functions
+
+1. `PlayFromStart` - starts the animation from initial location/rotation/scale;
+2. `PlayFromEnd` - start the animation from target location/rotation/scale;
+3. `Stop` - stops the animation;
+
+#### Delegates
+
+1. `OnAnimationFinished` - called when the animation cycle finished;
+ 
+### EasingAnimationComponent
+
+A scene component which can animate its location, rotation and scale using easing functions.
+
+#### Variables
+
+1. `AutoPlay` - toggles if the animation will start on begin play or not;
+2. `bPlayFromEnd` - if true, PlayFromEnd function will be called on begin play, else PlayFromStart;
+3. `AnimationBehavior` - Determines behavior of the animation:
+   - `Normal` plays once;
+   - `Loop` loops normal behavior;
+   - `AdditiveLoop` increment target values by their initial value each cycle;
+   - `PingPong` animates from initial values to target and back;
+4. `EaseFunction` - ease function which will be used for the animation;
+5. `TargetLocation` - target relative location of the animation;
+6. `TargetRotation` - target relative rotation of the animation;
+7. `TargetScale` - target relative scale of the animation;
+8. `Duration` - animation duration;
+9. `IsPlaying` - shows if the animation is playing;
+
+#### Functions
+
+1. `PlayFromStart` - starts the animation from initial location/rotation/scale;
+2. `PlayFromEnd` - start the animation from target location/rotation/scale;
+3. `Stop` - stops the animation;
+
+#### Delegates
+
+1. `OnAnimationFinished` - called when the animation cycle finished;
+
+### FollowAnimationComponent
+
+A component which interpolates an owning actor location towards a target location/actor.
+
+#### Variables
+
+1. `FollowActor` - toggles if the component will interpolate position towards a target actor or a specific location;
+2. `TargetActor` - an actor which world location will be used as a target location;
+3. `Location` - the world location which will be used as a target location;
+4. `TargetLocationOffsetz` - location offset relative to the target location;
+5. `Speed` - determines the speed of interpolation;
+6. `IsFollowing` - shows if the component follows the target location;
+
+#### Functions
+
+1. `StartFollowing` - start interpolation;
+2. `StopFollowing` - stops interpolation;
+
+### OscillationAnimationComponent
+
+A scene component which create oscillation animation for location, rotation and scale.
+
+#### Variables
+
+1. `IsEnabled` - toggles all the animations;
+2. For location, rotation, scale:
+   1. `AnimateX` - toggle animation along X axis;
+   2. `AnimateY` - toggle animation along Y axis;
+   3. `AnimateZ` - toggle animation along Z axis;
+   4. `Amplitude` - determines the animation amplitude for each axis;
+   5. `Frequency` - determines the animation frequency for each axis;
+
+#### Functions
+
+1. `SetIsEnabled` - toggles oscillation animation;
 
 ### RotationAnimationComponent
 
@@ -48,39 +146,46 @@ A scene component which rotates along the chosen axis.
 
 1. `SetIsRotating` - toggles rotation along XYZ axis;
 
-### OscillationAnimationComponent
+### SplineAnimationComponent
 
-A scene component which create oscillation animation for location, rotation and scale.
+An actor component which moves an actor along a spline component using a timeline component.
 
-#### Variables
+#### Setup
 
-1. `IsEnable` - toggles all the animations;
-2. For location, rotation, scale:
-   1. `AnimateX` - toggle animation along X axis;
-   2. `AnimateY` - toggle animation along Y axis;
-   3. `AnimateZ` - toggle animation along Z axis;
-   4. `Amplitude` - determines the animation amplitude for each axis;
-   5. `Frequency` - determines the animation frequency for each axis;
-
-#### Functions
-
-1. `SetIsFloating` - toggles floating animation along XYZ axis;
-
-### EaseAnimationComponent
-
-An actor component which moves the actor towards a target using interpolation functions.
+1. Add component to an actor;
+2. Create or use the existing curve float object for the `AnimationCurve` variable;
+3. Place the actor in the world;
+4. Choose an actor with a spline component as `TargetActor`;
+5. Setup animation behavior in blueprints if needed;
 
 #### Variables
 
-1. `IsEnabled` - toggles the easing animation;
-2. `FollowActor` - switches between using location from a target actor or a specific world location.
-3. `TargetActor` - an actor which world location will be used as a target location;
-4. `SpecificLocation` - a world location which will be used as a target location;
-5. `LocationOffset` - location offset relative to the target location;
-6. `EasingFunction` - a type of the function which will be used for moving an owner;
-7. `Alpha` - determines the speed of the movement;
-8. `Exponent` - blend exponent, used only with EaseIn, EaseOut, EaseInOut easing functions. The higher the steeper the graph.
-9. `SubSteps` - the number of substeps for the Step easing function;
+1. `AnimationMode` - a mode which determines how the animation will work;
+2. `SplineActor` - an actor which contains a spline component;
+3. `AnimationCurve` - a float curve object used by the timeline component for the animation;
+   * It's better to use a curve with length equal 1.f;
+4. `AnimationTime` - length of the animation;
+5. `AnimationSpeed` - used for calculation of the animation time;
+   * Great for splines with many points and when the animation time between them must be constant;
+6. `StartPointIndex` - the point index from which the animation will be started;
+7. `IsReversed` - determines if the order of points will be reversed or not;
+8. `StopAtPoints` - toggles if the owner will stop at the spline points during the animation;
+9. `WaitAtStart` - toggles if the owner will "stop" at the start point;
+10. `UseCustomStops` - enables custom stops adjustments;
+11. `CustomStops` - map with point indexes and wait time;
+12. `WaitTimer` - how long the owner will wait at the point;
+13. `SplineOffset` - the offset along the spline;
+14. `LocationOffset` - location offset relative to the current location along the spline;
+15. `InheritRotation` - determines if the rotation along spline must be applied to the owner;
+16. `InheritScale` - determines if the scale along spline must be applied to the owner;
+
+### Functions
+
+1. `Start` - starts the animation;
+2. `Stop` - stops the animation at the next spline point;
+3. `AnimateTo` - animates to the chosen point. Works only in the manual mode;
+4. `Pause` - pauses the animation;
+5. `Resume` - resumes the animation;
 
 ### TimelineAnimationComponent
 
@@ -115,43 +220,4 @@ An actor component which animates transforms of the chosen scene components of a
 6. `CanPlayAnimation` - returns if the animation can be played or not;
 7. `GetAnimationProgress` - returns progress of the animation;
 
-### SplineAnimationComponent
 
-An actor component which moves an actor along a spline component using a timeline component.
-
-#### Setup
-
-1. Add component to an actor;
-2. Create or use the existing curve float object for the `AnimationCurve` variable;
-3. Place the actor in the world;
-4. Choose an actor with a spline component as `TargetActor`;
-5. Setup animation behavior in blueprints if needed;
-
-#### Variables
-
-1. `AnimationMode` - a mode which determines how the animation will work;
-2. `SplineActor` - an actor which contains a spline component;
-3. `AnimationCurve` - a float curve object used by the timeline component for the animation;
-    * It's better to use a curve with length equal 1.f;
-4. `AnimationTime` - length of the animation;
-5. `AnimationSpeed` - used for calculation of the animation time;
-   * Great for splines with many points and when the animation time between them must be constant;
-6. `StartPointIndex` - the point index from which the animation will be started;
-7. `IsReversed` - determines if the order of points will be reversed or not;
-8. `StopAtPoints` - toggles if the owner will stop at the spline points during the animation;
-9. `WaitAtStart` - toggles if the owner will "stop" at the start point;
-10. `UseCustomStops` - enables custom stops adjustments;
-11. `CustomStops` - map with point indexes and wait time;
-12. `WaitTimer` - how long the owner will wait at the point;
-13. `SplineOffset` - the offset along the spline;
-14. `LocationOffset` - location offset relative to the current location along the spline;
-15. `InheritRotation` - determines if the rotation along spline must be applied to the owner;
-16. `InheritScale` - determines if the scale along spline must be applied to the owner;
-
-### Functions
-
-1. `Start` - starts the animation;
-2. `Stop` - stops the animation at the next spline point;
-3. `AnimateTo` - animates to the chosen point. Works only in the manual mode;
-4. `Pause` - pauses the animation;
-5. `Resume` - resumes the animation;
