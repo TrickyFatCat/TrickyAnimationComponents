@@ -1,7 +1,7 @@
 // MIT License Copyright. Created by Artyom "Tricky Fat Cat" Volkov
 
 #include "EaseAnimationComponent.h"
-
+#include "Engine/World.h"
 #include "GameFramework/Actor.h"
 
 UEaseAnimationComponent::UEaseAnimationComponent()

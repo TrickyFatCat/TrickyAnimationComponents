@@ -2,6 +2,7 @@
 
 #include "EasingAnimationSceneComponent.h"
 #include "GameFramework/Actor.h"
+#include "Engine/World.h"
 
 UEasingAnimationSceneComponent::UEasingAnimationSceneComponent()
 {
