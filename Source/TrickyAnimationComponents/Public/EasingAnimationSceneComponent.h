@@ -9,7 +9,7 @@
 #include "EasingAnimationSceneComponent.generated.h"
 
 /**
- * A scene component which allows to animate location, rotation and scale using easing functions.
+ * A scene component which can animate its location, rotation and scale using easing functions.
  */
 UCLASS(ClassGroup=(TrickyAnimationComponents), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API UEasingAnimationSceneComponent : public USceneComponent
@@ -32,14 +32,15 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnAnimationFinishedSignature OnAnimationFinished;
 
+	/**Toggles if the animation will start on begin play.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
 	bool bAutoPlay = false;
 
+	/**If true, PlayFormEnd function will be called on begin play, else PlayFromStart.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(EditCondition="bAutoPlay", EditConditionHides))
 	bool bPlayFromEnd = false;
-	/**
-	 * Determines behavior of the animation.
-	 */
+	
+	/**Determines behavior of the animation.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	EEaseAnimBehavior AnimationBehavior = EEaseAnimBehavior::Normal;
 
