@@ -119,6 +119,9 @@ public:
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|TimelineAnimation")
 	ETimelineAnimationState GetTargetState() const;
 
+	UFUNCTION(BlueprintCallable, Category="TrickyAnimations|TimelineAnimation")
+	bool IsPlaying() const;
+
 	void GetTransformOffsets(TArray<FTransform>& Offsets) const;
 
 	void SetTransformOffsets(const TArray<FTransform>& Offsets);
