@@ -244,7 +244,7 @@ private:
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
 		Category="Animation|StopsOptions",
-		meta=(AllowPrivateAccess, EditCondition="StopMode!=ESplineAnimationStopMode::None"))
+		meta=(AllowPrivateAccess, EditCondition="StopMode!=ESplineAnimationStopMode::None", EditConditionHides))
 	bool bWaitOnBeginPlay = true;
 
 	/**
