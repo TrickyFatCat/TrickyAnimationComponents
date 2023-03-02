@@ -29,13 +29,22 @@ enum class ESplineAnimationState : uint8
 	Pause
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class ESplineAnimationMode : uint8
 {
 	OneWay UMETA(ToolTip="Animate from the first to the last spline point."),
 	Loop UMETA(ToolTip="Loop the animation from first to the last spline point."),
 	PingPong UMETA(ToolTip="Move forth and beck between the first and the last spline point."),
 	Manual UMETA(ToolTip="Create the custom movement pattern using the AnimateTo function.")
+};
+
+UENUM(BlueprintType)
+enum class ESplineAnimationStopMode : uint8
+{
+	None,
+	FirstAndLast,
+	All,
+	Custom
 };
 
 USTRUCT(BlueprintType)
@@ -148,7 +157,7 @@ private:
 	/**
 	 * Determines the behavior of the animation.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess))
 	ESplineAnimationMode AnimationMode = ESplineAnimationMode::OneWay;
 
 	/**
@@ -224,19 +233,19 @@ private:
 	bool bIsReversed = false;
 
 	/**
-	 * Toggle if should an owner stopped at the spline points during the animation.
+	 * Determines the rules how the owner should stop at the points.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
-	bool bStopAtPoints = false; // TODO Consider creating custom getter and setter
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
+	ESplineAnimationStopMode StopMode = ESplineAnimationStopMode::None;
 
 	/**
 	 * If true, the actor will "stop" at start point at the beginning of the animation.
-	 */ 
+	 */
 	UPROPERTY(EditAnywhere,
-		BlueprintReadOnly,
+		BlueprintReadWrite,
 		Category="Animation|StopsOptions",
-		meta=(AllowPrivateAccess, EditCondition="bStopAtPoints"))
-	bool bWaitAtStart = true;
+		meta=(AllowPrivateAccess, EditCondition="StopMode!=ESplineAnimationStopMode::None"))
+	bool bWaitOnBeginPlay = true;
 
 	/**
 	 * How long the owner will wait at the point.
@@ -244,22 +253,19 @@ private:
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
 		Category="Animation|StopsOptions",
-		meta=(AllowPrivateAccess, EditCondition="bStopAtPoints && !bUseCustomStops", ClampMin=0.f))
+		meta=(AllowPrivateAccess, EditCondition=
+			"StopMode!=ESplineAnimationStopMode::None && StopMode!=ESplineAnimationStopMode::Custom",
+			EditConditionHides,
+			ClampMin=0.f))
 	float WaitTime = 1.f;
 
-	UPROPERTY(EditInstanceOnly,
-		BlueprintReadOnly,
-		Category="Animation|StopsOptions",
-		meta=(AllowPrivateAccess, EditCondition="bStopAtpoints"))
-	bool bUseCustomStops = false;
-
 	/**
-	 * 
+	 * Indexes of custom stops
 	 */
 	UPROPERTY(EditInstanceOnly,
 		BlueprintReadOnly,
 		Category="Animation|StopsOptions",
-		meta=(AllowPrivateAccess, EditCondition="bUseCustomStops && bStopAtPoints"))
+		meta=(AllowPrivateAccess, EditCondition="StopMode==ESplineAnimationStopMode::Custom", EditConditionHides))
 	TMap<int32, float> CustomStops;
 
 	UPROPERTY(BlueprintReadOnly, Category="Animation|StopsOptions", meta=(AllowPrivateAccess))
@@ -300,10 +306,10 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
 	int32 NextPointIndex = 1;
-	
+
 	UPROPERTY(VisibleInstanceOnly, Category="Animation|DebugInfo", meta=(AllowPrivateAccess))
 	TArray<int32> PointsIndexes;
-	
+
 	bool bMustStop = false;
 
 	void CalculateNextPointIndex();
@@ -339,4 +345,6 @@ private:
 	void LogWarning(const FString& Message) const;
 
 	bool HasSplineComponent() const;
+
+	bool IsStoppingAtPoints() const;
 };
