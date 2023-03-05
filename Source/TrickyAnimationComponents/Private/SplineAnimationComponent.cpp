@@ -149,7 +149,7 @@ void USplineAnimationComponent::Start()
 		return;
 	}
 
-	if (StopMode != ESplineAnimationStopMode::None && bWaitOnBeginPlay)
+	if (StopMode != ESplineAnimationStopMode::None && bWaitOnAnimStart)
 	{
 		StartWaitTimer();
 		return;
@@ -636,7 +636,9 @@ void USplineAnimationComponent::StartWaitTimer()
 
 	AnimationState = ESplineAnimationState::Wait;
 
-	const float CurrentWaitTime = IsStoppingAtPoints() ? CustomStops[PointsIndexes[CurrentPointIndex]] : WaitTime;
+	const float CurrentWaitTime = StopMode == ESplineAnimationStopMode::Custom
+		                              ? CustomStops[PointsIndexes[CurrentPointIndex]]
+		                              : WaitTime;
 
 	if (CurrentWaitTime <= 0.f)
 	{

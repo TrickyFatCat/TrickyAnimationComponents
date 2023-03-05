@@ -245,7 +245,7 @@ private:
 		BlueprintReadWrite,
 		Category="Animation|StopsOptions",
 		meta=(AllowPrivateAccess, EditCondition="StopMode!=ESplineAnimationStopMode::None", EditConditionHides))
-	bool bWaitOnBeginPlay = true;
+	bool bWaitOnAnimStart = true;
 
 	/**
 	 * How long the owner will wait at the point.
