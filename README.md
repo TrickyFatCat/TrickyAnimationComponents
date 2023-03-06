@@ -11,7 +11,7 @@ The plugin can be used in both C++ and Blueprint projects.
 **At the moment, the package is compatible only with Unreal Engine 4.**
 
 1. Download [**package file**](https://github.com/TrickyFatCat/TrickyAnimationComponents/releases/);
-2. Unzip the package to the Plugins folder in engine folder, e.g. `C:\Program Files\Epic Games\UE_4.27\Engine\Plugins`;
+2. Unzip the package into Plugins folder of your project, e.g. `D:\UnrealProjects\MyProject\Plugins`;
 3. Restart the project;
 
 In this case the plugin can be used for any blueprint project.
@@ -169,15 +169,14 @@ An actor component which moves an actor along a spline component using a timelin
    * Great for splines with many points and when the animation time between them must be constant;
 6. `StartPointIndex` - the point index from which the animation will be started;
 7. `IsReversed` - determines if the order of points will be reversed or not;
-8. `StopAtPoints` - toggles if the owner will stop at the spline points during the animation;
-9. `WaitAtStart` - toggles if the owner will "stop" at the start point;
+8. `StopMode` - determines the rules how the owner should stop at the points;
+9. `WaitAtAnimationStart` - toggles if the owner will "stop" at the start point;
 10. `UseCustomStops` - enables custom stops adjustments;
-11. `CustomStops` - map with point indexes and wait time;
-12. `WaitTimer` - how long the owner will wait at the point;
-13. `SplineOffset` - the offset along the spline;
-14. `LocationOffset` - location offset relative to the current location along the spline;
-15. `InheritRotation` - determines if the rotation along spline must be applied to the owner;
-16. `InheritScale` - determines if the scale along spline must be applied to the owner;
+11. `WaitTimer` - how long the owner will wait at the point;
+12. `SplineOffset` - the offset along the spline;
+13. `LocationOffset` - location offset relative to the current location along the spline;
+14. `InheritRotation` - determines if the rotation along spline must be applied to the owner;
+15. `InheritScale` - determines if the scale along spline must be applied to the owner;
 
 ### Functions
 
@@ -186,6 +185,7 @@ An actor component which moves an actor along a spline component using a timelin
 3. `AnimateTo` - animates to the chosen point. Works only in the manual mode;
 4. `Pause` - pauses the animation;
 5. `Resume` - resumes the animation;
+6. `IsPlaying` - returns true if the animation is playing;
 
 ### TimelineAnimationComponent
 
