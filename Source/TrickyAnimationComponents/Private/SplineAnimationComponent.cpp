@@ -428,9 +428,11 @@ void USplineAnimationComponent::AnimateAlongSpline(const float Progress) const
 
 void USplineAnimationComponent::MoveAlongSpline(const float Progress) const
 {
+	// TODO: To use distance offset properly, it's better to calculate distance using CurrentDistance % Length
 	const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
+	const float Distance = FMath::Fmod(Position + SplineOffset, SplineComponent->GetSplineLength());
 	const FVector NewLocation{
-		SplineComponent->GetLocationAtDistanceAlongSpline(Position + SplineOffset, ESplineCoordinateSpace::World)
+		SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World)
 	};
 
 	GetOwner()->SetActorLocation(NewLocation + LocationOffset);
@@ -442,8 +444,9 @@ void USplineAnimationComponent::RotateAlongSpline(const float Progress) const
 	{
 		const FRotator CurrentRotation{GetOwner()->GetActorRotation()};
 		const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
+		const float Distance = FMath::Fmod(Position + SplineOffset, SplineComponent->GetSplineLength());
 		const FRotator RotationAlongSpline{
-			SplineComponent->GetRotationAtDistanceAlongSpline(Position, ESplineCoordinateSpace::World)
+			SplineComponent->GetRotationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World)
 		};
 
 		const float NewRoll = InheritRotation.bX ? RotationAlongSpline.Roll : CurrentRotation.Roll;
@@ -460,7 +463,8 @@ void USplineAnimationComponent::ScaleAlongSpline(const float Progress) const
 	{
 		const FVector CurrentScale{GetOwner()->GetActorScale3D()};
 		const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
-		const FVector ScaleAlongSpline{SplineComponent->GetScaleAtDistanceAlongSpline(Position)};
+		const float Distance = FMath::Fmod(Position + SplineOffset, SplineComponent->GetSplineLength());
+		const FVector ScaleAlongSpline{SplineComponent->GetScaleAtDistanceAlongSpline(Distance)};
 
 		const float NewScaleX = InheritScale.bX ? ScaleAlongSpline.X : CurrentScale.X;
 		const float NewScaleY = InheritScale.bY ? ScaleAlongSpline.Y : CurrentScale.Y;
