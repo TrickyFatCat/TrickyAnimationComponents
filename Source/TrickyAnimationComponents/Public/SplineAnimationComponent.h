@@ -347,4 +347,6 @@ private:
 	bool HasSplineComponent() const;
 
 	bool IsStoppingAtPoints() const;
+
+	float CalculateDistance(const float Progress) const;
 };

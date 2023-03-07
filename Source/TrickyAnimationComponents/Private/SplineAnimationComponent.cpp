@@ -428,11 +428,8 @@ void USplineAnimationComponent::AnimateAlongSpline(const float Progress) const
 
 void USplineAnimationComponent::MoveAlongSpline(const float Progress) const
 {
-	// TODO: To use distance offset properly, it's better to calculate distance using CurrentDistance % Length
-	const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
-	const float Distance = FMath::Fmod(Position + SplineOffset, SplineComponent->GetSplineLength());
 	const FVector NewLocation{
-		SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World)
+		SplineComponent->GetLocationAtDistanceAlongSpline(CalculateDistance(Progress), ESplineCoordinateSpace::World)
 	};
 
 	GetOwner()->SetActorLocation(NewLocation + LocationOffset);
@@ -443,10 +440,10 @@ void USplineAnimationComponent::RotateAlongSpline(const float Progress) const
 	if (InheritRotation.bX || InheritRotation.bY || InheritRotation.bZ)
 	{
 		const FRotator CurrentRotation{GetOwner()->GetActorRotation()};
-		const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
-		const float Distance = FMath::Fmod(Position + SplineOffset, SplineComponent->GetSplineLength());
+
 		const FRotator RotationAlongSpline{
-			SplineComponent->GetRotationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World)
+			SplineComponent->GetRotationAtDistanceAlongSpline(CalculateDistance(Progress),
+			                                                  ESplineCoordinateSpace::World)
 		};
 
 		const float NewRoll = InheritRotation.bX ? RotationAlongSpline.Roll : CurrentRotation.Roll;
@@ -462,9 +459,7 @@ void USplineAnimationComponent::ScaleAlongSpline(const float Progress) const
 	if (InheritScale.bX || InheritScale.bY || InheritScale.bZ)
 	{
 		const FVector CurrentScale{GetOwner()->GetActorScale3D()};
-		const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
-		const float Distance = FMath::Fmod(Position + SplineOffset, SplineComponent->GetSplineLength());
-		const FVector ScaleAlongSpline{SplineComponent->GetScaleAtDistanceAlongSpline(Distance)};
+		const FVector ScaleAlongSpline{SplineComponent->GetScaleAtDistanceAlongSpline(CalculateDistance(Progress))};
 
 		const float NewScaleX = InheritScale.bX ? ScaleAlongSpline.X : CurrentScale.X;
 		const float NewScaleY = InheritScale.bY ? ScaleAlongSpline.Y : CurrentScale.Y;
@@ -704,4 +699,17 @@ bool USplineAnimationComponent::HasSplineComponent() const
 bool USplineAnimationComponent::IsStoppingAtPoints() const
 {
 	return StopMode != ESplineAnimationStopMode::None;
+}
+
+float USplineAnimationComponent::CalculateDistance(const float Progress) const
+{
+	const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
+	float Distance = FMath::Fmod(Position + SplineOffset, SplineComponent->GetSplineLength());
+
+	if (Distance < 0.f)
+	{
+		Distance = SplineComponent->GetSplineLength() + Distance;
+	}
+
+	return Distance;
 }
