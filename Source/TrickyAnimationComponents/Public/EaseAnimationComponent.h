@@ -1,4 +1,4 @@
-// MIT License Copyright. Created by Artyom "Tricky Fat Cat" Volkov
+// MIT License Copyright (c) Artyom "Tricky Fat Cat" Volkov
 
 #pragma once
 
@@ -60,6 +60,8 @@ public:
 	/**Ease function which will be used for the animation.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	TEnumAsByte<EEasingFunc::Type> EaseFunction = EEasingFunc::EaseInOut;
+
+	
 
 	/**The higher the steeper the graph.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation",

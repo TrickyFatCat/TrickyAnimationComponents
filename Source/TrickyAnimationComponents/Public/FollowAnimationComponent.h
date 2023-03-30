@@ -1,4 +1,4 @@
-﻿// MIT License Copyright. Created by Artyom "Tricky Fat Cat" Volkov
+﻿// MIT License Copyright (c) Artyom "Tricky Fat Cat" Volkov
 
 #pragma once
 

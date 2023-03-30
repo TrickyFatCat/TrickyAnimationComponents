@@ -1,4 +1,4 @@
-// MIT License Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov
+// MIT License Copyright (c) Artyom "Tricky Fat Cat" Volkov
 
 #pragma once
 
@@ -12,13 +12,9 @@ class USplineComponent;
 
 DECLARE_LOG_CATEGORY_CLASS(LogSplineAnimationComponent, Display, Display);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplineAnimationStartedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplineAnimationStateChangedSignature);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSplineAnimationStoppedSignature, int32, PointIndex);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplineAnimationPausedSignature);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplineAnimationResumedSignature);
 
 UENUM()
 enum class ESplineAnimationState : uint8
@@ -66,7 +62,7 @@ struct FAxisInheritance
  * A simple actor component which can animate the owner along the spline component.
  */
 
-UCLASS(ClassGroup=(TrcickyAnimationComponent), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(TrcickyAnimationComponents), meta=(BlueprintSpawnableComponent))
 class TRICKYANIMATIONCOMPONENTS_API USplineAnimationComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -85,16 +81,16 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(BlueprintAssignable, Category="Animation")
-	FOnSplineAnimationStartedSignature OnAnimationStarted;
+	FOnSplineAnimationStateChangedSignature OnAnimationStarted;
 
 	UPROPERTY(BlueprintAssignable, Category="Animation")
 	FOnSplineAnimationStoppedSignature OnAnimationStopped;
 
 	UPROPERTY(BlueprintAssignable, Category="Animation")
-	FOnSplineAnimationPausedSignature OnAnimationPaused;
+	FOnSplineAnimationStateChangedSignature OnAnimationPaused;
 
 	UPROPERTY(BlueprintAssignable, Category="Animation")
-	FOnSplineAnimationResumedSignature OnAnimationResumed;
+	FOnSplineAnimationStateChangedSignature OnAnimationResumed;
 
 private:
 	UPROPERTY()
