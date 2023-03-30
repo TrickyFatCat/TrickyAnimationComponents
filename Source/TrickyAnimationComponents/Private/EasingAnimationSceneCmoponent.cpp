@@ -95,9 +95,9 @@ bool UEasingAnimationSceneComponent::PlayFromStart()
 	StartRotation = InitialRotation;
 	StartScale = InitialScale;
 
-	EndLocation = TargetLocation;
-	EndRotation = TargetRotation;
-	EndScale = TargetScale;
+	EndLocation = TargetLocation + StartLocation;
+	EndRotation = TargetRotation + StartRotation;
+	EndScale = TargetScale + StartScale;
 
 	bIsPlaying = true;
 	SetComponentTickEnabled(true);
