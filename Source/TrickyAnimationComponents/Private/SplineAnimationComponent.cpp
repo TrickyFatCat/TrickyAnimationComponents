@@ -384,15 +384,6 @@ void USplineAnimationComponent::CalculateNextPointIndex()
 	case ESplineAnimationMode::PingPong:
 		if (IsStoppingAtPoints())
 		{
-			if (CurrentPointIndex == 0)
-			{
-				bIsReversed = false;
-			}
-			else if (CurrentPointIndex == GetLastPointIndex())
-			{
-				bIsReversed = true;
-			}
-
 			NextPointIndex = bIsReversed ? CurrentPointIndex - 1 : CurrentPointIndex + 1;
 			NextPointIndex = FMath::Clamp(NextPointIndex, 0, GetLastPointIndex());
 		}
@@ -528,6 +519,16 @@ void USplineAnimationComponent::FinishAnimation()
 
 	case ESplineAnimationMode::PingPong:
 		CurrentPointIndex = NextPointIndex;
+
+		if (CurrentPointIndex == 0)
+		{
+			bIsReversed = false;
+		}
+		else if (CurrentPointIndex == GetLastPointIndex())
+		{
+			bIsReversed = true;
+		}
+		
 		CalculateNextPointIndex();
 
 		if (IsStoppingAtPoints())
@@ -706,10 +707,12 @@ float USplineAnimationComponent::CalculateDistance(const float Progress) const
 	const float Position = GetPositionAtSpline(CurrentPointIndex, NextPointIndex, Progress);
 	float Distance = FMath::Fmod(Position + SplineOffset, SplineComponent->GetSplineLength());
 
-	if (Distance < 0.f)
+	if (Distance < 0.f || Distance <= 0.f && Position > 0.f)
 	{
 		Distance = SplineComponent->GetSplineLength() + Distance;
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Position: %.2f| Distance: %.2f"), Position, Distance);
 
 	return Distance;
 }
