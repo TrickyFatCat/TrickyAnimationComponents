@@ -1,6 +1,6 @@
 // MIT License Copyright (c) Artyom "Tricky Fat Cat" Volkov
 
-#include "TrickyAnimationComponentsLibrary.h"
+#include "Libraries/TrickyAnimationComponentsLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 
 

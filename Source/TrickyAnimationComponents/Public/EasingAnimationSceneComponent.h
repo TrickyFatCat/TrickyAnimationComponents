@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "TrickyAnimationComponentsLibrary.h"
+#include "Libraries/TrickyAnimationComponentsLibrary.h"
 #include "EasingAnimationSceneComponent.generated.h"
 
 /**
