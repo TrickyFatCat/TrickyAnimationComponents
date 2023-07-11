@@ -54,16 +54,16 @@ public:
 	UFUNCTION(BlueprintPure, Category="TrickyEasing")
 	static double Ease(const EEaseFunction EaseFunction, const double Alpha = 0.f);
 
-	UFUNCTION(BlueprintCallable, Category="TrickyEasing")
+	UFUNCTION(BlueprintPure, Category="TrickyEasing")
 	static double EaseFloat(double A, double B, const EEaseFunction EaseFunction, const double Alpha = 0.f);
 
-	UFUNCTION(BlueprintCallable, Category="TrickyEasing", meta=(AutoCreateRefTerm="A, B"))
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", meta=(AutoCreateRefTerm="A, B"))
 	static FVector EaseVector(UPARAM(ref) FVector& A,
 	                          UPARAM(ref) FVector& B,
 	                          const EEaseFunction EaseFunction,
 	                          const double Alpha = 0.f);
 
-	UFUNCTION(BlueprintCallable, Category="TrickyEasing", meta=(AutoCreateRefTerm="A, B"))
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", meta=(AutoCreateRefTerm="A, B"))
 	static FRotator EaseRotator(UPARAM(ref) FRotator& A,
 	                            UPARAM(ref) FRotator& B,
 	                            const EEaseFunction EaseFunction,
