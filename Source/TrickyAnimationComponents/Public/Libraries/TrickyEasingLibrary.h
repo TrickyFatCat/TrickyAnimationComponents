@@ -6,7 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "TrickyEasingLibrary.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class EEaseType : uint8
 {
 	Linear,
@@ -27,7 +27,19 @@ enum class EEaseType : uint8
 	InOutQuint,
 	InCirc,
 	OutCirc,
-	InOutCirc
+	InOutCirc,
+	InExpo,
+	OutExpo,
+	InOutExpo,
+	InBack,
+	OutBack,
+	InOutBack,
+	InElastic,
+	OutElastic,
+	InOutElastic,
+	InBounce,
+	OutBounce,
+	InOutBounce
 };
 /**
  * 
@@ -94,4 +106,40 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseInOutCirc")
 	static double EaseInOutCirc(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseInExpo")
+	static double EaseInExpo(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseOutExpo")
+	static double EaseOutExpo(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseInOutExpo")
+	static double EaseInOutExpo(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseInBack")
+	static double EaseInBack(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseOutBack")
+	static double EaseOutBack(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseInOutBack")
+	static double EaseInOutBack(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseInElastic")
+	static double EaseInElastic(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseOutElastic")
+	static double EaseOutElastic(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseInOutElastic")
+	static double EaseInOutElastic(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseInBounce")
+	static double EaseInBounce(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseOutBounce")
+	static double EaseOutBounce(const double Alpha = 0.f);
+	
+	UFUNCTION(BlueprintPure, Category="TrickyEasing", DisplayName="EaseInOutBounce")
+	static double EaseInOutBounce(const double Alpha = 0.f);
 };
