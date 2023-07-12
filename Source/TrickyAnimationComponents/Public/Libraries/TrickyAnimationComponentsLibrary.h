@@ -34,20 +34,4 @@ public:
 		A = B;
 		B = C;
 	}
-
-	static void EaseVector(FVector& Value,
-	                       const FVector& InitialValue,
-	                       const FVector& TargetValue,
-	                       const float Alpha,
-	                       const TEnumAsByte<EEasingFunc::Type> EaseFunction,
-	                       const float BlendExp,
-	                       const int32 Steps);
-
-	static void EaseRotator(FRotator& Value,
-	                        const FRotator& InitialValue,
-	                        const FRotator& TargetValue,
-	                        const float Alpha,
-	                        const TEnumAsByte<EEasingFunc::Type> EaseFunction,
-	                        const float BlendExp,
-	                        const int32 Steps);
 };
