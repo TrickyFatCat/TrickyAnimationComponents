@@ -46,21 +46,21 @@ void UEaseAnimationComponent::TickComponent(float DeltaTime,
 			if (bAnimateLocation)
 			{
 				FVector NewLocation;
-				EaseVector(NewLocation, StartLocation, EndLocation, Alpha);
+				UTrickyEasingLibrary::EaseVector(NewLocation, StartLocation, EndLocation, EaseFunction, Alpha);
 				GetOwner()->SetActorLocation(NewLocation);
 			}
 
 			if (bAnimateRotation)
 			{
 				FRotator NewRotation;
-				EaseRotator(NewRotation, StartRotation, EndRotation, Alpha);
+				UTrickyEasingLibrary::EaseRotator(NewRotation, StartRotation, EndRotation, EaseFunction, Alpha);
 				GetOwner()->SetActorRotation(NewRotation);
 			}
 
 			if (bAnimateScale)
 			{
 				FVector NewScale;
-				EaseVector(NewScale, StartScale, EndScale, Alpha);
+				UTrickyEasingLibrary::EaseVector(NewScale, StartScale, EndScale, EaseFunction, Alpha);
 				GetOwner()->SetActorScale3D(NewScale);
 			}
 		}
@@ -215,7 +215,7 @@ void UEaseAnimationComponent::Finish()
 		EndLocation = StartLocation + TargetLocation;
 		EndRotation = StartRotation + TargetRotation;
 		EndScale = StartScale + TargetScale;
-		
+
 		LaunchTime = GetWorld()->GetTimeSeconds();
 		break;
 
@@ -226,32 +226,4 @@ void UEaseAnimationComponent::Finish()
 		LaunchTime = GetWorld()->GetTimeSeconds();
 		break;
 	}
-}
-
-void UEaseAnimationComponent::EaseVector(FVector& Value,
-                                         const FVector& InitialValue,
-                                         const FVector& TargetValue,
-                                         const float Alpha) const
-{
-	UTrickyAnimationComponentsLibrary::EaseVector(Value,
-	                                              InitialValue,
-	                                              TargetValue,
-	                                              Alpha,
-	                                              EaseFunction,
-	                                              BlendExp,
-	                                              Steps);
-}
-
-void UEaseAnimationComponent::EaseRotator(FRotator& Value,
-                                          const FRotator& InitialValue,
-                                          const FRotator& TargetValue,
-                                          const float Alpha) const
-{
-	UTrickyAnimationComponentsLibrary::EaseRotator(Value,
-	                                               InitialValue,
-	                                               TargetValue,
-	                                               Alpha,
-	                                               EaseFunction,
-	                                               BlendExp,
-	                                               Steps);
 }

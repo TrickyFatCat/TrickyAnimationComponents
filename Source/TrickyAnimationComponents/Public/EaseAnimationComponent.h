@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Libraries/TrickyAnimationComponentsLibrary.h"
+#include "Libraries/TrickyEasingLibrary.h"
 #include "EaseAnimationComponent.generated.h"
 
 /**
@@ -59,7 +60,7 @@ public:
 
 	/**Ease function which will be used for the animation.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
-	TEnumAsByte<EEasingFunc::Type> EaseFunction = EEasingFunc::EaseInOut;
+	EEaseFunction EaseFunction = EEaseFunction::Linear;
 
 	
 
@@ -158,8 +159,4 @@ private:
 	FVector EndScale{FVector::OneVector};
 	
 	void Finish();
-
-	void EaseVector(FVector& Value, const FVector& InitialValue, const FVector& TargetValue, const float Alpha) const;
-
-	void EaseRotator(FRotator& Value, const FRotator& InitialValue, const FRotator& TargetValue, const float Alpha) const;
 };
