@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Libraries/TrickyAnimationComponentsLibrary.h"
 #include "Libraries/TrickyEasingLibrary.h"
 #include "EaseAnimationComponent.generated.h"
@@ -61,22 +60,6 @@ public:
 	/**Ease function which will be used for the animation.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
 	EEaseFunction EaseFunction = EEaseFunction::Linear;
-
-	
-
-	/**The higher the steeper the graph.*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation",
-		meta=(EditCondition=
-			"EaseFunction == EEasingFunc::EaseIn || EaseFunction == EEasingFunc::EaseOut || EaseFunction == EEasingFunc::EaseInOut"
-			,
-			EditConditionHides
-		))
-	float BlendExp = 2.f;
-
-	/**Amount of substeps.*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation",
-		meta=(EditCondition="EaseFunction == EEasingFunc::Step", EditConditionHides))
-	int32 Steps = 10.f;
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EaseAnimation")
 	bool GetIsPlaying() const;
