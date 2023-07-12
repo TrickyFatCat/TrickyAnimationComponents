@@ -138,34 +138,34 @@ double UTrickyEasingLibrary::Ease(const EEaseFunction EaseFunction, const double
 	return Result;
 }
 
-double UTrickyEasingLibrary::EaseFloat(double A, double B, const EEaseFunction EaseFunction, const double Alpha)
+double UTrickyEasingLibrary::EaseFloat(const double A,
+                                       const double B,
+                                       const EEaseFunction EaseFunction,
+                                       const double Alpha)
 {
 	return FMath::Lerp(A, B, Ease(EaseFunction, Alpha));
 }
 
-FVector UTrickyEasingLibrary::EaseVector(FVector& A, FVector& B, const EEaseFunction EaseFunction, const double Alpha)
+void UTrickyEasingLibrary::EaseVector(FVector& Result,
+                                      const FVector& A,
+                                      const FVector& B,
+                                      const EEaseFunction EaseFunction,
+                                      const double Alpha)
 {
-	FVector NewVector = FVector::Zero();
-
-	NewVector.X = FMath::Lerp(A.X, B.X, Ease(EaseFunction, Alpha));
-	NewVector.Y = FMath::Lerp(A.Y, B.Y, Ease(EaseFunction, Alpha));
-	NewVector.Z = FMath::Lerp(A.Z, B.Z, Ease(EaseFunction, Alpha));
-
-	return NewVector;
+	Result.X = FMath::Lerp(A.X, B.X, Ease(EaseFunction, Alpha));
+	Result.Y = FMath::Lerp(A.Y, B.Y, Ease(EaseFunction, Alpha));
+	Result.Z = FMath::Lerp(A.Z, B.Z, Ease(EaseFunction, Alpha));
 }
 
-FRotator UTrickyEasingLibrary::EaseRotator(FRotator& A,
-                                           FRotator& B,
-                                           const EEaseFunction EaseFunction,
-                                           const double Alpha)
+void UTrickyEasingLibrary::EaseRotator(FRotator& Result,
+                                       const FRotator& A,
+                                       const FRotator& B,
+                                       const EEaseFunction EaseFunction,
+                                       const double Alpha)
 {
-	FRotator NewRotator = FRotator(0.f);
-
-	NewRotator.Pitch = FMath::Lerp(A.Pitch, B.Pitch, Ease(EaseFunction, Alpha));
-	NewRotator.Yaw = FMath::Lerp(A.Yaw, B.Yaw, Ease(EaseFunction, Alpha));
-	NewRotator.Roll = FMath::Lerp(A.Roll, B.Roll, Ease(EaseFunction, Alpha));
-
-	return NewRotator;
+	Result.Pitch = FMath::Lerp(A.Pitch, B.Pitch, Ease(EaseFunction, Alpha));
+	Result.Yaw = FMath::Lerp(A.Yaw, B.Yaw, Ease(EaseFunction, Alpha));
+	Result.Roll = FMath::Lerp(A.Roll, B.Roll, Ease(EaseFunction, Alpha));
 }
 
 double UTrickyEasingLibrary::EaseInSine(const double Alpha)
