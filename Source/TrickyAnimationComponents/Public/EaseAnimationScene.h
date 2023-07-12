@@ -6,18 +6,19 @@
 #include "Components/SceneComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Libraries/TrickyAnimationComponentsLibrary.h"
-#include "EasingAnimationSceneComponent.generated.h"
+#include "Libraries/TrickyEasingLibrary.h"
+#include "EaseAnimationScene.generated.h"
 
 /**
  * A scene component which can animate its location, rotation and scale using easing functions.
  */
 UCLASS(ClassGroup=(TrickyAnimationComponents), meta=(BlueprintSpawnableComponent))
-class TRICKYANIMATIONCOMPONENTS_API UEasingAnimationSceneComponent : public USceneComponent
+class TRICKYANIMATIONCOMPONENTS_API UEaseAnimationScene : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:
-	UEasingAnimationSceneComponent();
+	UEaseAnimationScene();
 
 protected:
 	virtual void InitializeComponent() override;
@@ -59,21 +60,7 @@ public:
 
 	/**Ease function which will be used for animation.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
-	TEnumAsByte<EEasingFunc::Type> EaseFunction = EEasingFunc::EaseInOut;
-
-	/**The higher the steeper the graph.*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation",
-		meta=(EditCondition=
-			"EaseFunction == EEasingFunc::EaseIn || EaseFunction == EEasingFunc::EaseOut || EaseFunction == EEasingFunc::EaseInOut"
-			,
-			EditConditionHides
-		))
-	float BlendExp = 2.f;
-
-	/**Amount of substeps.*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation",
-		meta=(EditCondition="EaseFunction == EEasingFunc::Step", EditConditionHides))
-	int32 Steps = 10.f;
+	EEaseFunction EaseFunction = EEaseFunction::Linear;
 
 	UFUNCTION(BlueprintGetter, Category="TrickyAnimations|EasingAnimationScene")
 	bool GetIsPlaying() const;
@@ -156,8 +143,4 @@ private:
 	FVector EndScale{FVector::OneVector};
 	
 	void Finish();
-
-	void EaseVector(FVector& Value, const FVector& InitialValue, const FVector& TargetValue, const float Alpha) const;
-
-	void EaseRotator(FRotator& Value, const FRotator& InitialValue, const FRotator& TargetValue, const float Alpha) const;
 };
