@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "RotationAnimationComponent.generated.h"
+#include "RotationAnimationScene.generated.h"
 
 /**
  * A simple scene components which rotates along chosen axis.
  */
 
 UCLASS(ClassGroup=(TrickyAnimationComponents), meta=(BlueprintSpawnableComponent))
-class TRICKYANIMATIONCOMPONENTS_API URotationAnimationComponent : public USceneComponent
+class TRICKYANIMATIONCOMPONENTS_API URotationAnimationScene : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:
-	URotationAnimationComponent();
+	URotationAnimationScene();
 
 protected:
 	virtual void BeginPlay() override;

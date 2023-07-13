@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "OscillationAnimationComponent.generated.h"
+#include "OscillationAnimationScene.generated.h"
 
 
 USTRUCT(BlueprintType)
@@ -33,12 +33,12 @@ struct FOscillationSettings
  * A simple scene component which creates a floating animation.
  */
 UCLASS(ClassGroup=(TrickyAnimationComponents), meta=(BlueprintSpawnableComponent))
-class TRICKYANIMATIONCOMPONENTS_API UOscillationAnimationComponent : public USceneComponent
+class TRICKYANIMATIONCOMPONENTS_API UOscillationAnimationScene : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:
-	UOscillationAnimationComponent();
+	UOscillationAnimationScene();
 
 protected:
 	virtual void BeginPlay() override;

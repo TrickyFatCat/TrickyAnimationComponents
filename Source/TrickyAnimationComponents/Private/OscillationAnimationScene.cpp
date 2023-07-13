@@ -1,16 +1,16 @@
 // MIT License Copyright (c) Artyom "Tricky Fat Cat" Volkov
 
 
-#include "OscillationAnimationComponent.h"
+#include "OscillationAnimationScene.h"
 #include "Engine/World.h"
 
-UOscillationAnimationComponent::UOscillationAnimationComponent()
+UOscillationAnimationScene::UOscillationAnimationScene()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
-void UOscillationAnimationComponent::BeginPlay()
+void UOscillationAnimationScene::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -21,7 +21,7 @@ void UOscillationAnimationComponent::BeginPlay()
 }
 
 
-void UOscillationAnimationComponent::TickComponent(float DeltaTime,
+void UOscillationAnimationScene::TickComponent(float DeltaTime,
                                                    ELevelTick TickType,
                                                    FActorComponentTickFunction* ThisTickFunction)
 {
@@ -43,18 +43,18 @@ void UOscillationAnimationComponent::TickComponent(float DeltaTime,
 	}
 }
 
-bool UOscillationAnimationComponent::GetIsEnabled() const
+bool UOscillationAnimationScene::GetIsEnabled() const
 {
 	return bIsEnabled;
 }
 
-void UOscillationAnimationComponent::SetIsEnabled(const bool Value)
+void UOscillationAnimationScene::SetIsEnabled(const bool Value)
 {
 	bIsEnabled = Value;
 	SetComponentTickEnabled(bIsEnabled);
 }
 
-float UOscillationAnimationComponent::OscillateAxis(const float InitialValue,
+float UOscillationAnimationScene::OscillateAxis(const float InitialValue,
                                                     const float Amplitude,
                                                     const float Frequency) const
 {
@@ -62,7 +62,7 @@ float UOscillationAnimationComponent::OscillateAxis(const float InitialValue,
 	return InitialValue + Amplitude * FMath::Sin(Frequency * Time);
 }
 
-void UOscillationAnimationComponent::OscillateVector(FVector& Vector,
+void UOscillationAnimationScene::OscillateVector(FVector& Vector,
                                                      const FVector& InitialVector,
                                                      const FOscillationSettings& Settings) const
 {
@@ -82,7 +82,7 @@ void UOscillationAnimationComponent::OscillateVector(FVector& Vector,
 	}
 }
 
-void UOscillationAnimationComponent::OscillateRotator(FRotator& Rotator,
+void UOscillationAnimationScene::OscillateRotator(FRotator& Rotator,
                                                       const FRotator& InitialRotator,
                                                       const FOscillationSettings& Settings) const
 {

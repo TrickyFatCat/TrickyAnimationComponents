@@ -1,14 +1,14 @@
 ﻿// MIT License Copyright (c) Artyom "Tricky Fat Cat" Volkov
 
 
-#include "RotationAnimationComponent.h"
+#include "RotationAnimationScene.h"
 
-URotationAnimationComponent::URotationAnimationComponent()
+URotationAnimationScene::URotationAnimationScene()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void URotationAnimationComponent::BeginPlay()
+void URotationAnimationScene::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -16,7 +16,7 @@ void URotationAnimationComponent::BeginPlay()
 	ToggleTick();
 }
 
-void URotationAnimationComponent::TickComponent(float DeltaTime,
+void URotationAnimationScene::TickComponent(float DeltaTime,
                                                 ELevelTick TickType,
                                                 FActorComponentTickFunction* ThisTickFunction)
 {
@@ -32,18 +32,18 @@ void URotationAnimationComponent::TickComponent(float DeltaTime,
 	}
 }
 
-FRotator URotationAnimationComponent::GetRotationSpeed() const
+FRotator URotationAnimationScene::GetRotationSpeed() const
 {
 	return RotationSpeed;
 }
 
-void URotationAnimationComponent::SetRotationSpeed(const FRotator Value)
+void URotationAnimationScene::SetRotationSpeed(const FRotator Value)
 {
 	RotationSpeed = Value;
 	DeltaRotator = Value;
 }
 
-void URotationAnimationComponent::SetIsRotating(const bool bX, const bool bY, const bool bZ)
+void URotationAnimationScene::SetIsRotating(const bool bX, const bool bY, const bool bZ)
 {
 	bRotateX = bX;
 	bRotateY = bY;
@@ -51,7 +51,7 @@ void URotationAnimationComponent::SetIsRotating(const bool bX, const bool bY, co
 	ToggleTick();
 }
 
-void URotationAnimationComponent::ToggleTick()
+void URotationAnimationScene::ToggleTick()
 {
 	SetComponentTickEnabled((!bRotateX && !bRotateY && !bRotateZ) || (bRotateX || bRotateY || bRotateZ));
 }
